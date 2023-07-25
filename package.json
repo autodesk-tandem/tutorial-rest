@@ -1,0 +1,11 @@
+{
+    "name": "streams-examples",
+    "version": "1.0.0",
+    "description": "",
+    "dependencies": {
+      "node-fetch": "^2.6.0"
+    },
+    "type": "module",
+    "author": "aleksandr.bakharev@autodesk.com",
+    "license": "Apache-2.0"
+  }
