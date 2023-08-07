@@ -1,3 +1,7 @@
+/*
+    This example demonstrates how to send stream data using generic webhook URL.
+*/
+
 async function main() {
     /*
         STEP 1 - Construct payload
