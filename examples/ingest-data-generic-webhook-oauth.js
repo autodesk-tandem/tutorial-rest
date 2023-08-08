@@ -1,5 +1,6 @@
 /*
-    This example demonstrates how to send stream data using generic webhook URL.
+    This example demonstrates how to send stream data using generic webhook URL. It also provides example how
+    to authenticate using APS Authenticattion service.
 */
 
 async function main() {
