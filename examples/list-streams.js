@@ -1,5 +1,5 @@
 /*
-    This examples demonstrates how to get streams from givel facility and get stream details (name, parent). It uses -2legged
+    This example demonstrates how to get streams from given facility and get stream details (name, parent). It uses 2-legged
     authentication - this requires that application is added to facility as service.
 */
 async function main() {
