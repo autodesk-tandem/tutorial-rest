@@ -1,5 +1,9 @@
+/*
+    This examples demonstrates how to get streams from givel facility and get stream details (name, parent). It uses -2legged
+    authentication - this requires that application is added to facility as service.
+*/
 async function main() {
-    // STEP 1 - obtain token. The sampleuses 2-legged token but it would also work with 3-legged token
+    // STEP 1 - obtain token. The sample uses 2-legged token but it would also work with 3-legged token
     // assuming that user has access to the facility
     const token = await createToken('YOUR_CLIENT_ID',
         'YOUR_CLIENT_SECRET', 'data:read');
@@ -30,6 +34,7 @@ async function main() {
         if (!elementData) {
             continue;
         }
+        // print out name of stream + name of parent
         console.log(`${stream['n:n']}:${elementData['n:n']}`);
     }
 }
