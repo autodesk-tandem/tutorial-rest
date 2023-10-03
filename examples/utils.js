@@ -3,6 +3,19 @@ const kElementIdSize = 20;
 const kElementFlagsSize = 4;
 const kElementIdWithFlagsSize = kElementIdSize + kElementFlagsSize;
 
+export const ElementFlags = {
+    SimpleElement:  0x00000000,
+    Room:           0x00000005,
+    FamilyType:     0x01000000,
+    Level:          0x01000001,
+    Stream:         0x01000003
+};
+
+export const KeyFlags = {
+    Physical:   0x00000000,
+    Logical:    0x01000000
+};
+
 export class Encoding {
     /**
      * Converts element short key to full key.
@@ -14,7 +27,7 @@ export class Encoding {
         const binData = Buffer.from(shortKey, 'base64');
         const fullKey = Buffer.alloc(kElementIdWithFlagsSize);
 
-        fullKey.writeInt32BE(isLogical ? 0x01000000: 0x00000000);
+        fullKey.writeInt32BE(isLogical ? KeyFlags.Logical : KeyFlags.Physical);
         binData.copy(fullKey, kElementFlagsSize);
         return Encoding.makeWebsafe(fullKey.toString('base64'));
     }

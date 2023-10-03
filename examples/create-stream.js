@@ -1,4 +1,4 @@
-import { Encoding } from './utils.js';
+import { ElementFlags, Encoding } from './utils.js';
 
 /*
     This example demonstrates how to create stream using REST API. It uses 2-legged
@@ -147,7 +147,7 @@ async function getLevels(token, urn) {
     const results = [];
 
     for (const item of data) {
-        if ((item['n:a'] & 0x01000001) === 0x01000001) {
+        if ((item['n:a'] & ElementFlags.Level) === ElementFlags.Level) {
             results.push(item);
         }
     }
@@ -178,7 +178,7 @@ async function getRooms(token, urn) {
     const results = [];
 
     for (const item of data) {
-        if ((item['n:a'] & 0x00000005) === 0x00000005) {
+        if ((item['n:a'] & ElementFlags.Room) === ElementFlags.Room) {
             results.push(item);
         }
     }
@@ -232,7 +232,7 @@ async function createStream(token, urn, name, uniformatClass, categoryId, classi
     const inputs = {
         muts: [
             [ 'i', 'n', 'n', name ],
-            [ 'i', 'n', 'a', 0x01000003 ], // this flag identifies stream
+            [ 'i', 'n', 'a', ElementFlags.Stream ], // this flag identifies stream
             [ 'i', 'n', 'u', uniformatClass ],
             [ 'i', 'n', 'c', categoryId ],
 
