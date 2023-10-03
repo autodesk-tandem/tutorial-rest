@@ -1,4 +1,4 @@
-import { ElementFlags, Encoding } from './utils.js';
+import { ColumnFamilies, ColumnNames, ElementFlags, Encoding, MutateActions, QC } from './utils.js';
 
 /*
     This example demonstrates how to create stream using REST API. It uses 2-legged
@@ -39,7 +39,7 @@ async function main() {
     // iterate through rooms
     for (const link of facility.links) {
         const rooms = await getRooms(token, link.modelId);
-        const room = rooms.find(r => r['n:n'] === roomName);
+        const room = rooms.find(r => r[QC.Name] === roomName);
 
         if (room) {
             targetRoom = room;
@@ -51,13 +51,13 @@ async function main() {
         throw new Error(`Room ${roomName} doesn't exist`);
     }
     // STEP 4 - find level. Level with same name should exist in default model.
-    const levelKey = Encoding.toFullKey(targetRoom['l:l'], true);
+    const levelKey = Encoding.toFullKey(targetRoom[QC.Level], true);
     const levelDetails = await getElementData(token, targetRoomModelId, levelKey);
     const levels = await getLevels(token, defaultModel.modelId);
-    const targetLevel = levels.find(l => l['n:n'] === levelDetails['n:n']);
+    const targetLevel = levels.find(l => l[QC.Name] === levelDetails[QC.Name]);
 
     if (!targetLevel) {
-        throw new Error(`Level ${levelDetails['n:n']} doesn't exist`);
+        throw new Error(`Level ${levelDetails[QC.Name]} doesn't exist`);
     }
     // STEP 5 - create new stream. First step is to encode keys for references. In our case host element and room are same.
     const parentXref = Encoding.toXrefKey(targetRoomModelId, targetRoom.k);
@@ -131,7 +131,7 @@ async function getFacility(token, urn) {
  */
 async function getLevels(token, urn) {
     const inputs = {
-        families: [ 'n' ],
+        families: [ ColumnFamilies.Standard ],
         includeHistory: false,
         skipArrays: true
     };
@@ -147,7 +147,7 @@ async function getLevels(token, urn) {
     const results = [];
 
     for (const item of data) {
-        if ((item['n:a'] & ElementFlags.Level) === ElementFlags.Level) {
+        if ((item[QC.ElementFlags] & ElementFlags.Level) === ElementFlags.Level) {
             results.push(item);
         }
     }
@@ -162,7 +162,7 @@ async function getLevels(token, urn) {
  */
 async function getRooms(token, urn) {
     const inputs = {
-        families: [ 'n', 'l' ],
+        families: [ ColumnFamilies.Standard, ColumnFamilies.Refs ],
         includeHistory: false,
         skipArrays: true
     };
@@ -178,7 +178,7 @@ async function getRooms(token, urn) {
     const results = [];
 
     for (const item of data) {
-        if ((item['n:a'] & ElementFlags.Room) === ElementFlags.Room) {
+        if ((item[QC.ElementFlags] & ElementFlags.Room) === ElementFlags.Room) {
             results.push(item);
         }
     }
@@ -195,7 +195,7 @@ async function getRooms(token, urn) {
 async function getElementData(token, urn, key) {
     const inputs = {
         keys: [ key ],
-        families: [ 'n' ],
+        families: [ ColumnFamilies.Standard ],
         includeHistory: false,
         skipArrays: true
     };
@@ -231,26 +231,26 @@ async function getElementData(token, urn, key) {
 async function createStream(token, urn, name, uniformatClass, categoryId, classification, parentXref, roomXref, levelKey) {
     const inputs = {
         muts: [
-            [ 'i', 'n', 'n', name ],
-            [ 'i', 'n', 'a', ElementFlags.Stream ], // this flag identifies stream
-            [ 'i', 'n', 'u', uniformatClass ],
-            [ 'i', 'n', 'c', categoryId ],
+            [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.Name, name ],
+            [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.ElementFlags, ElementFlags.Stream ], // this flag identifies stream
+            [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.UniformatClass, uniformatClass ],
+            [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.CategoryId, categoryId ],
 
         ],
         desc: 'Create stream'
     };
 
     if (classification) {
-        inputs.muts.push([ 'i', 'n', 'v', classification ]);
+        inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.Classification, classification ]);
     }
     if (parentXref) {
-        inputs.muts.push([ 'i', 'x', 'p', parentXref ]);
+        inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Xrefs, ColumnNames.Parent, parentXref ]);
     }
     if (roomXref) {
-        inputs.muts.push([ 'i', 'x', 'r', roomXref ]);
+        inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Xrefs, ColumnNames.Rooms, roomXref ]);
     }
     if (levelKey) {
-        inputs.muts.push([ 'i', 'l', 'l', levelKey ]);
+        inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Refs, ColumnNames.Level, levelKey ]);
     }
     const response = await fetch(`https://tandem.autodesk.com/api/v1/modeldata/${urn}/create`, {
         method: 'POST',

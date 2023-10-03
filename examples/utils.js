@@ -16,6 +16,33 @@ export const KeyFlags = {
     Logical:    0x01000000
 };
 
+export const ColumnFamilies = {
+    Standard:   'n',
+    Refs:       'l',
+    Xrefs:      'x'
+};
+
+export const ColumnNames = {
+    CategoryId:     'c',
+    Classification: 'v',
+    ElementFlags:   'a',
+    Level:          'l',
+    Name:           'n',
+    Parent:         'p',
+    Rooms:          'r',
+    UniformatClass: 'u'
+};
+
+export const QC = {
+    ElementFlags:   `${ColumnFamilies.Standard}:${ColumnNames.ElementFlags}`,
+    Name:           `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
+    Level:          `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
+};
+
+export const MutateActions = {
+    Insert: 'i'
+};
+
 export class Encoding {
     /**
      * Converts element short key to full key.
