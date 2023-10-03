@@ -1,16 +1,24 @@
+import { Encoding } from './utils.js';
+
 /*
     This example demonstrates how to create stream using REST API. It uses 2-legged
     authentication - this requires that application is added to facility as service.
     The stream is assigned to specified room.
 */
+const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
+const APS_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
+const FACILITY_URN = 'YOUR_FACILITY_URN';
+const ROOM_NAME = 'UNIT E-110'; // Use room name based on your facility
+const CLASSIFICATION_ID = '3d';  // Use classification id based on your facility template
+
 async function main() {
     // STEP 1 - obtain token. The sample uses 2-legged token but it would also work with 3-legged token
     // assuming that user has access to the facility
-    const token = await createToken('YOUR_CLIENT_ID',
-        'YOUR_CLIENT_SECRET', 'data:read data:write');
+    const token = await createToken(APS_CLIENT_ID,
+        APS_CLIENT_SECRET, 'data:read data:write');
 
     // STEP 2 - get facility and default model. The default model has same id as facility but different prefix
-    const facilityId = 'YOUR_FACILITY_URN';
+    const facilityId = FACILITY_URN;
     const facility = await getFacility(token, facilityId);
     const defaultModelId = facilityId.replace('urn:adsk.dtt:', 'urn:adsk.dtm:');
     const defaultModel = facility.links.find((m) => {
@@ -21,10 +29,10 @@ async function main() {
         throw new Error('Unable to find default model');
     }
     // STEP 3 - find room by name. We assume there is only one room with given name.
-    const roomName = 'UNIT E-110';
+    const roomName = ROOM_NAME;
     const uniformatClassId = 'D7070'; // this refers to Electronic Monitoring and Control
     const categoryId = 5031; // this refers to IoT Connections category
-    const classification = '3d'; // this depends on facility template
+    const classification = CLASSIFICATION_ID;
     let targetRoomModelId = null;
     let targetRoom = null;
 
@@ -43,7 +51,7 @@ async function main() {
         throw new Error(`Room ${roomName} doesn't exist`);
     }
     // STEP 4 - find level. Level with same name should exist in default model.
-    const levelKey = toFullKey(targetRoom['l:l'], true);
+    const levelKey = Encoding.toFullKey(targetRoom['l:l'], true);
     const levelDetails = await getElementData(token, targetRoomModelId, levelKey);
     const levels = await getLevels(token, defaultModel.modelId);
     const targetLevel = levels.find(l => l['n:n'] === levelDetails['n:n']);
@@ -52,7 +60,7 @@ async function main() {
         throw new Error(`Level ${levelDetails['n:n']} doesn't exist`);
     }
     // STEP 5 - create new stream. First step is to encode keys for references. In our case host element and room are same.
-    const parentXref = encodeXref(targetRoomModelId, targetRoom.k);
+    const parentXref = Encoding.toXrefKey(targetRoomModelId, targetRoom.k);
     // creeate new stream
     const streamId = await createStream(token,
         defaultModel.modelId,
@@ -67,6 +75,7 @@ async function main() {
     console.log(`New stream: ${streamId}`);
     // STEP 6 - reset stream secrets
     await resetStreamsSecrets(token, defaultModel.modelId, [ streamId ]);
+    // to push data to stream follow other stream examples
 }
 
 /**
@@ -277,48 +286,6 @@ async function resetStreamsSecrets(token, urn, streamIds) {
     });
 }
 
-/**
- * Converts short key to qualified key.
- * @param {string} shortKey 
- * @param {boolean} isLogical 
- * @returns {string}
- */
-function toFullKey(shortKey, isLogical) {
-    const binData = Buffer.from(shortKey, 'base64');
-    const fullKey = Buffer.alloc(24);
-
-    fullKey.writeInt32BE(isLogical ? 0x01000000: 0x00000000);
-    binData.copy(fullKey, 4);
-    return makeWebsafe(fullKey.toString('base64'));
-}
-
-/**
- * Returns URL safe string.
- * @param {string} text 
- * @returns {string}
- */
-function makeWebsafe(text) {
-	return text.replace(/\+/g, '-') // Convert '+' to '-' (dash)
-		.replace(/\//g, '_') // Convert '/' to '_' (underscore)
-		.replace(/=+$/, ''); // Remove trailing '='
-}
-
-/**
- * Encodes xref key from model id and element key.
- * @param {string} modelId
- * @param {string} key
- * @returns {string}
- */
-function encodeXref(modelId, key) {
-    const modelBuff = Buffer.from(makeWebsafe(modelId), 'base64');
-    const elementBuff = Buffer.from(makeWebsafe(key), 'base64');
-    const result = Buffer.alloc(40);
-    
-    modelBuff.copy(result, 0);
-    elementBuff.copy(result, 16);
-    return makeWebsafe(result.toString('base64'));
-}
-
 main()
     .then(() => {
         console.log('success');
@@ -328,4 +295,3 @@ main()
         console.error('failure', err);
         process.exit(1);
     });
-
