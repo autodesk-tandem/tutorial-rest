@@ -86,3 +86,18 @@ export class Encoding {
             .replace(/=+$/, ''); // Remove trailing '='
     }
 }
+
+/**
+ * Returns default model of the facility. Default model has same id as facility but different prefix.
+ * @param {string} facilityId 
+ * @param {object} facilityData 
+ * @returns {object}
+ */
+export function getDefaultModel(facilityId, facilityData) {
+    const defaultModelId = facilityId.replace('urn:adsk.dtt:', 'urn:adsk.dtm:');
+    const defaultModel = facilityData.links.find((m) => {
+        return  m.modelId === defaultModelId;
+    });
+
+    return defaultModel;
+}

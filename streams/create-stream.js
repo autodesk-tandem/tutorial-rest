@@ -1,4 +1,10 @@
-import { ColumnFamilies, ColumnNames, ElementFlags, Encoding, MutateActions, QC } from './../common/utils.js';
+import {  ColumnFamilies,
+    ColumnNames,
+    ElementFlags,
+    Encoding,
+    MutateActions,
+    QC,
+    getDefaultModel } from './../common/utils.js';
 
 /*
     This example demonstrates how to create stream using REST API. The stream is assigned to specified room.
@@ -19,13 +25,10 @@ async function main() {
     const token = await createToken(APS_CLIENT_ID,
         APS_CLIENT_SECRET, 'data:read data:write');
 
-    // STEP 2 - get facility and default model. The default model has same id as facility but different prefix
+    // STEP 2 - get facility and default model.
     const facilityId = FACILITY_URN;
     const facility = await getFacility(token, facilityId);
-    const defaultModelId = facilityId.replace('urn:adsk.dtt:', 'urn:adsk.dtm:');
-    const defaultModel = facility.links.find((m) => {
-        return  m.modelId === defaultModelId;
-    });
+    const defaultModel = getDefaultModel(facilityId, facility);
 
     if (!defaultModel) {
         throw new Error('Unable to find default model');
