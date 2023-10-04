@@ -1,4 +1,4 @@
-import { ColumnFamilies, ColumnNames, ElementFlags, Encoding, MutateActions, QC } from './utils.js';
+import { ColumnFamilies, ColumnNames, ElementFlags, Encoding, MutateActions, QC } from './../common/utils.js';
 
 /*
     This example demonstrates how to create stream using REST API. The stream is assigned to specified room.
