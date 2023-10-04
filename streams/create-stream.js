@@ -1,4 +1,11 @@
-import {  ColumnFamilies,
+/*
+    This example demonstrates how to create stream using REST API. The stream is assigned to specified room.
+    
+    It uses 2-legged authentication - this requires that application is added to facility as service.
+*/
+import { createToken } from '../common/auth.js';
+import {
+    ColumnFamilies,
     ColumnNames,
     ElementFlags,
     Encoding,
@@ -6,16 +13,11 @@ import {  ColumnFamilies,
     QC,
     getDefaultModel } from './../common/utils.js';
 
-/*
-    This example demonstrates how to create stream using REST API. The stream is assigned to specified room.
-    
-    It uses 2-legged - this requires that application is added to facility as service.
-*/
+// update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
 const APS_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
 const FACILITY_URN = 'YOUR_FACILITY_URN';
 
-// update values below according to your environment
 const ROOM_NAME = 'UNIT E-110'; // Use room name based on your facility
 const CLASSIFICATION_ID = '3d';  // Use classification id based on your facility template
 
@@ -81,32 +83,6 @@ async function main() {
     // STEP 6 - reset stream secrets
     await resetStreamsSecrets(token, defaultModel.modelId, [ streamId ]);
     // to push data to stream follow other stream examples
-}
-
-/**
- * Creates 2-legged token using provided inputs.
- * @param {string} clientID 
- * @param {string} clientSecret 
- * @param {string} scope 
- * @returns {Promise<string>}
- */
-async function createToken(clientID, clientSecret, scope) {
-    const auth = Buffer.from(`${clientID}:${clientSecret}`).toString('base64');
-    const options = new URLSearchParams({
-        'grant_type': 'client_credentials',
-        'scope': scope
-    });
-
-    const tokenResponse = await fetch(`https://developer.api.autodesk.com/authentication/v2/token?${options}`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Basic ${auth}`
-        }
-    });
-
-    const token = await tokenResponse.json();
-
-    return token.access_token;
 }
 
 /**
