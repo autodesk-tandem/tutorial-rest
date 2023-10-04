@@ -1,68 +1,77 @@
 /*
-    This example demonstrates how to get streams from given facility and get stream details (name, parent). It uses 2-legged
-    authentication - this requires that application is added to facility as service.
+    This example demonstrates how to get streams from given facility and get stream details (name, parent).
+    
+    It uses 2-legged authentication - this requires that application is added to facility as service.
 */
+import { createToken } from '../common/auth.js';
+import {
+    ColumnFamilies,
+    ElementFlags,
+    Encoding,
+    QC,
+    getDefaultModel
+} from '../common/utils.js';
+
+// update values below according to your environment
+const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
+const APS_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
+const FACILITY_URN = 'YOUR_FACILITY_URN';
+
 async function main() {
     // STEP 1 - obtain token. The sample uses 2-legged token but it would also work with 3-legged token
     // assuming that user has access to the facility
-    const token = await createToken('YOUR_CLIENT_ID',
-        'YOUR_CLIENT_SECRET', 'data:read');
+    const token = await createToken(APS_CLIENT_ID,
+        APS_CLIENT_SECRET, 'data:read');
     
     // STEP 2 - get facility and default model. The default model has same id as facility
-    const facilityId = 'YOUR_FACILITY_URN';
+    const facilityId = FACILITY_URN;
     const facility = await getFacility(token, facilityId);
-    const defaultModelId = facilityId.replace('urn:adsk.dtt:', 'urn:adsk.dtm:');
-    const defaultModel = facility.links.find((m) => {
-        return  m.modelId === defaultModelId;
-    });
+    const defaultModel = getDefaultModel(facilityId, facility);
 
-    // STEP 3 - get streams and print stream + its parent
+    // STEP 3 - get streams and their parents
     const streams = await getStreams(token, defaultModel.modelId);
+    const modelStreamMap = {};
 
-    for (const stream of streams) {
+    for (let i = 0; i < streams.length; i++) {
+        const stream = streams[i];
         // host is stored as parent
-        const parentXref = stream['x:p'];
+        const parentXref = stream[QC.XParent];
 
         if (!parentXref) {
             continue;
         }
-        // the id of the host is encoded
-        const [ modelId, key ] = decodeXref(parentXref);
+        // decode xref key of the host
+        const [ modelId, key ] = Encoding.fromXrefKey(parentXref);
 
-        const elementData = await getElementData(token, `urn:adsk.dtm:${modelId}`, key);
+        let items = modelStreamMap[modelId];
 
-        if (!elementData) {
-            continue;
-        }
-        // print out name of stream + name of parent
-        console.log(`${stream['n:n']}:${elementData['n:n']}`);
+        if (!items) {
+            items = [];
+            modelStreamMap[modelId] = items;
+        };
+        items.push({
+            key,
+            streamIndex: i
+        });
     }
-}
+    // STEP 5 - print name of stream + name of parent
+    // note we use batch query to get properties of multiple elements
+    // in one call rather than query server for each element
+    for (const modelId in modelStreamMap) {
+        const items = modelStreamMap[modelId];
+        const keys = items.map(n => n.key);
+        const elementData = await getElementData(token, `urn:adsk.dtm:${modelId}`, keys);
+        
+        for (const item of items) {
+            const stream = streams[item.streamIndex];
+            const parentData = elementData.find(i => i.k === item.key);
 
-/**
- * Creates 2-legged token using provided inputs.
- * @param {string} clientID 
- * @param {string} clientSecret 
- * @param {string} scope 
- * @returns {Promise<string>}
- */
-async function createToken(clientID, clientSecret, scope) {
-    const auth = Buffer.from(`${clientID}:${clientSecret}`).toString('base64');
-    const options = new URLSearchParams({
-        'grant_type': 'client_credentials',
-        'scope': scope
-    });
-
-    const tokenResponse = await fetch(`https://developer.api.autodesk.com/authentication/v2/token?${options}`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Basic ${auth}`
+            if (!parentData) {
+                continue;
+            }
+            console.log(`${stream[QC.Name]}:${parentData[QC.Name]}`);
         }
-    });
-
-    const token = await tokenResponse.json();
-
-    return token.access_token;
+    }
 }
 
 /**
@@ -92,7 +101,7 @@ async function getFacility(token, urn) {
  */
 async function getStreams(token, urn) {
     const inputs = {
-        families: [ 'n', 'x'],
+        families: [ ColumnFamilies.Standard, ColumnFamilies.Xrefs ],
         includeHistory: false,
         skipArrays: true
     };
@@ -108,7 +117,7 @@ async function getStreams(token, urn) {
     const results = [];
 
     for (const item of data) {
-        if ((item['n:a'] & 0x01000003) === 0x01000003) {
+        if ((item[QC.ElementFlags] & ElementFlags.Stream) === ElementFlags.Stream) {
             results.push(item);
         }
     }
@@ -116,16 +125,16 @@ async function getStreams(token, urn) {
 }
 
 /**
- * Returns data of given element. Includes standard (n) properties.
+ * Returns data of given elements. Includes standard (n) properties.
  * @param {string} token 
  * @param {string} urn 
- * @param {string} key 
+ * @param {string[]} keys 
  * @returns {Promise<object>}
  */
-async function getElementData(token, urn, key) {
+async function getElementData(token, urn, keys) {
     const inputs = {
-        keys: [ key ],
-        families: [ 'n' ],
+        keys: keys,
+        families: [ ColumnFamilies.Standard ],
         includeHistory: false,
         skipArrays: true
     };
@@ -139,42 +148,8 @@ async function getElementData(token, urn, key) {
 
     const data = await response.json();
 
-    if (data.length > 0) {
-        return data[1];
-    }
-    return undefined;
+    return data;
 }
-
-/**
- * Decodes xref key and returns model id and element key.
- * @param {string} xref 
- * @returns {string[]}
- */
-function decodeXref(xref) {
-    const binData = Buffer.from(xref, 'base64');
-    const modelBuff = Buffer.alloc(16);
-    
-    binData.copy(modelBuff, 0);
-    const modelId = makeWebsafe(modelBuff.toString('base64'));
-    const keyBuff = Buffer.alloc(24);
-
-    binData.copy(keyBuff, 0, 16);
-    const key = makeWebsafe(keyBuff.toString('base64'));
-
-    return [ modelId, key ];
-}
-
-/**
- * Returns URL safe string.
- * @param {string} text 
- * @returns {string}
- */
-function makeWebsafe(text) {
-	return text.replace(/\+/g, '-') // Convert '+' to '-' (dash)
-		.replace(/\//g, '_') // Convert '/' to '_' (underscore)
-		.replace(/=+$/, ''); // Remove trailing '='
-}
-
 
 main()
     .then(() => {
