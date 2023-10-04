@@ -1,13 +1,15 @@
 import { ColumnFamilies, ColumnNames, ElementFlags, Encoding, MutateActions, QC } from './utils.js';
 
 /*
-    This example demonstrates how to create stream using REST API. It uses 2-legged
-    authentication - this requires that application is added to facility as service.
-    The stream is assigned to specified room.
+    This example demonstrates how to create stream using REST API. The stream is assigned to specified room.
+    
+    It uses 2-legged - this requires that application is added to facility as service.
 */
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
 const APS_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
 const FACILITY_URN = 'YOUR_FACILITY_URN';
+
+// update values below according to your environment
 const ROOM_NAME = 'UNIT E-110'; // Use room name based on your facility
 const CLASSIFICATION_ID = '3d';  // Use classification id based on your facility template
 
