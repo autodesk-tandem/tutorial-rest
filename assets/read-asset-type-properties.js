@@ -4,11 +4,8 @@
     It uses 2-legged authentication - this requires athat application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import {
-    ColumnFamilies,
-    Encoding,
-    QC
-} from '../common/utils.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { ColumnFamilies, Encoding, QC } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -19,14 +16,17 @@ async function main() {
     // STEP 1 - obtain token to authenticate subsequent API calls
     const token = await createToken(APS_CLIENT_ID,
         APS_CLIENT_SECRET, 'data:read');
+    const client = new TandemClient(() => {
+        return token;
+    });
 
     // STEP 2 - get facility
     const facilityId = FACILITY_URN;
-    const facility = await getFacility(token, facilityId);
+    const facility = await client.getFacility(facilityId);
 
     // STEP 3 - iterate through facility models and collect tagged assets
     for (const link of facility.links) {
-        const assets = await getTaggetAssets(token, link.modelId);
+        const assets = await client.getTaggetAssets(link.modelId, [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs ]);
         const assetTypes = new Set();
         const assetTypeMap = {};
 
@@ -45,7 +45,7 @@ async function main() {
         if (assetTypes.size === 0) {
             continue;
         }
-        const familyTypeData = await getElementData(token, link.modelId, [... assetTypes]);
+        const familyTypes = await client.getElements(link.modelId, [... assetTypes]);
 
         for (const asset of assets) {
             const assetTypeKey = assetTypeMap[asset.k];
@@ -53,89 +53,11 @@ async function main() {
             if (!assetTypeKey) {
                 continue;
             }
-            const familyTypeDataItem = familyTypeData.find(i => i.k === assetTypeKey);
+            const familyType = familyTypes.find(i => i.k === assetTypeKey);
 
-            console.log(`${asset[QC.Name]}: ${familyTypeDataItem[QC.Name]}`);
+            console.log(`${asset[QC.Name]}: ${familyType[QC.Name]}`);
         }
     }   
-}
-
-/**
- * Returns facility based on given URN.
- * @param {string} token 
- * @param {string} urn 
- * @returns {Promise<object>}
- */
-async function getFacility(token, urn) {
-    const response = await fetch(`https://tandem.autodesk.com/api/v1/twins/${urn}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    const data = await response.json();
-
-    return data;
-}
-
-/**
- * Returns asset elements from given model. Tagged asset is element with custom properties ('z' family).
- * @param {string} token 
- * @param {string} urn 
- * @returns {Promise<object[]>}
- */
-async function getTaggetAssets(token, urn) {
-    const inputs = {
-        families: [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs ],
-        includeHistory: false,
-        skipArrays: true
-    };
-    const response = await fetch(`https://tandem.autodesk.com/api/v2/modeldata/${urn}/scan`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(inputs)
-    });
-    const data = await response.json();
-    const results = [];
-
-    for (const item of data) {
-        const keys = Object.keys(item);
-        const userProps = keys.filter(k => k.startsWith(`${ColumnFamilies.DtProperties}:`));
-
-        if (userProps.length > 0) {
-            results.push(item);
-        }
-    }
-    return results;
-}
-
-/**
- * 
- * @param {string} token 
- * @param {string} urn 
- * @param {string[]} keys 
- * @returns {Promise<object[]>}
- */
-async function getElementData(token, urn, keys) {
-    const inputs = {
-        keys: keys,
-        families: [ ColumnFamilies.Standard ],
-        includeHistory: false,
-        skipArrays: true
-    };
-    const response = await fetch(`https://tandem.autodesk.com/api/v2/modeldata/${urn}/scan`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(inputs)
-    });
-
-    const data = await response.json();
-
-    return data;
 }
 
 main()

@@ -4,10 +4,8 @@
     It uses 2-legged authentication - this requires athat application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import {
-    ColumnFamilies,
-    QC
-} from '../common/utils.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { QC } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -18,15 +16,18 @@ async function main() {
     // STEP 1 - obtain token to authenticate subsequent API calls
     const token = await createToken(APS_CLIENT_ID,
         APS_CLIENT_SECRET, 'data:read');
+    const client = new TandemClient(() => {
+        return token;
+    });
 
     // STEP 2 - get facility
     const facilityId = FACILITY_URN;
-    const facility = await getFacility(token, facilityId);
+    const facility = await client.getFacility(facilityId);
 
     // STEP 3 - iterate through facility models and collect tagged assets
     for (const link of facility.links) {
-        const schema = await getModelSchema(token, link.modelId);
-        const assets = await getTaggetAssets(token, link.modelId);
+        const schema = await client.getModelSchema(link.modelId);
+        const assets = await client.getTaggetAssets(link.modelId);
 
         for (const asset of assets) {
             // STEP 4 - map properties to schema and print out propertu name & value
@@ -41,75 +42,6 @@ async function main() {
             }
         }
     }   
-}
-
-/**
- * Returns facility based on given URN.
- * @param {string} token 
- * @param {string} urn 
- * @returns {Promise<object>}
- */
-async function getFacility(token, urn) {
-    const response = await fetch(`https://tandem.autodesk.com/api/v1/twins/${urn}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    const data = await response.json();
-
-    return data;
-}
-
-/**
- * Returns schema for given model.
- * @param {string} token 
- * @param {string} urn 
- * @returns {Promise<object>}
- */
-async function getModelSchema(token, urn) {
-    const response = await fetch(`https://tandem.autodesk.com/api/v1/modeldata/${urn}/schema`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    const data = await response.json();
-
-    return data;
-}
-
-/**
- * Returns asset elements from given model. Tagged asset is element with custom properties ('z' family).
- * @param {string} token 
- * @param {string} urn 
- * @returns {Promise<object[]>}
- */
-async function getTaggetAssets(token, urn) {
-    const inputs = {
-        families: [ ColumnFamilies.Standard, ColumnFamilies.DtProperties ],
-        includeHistory: false,
-        skipArrays: true
-    };
-    const response = await fetch(`https://tandem.autodesk.com/api/v2/modeldata/${urn}/scan`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(inputs)
-    });
-    const data = await response.json();
-    const results = [];
-
-    for (const item of data) {
-        const keys = Object.keys(item);
-        const userProps = keys.filter(k => k.startsWith(`${ColumnFamilies.DtProperties}:`));
-
-        if (userProps.length > 0) {
-            results.push(item);
-        }
-    }
-    return results;
 }
 
 main()
