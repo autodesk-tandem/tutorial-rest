@@ -37,6 +37,7 @@ export const QC = {
     ElementFlags:   `${ColumnFamilies.Standard}:${ColumnNames.ElementFlags}`,
     Name:           `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     Level:          `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
+    XParent:        `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`
 };
 
 export const MutateActions = {
@@ -57,6 +58,25 @@ export class Encoding {
         fullKey.writeInt32BE(isLogical ? KeyFlags.Logical : KeyFlags.Physical);
         binData.copy(fullKey, kElementFlagsSize);
         return Encoding.makeWebsafe(fullKey.toString('base64'));
+    }
+
+    /**
+     * Creates pair of modelId and element key from xref key.
+     * @param {string} xrefKey 
+     * @returns {string[]}
+     */
+    static fromXrefKey(xrefKey) {
+        const binData = Buffer.from(xrefKey, 'base64');
+        const modelBuff = Buffer.alloc(kModelIdSize);
+    
+        binData.copy(modelBuff, 0);
+        const modelId = Encoding.makeWebsafe(modelBuff.toString('base64'));
+        const keyBuff = Buffer.alloc(kElementIdWithFlagsSize);
+
+        binData.copy(keyBuff, 0, kModelIdSize);
+        const key = Encoding.makeWebsafe(keyBuff.toString('base64'));
+
+        return [ modelId, key ];
     }
 
     /**
