@@ -17,9 +17,10 @@ export const KeyFlags = {
 };
 
 export const ColumnFamilies = {
-    Standard:   'n',
-    Refs:       'l',
-    Xrefs:      'x'
+    DtProperties:   'z',
+    Standard:       'n',
+    Refs:           'l',
+    Xrefs:          'x'
 };
 
 export const ColumnNames = {
