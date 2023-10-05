@@ -1,5 +1,8 @@
 import { ColumnFamilies } from './utils.js';
 
+/**
+ * Simple wrapper for Tandem REST API
+ */
 export class TandemClient {
 
     /**
@@ -10,7 +13,7 @@ export class TandemClient {
      */
 
     /**
-     * 
+     * Class constructores. It accepts callback which returns valid authentication token.
      * @param {tokenCallback} getToken 
      */
     constructor(getToken) {
