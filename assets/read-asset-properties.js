@@ -30,7 +30,7 @@ async function main() {
         const assets = await client.getTaggetAssets(link.modelId);
 
         for (const asset of assets) {
-            // STEP 4 - map properties to schema and print out propertu name & value
+            // STEP 4 - map properties to schema and print out property name & value
             console.log(`${asset[QC.Name]}: ${asset.k}`);
             for (const propId of Object.keys(asset)) {
                 const prop = schema.attributes.find(p => p.id === propId);

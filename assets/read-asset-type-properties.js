@@ -30,7 +30,7 @@ async function main() {
         const assetTypes = new Set();
         const assetTypeMap = {};
 
-        // STEP 4 - map properties to schema and print out asset properties
+        // STEP 4 - iterate through assets and collect asset types
         for (const asset of assets) {
             const familyType = asset[QC.FamilyType];
 
@@ -45,6 +45,7 @@ async function main() {
         if (assetTypes.size === 0) {
             continue;
         }
+        // STEP 5 - get type properties
         const familyTypes = await client.getElements(link.modelId, [... assetTypes]);
 
         for (const asset of assets) {
@@ -53,6 +54,7 @@ async function main() {
             if (!assetTypeKey) {
                 continue;
             }
+            // STEP 6 - print out asset name & asset type name
             const familyType = familyTypes.find(i => i.k === assetTypeKey);
 
             console.log(`${asset[QC.Name]}: ${familyType[QC.Name]}`);
