@@ -8,17 +8,17 @@ export class TandemClient {
     /**
      * The callback provides valid authentication token
      
-     * @callback tokenCallback
+     * @callback authCallback
      * @returns {string}
      */
 
     /**
-     * Class constructores. It accepts callback which returns valid authentication token.
-     * @param {tokenCallback} getToken 
+     * Class constructores. It accepts function which returns valid authentication token.
+     * @param {authCallback} authProvider 
      */
-    constructor(getToken) {
+    constructor(authProvider) {
         this._basePath = 'https://tandem.autodesk.com/api/';
-        this._getToken = getToken;
+        this._authProvider = authProvider;
     }
 
     get basePath() {
@@ -33,7 +33,7 @@ export class TandemClient {
      * @returns {Promise<object[]>}
      */
     async getElements(urn, keys = undefined, columnFamilies = [ ColumnFamilies.Standard ]) {
-        const token = this._getToken();
+        const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
             includeHistory: false,
@@ -61,7 +61,7 @@ export class TandemClient {
      * @returns {Promise<object>}
      */
     async getFacility(facilityId) {
-        const token = this._getToken();
+        const token = this._authProvider();
         const response = await fetch(`${this.basePath}v1/twins/${facilityId}`, {
             method: 'GET',
             headers: {
@@ -79,7 +79,7 @@ export class TandemClient {
      * @returns {Promise<object>}
      */
     async getModelSchema(modelId) {
-        const token = this._getToken();
+        const token = this._authProvider();
         const response = await fetch(`${this.basePath}v1/modeldata/${modelId}/schema`, {
             method: 'GET',
             headers: {
@@ -98,7 +98,7 @@ export class TandemClient {
      * @returns {Promise<object[]>}
      */
     async getTaggetAssets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.DtProperties ]) {
-        const token = this._getToken();
+        const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
             includeHistory: false,
