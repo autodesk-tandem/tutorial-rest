@@ -1,4 +1,4 @@
-import { ColumnFamilies } from './utils.js';
+import { ColumnFamilies, ElementFlags, QC } from './utils.js';
 
 /**
  * Simple wrapper for Tandem REST API
@@ -71,6 +71,37 @@ export class TandemClient {
         const data = await response.json();
 
         return data;
+    }
+
+    /**
+     * Returns level elements from given model.
+     * @param {string} urn - URN of the model.
+     * @param {string[]} [columnFamilies] - optional list of columns
+     * @returns {Promise<object[]>}
+     */
+    async getLevels(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+        const token = this._authProvider();
+        const inputs = {
+            families: columnFamilies,
+            includeHistory: false,
+            skipArrays: true
+        };
+        const response = await fetch(`${this.basePath}v2/modeldata/${urn}/scan`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+        const results = [];
+
+        for (const item of data) {
+            if ((item[QC.ElementFlags] & ElementFlags.Level) === ElementFlags.Level) {
+                results.push(item);
+            }
+        }
+        return results;
     }
 
     /**
