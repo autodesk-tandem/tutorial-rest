@@ -27,6 +27,7 @@ export const ColumnNames = {
     CategoryId:     'c',
     Classification: 'v',
     ElementFlags:   'a',
+    Elevation:      'el',
     FamilyType:     't',
     Level:          'l',
     Name:           'n',
@@ -37,9 +38,11 @@ export const ColumnNames = {
 
 export const QC = {
     ElementFlags:   `${ColumnFamilies.Standard}:${ColumnNames.ElementFlags}`,
+    Elevation:      `${ColumnFamilies.Standard}:${ColumnNames.Elevation}`,
     FamilyType:     `${ColumnFamilies.Refs}:${ColumnNames.FamilyType}`,
-    Name:           `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     Level:          `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
+    Name:           `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
+    Rooms:          `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
     XParent:        `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`
 };
 
@@ -61,6 +64,33 @@ export class Encoding {
         fullKey.writeInt32BE(isLogical ? KeyFlags.Logical : KeyFlags.Physical);
         binData.copy(fullKey, kElementFlagsSize);
         return Encoding.makeWebsafe(fullKey.toString('base64'));
+    }
+
+    /**
+     * Decodes array of keys from provided text.
+     * @param {string} key 
+     * @returns {string[]}
+     */
+    static fromShortKeyArray(key) {
+        const binData = Buffer.from(key, 'base64');
+        const result = [];
+        let offset = 0;
+
+        while (offset < binData.length) {
+            const size = binData.length - offset;
+
+            if (size < kElementIdSize) {
+                break;
+            }
+            var elementBuff = Buffer.alloc(kElementIdWithFlagsSize);
+
+            binData.copy(elementBuff, kElementFlagsSize, offset, offset + kElementIdSize);
+            const elementKey = Encoding.makeWebsafe(elementBuff.toString('base64'));
+
+            result.push(elementKey);
+            offset += kElementIdSize;
+        }
+        return result;
     }
 
     /**
