@@ -27,7 +27,7 @@ async function main() {
     // STEP 3 - iterate through facility models and collect tagged assets
     for (const link of facility.links) {
         const schema = await client.getModelSchema(link.modelId);
-        const assets = await client.getTaggetAssets(link.modelId);
+        const assets = await client.getTaggedAssets(link.modelId);
 
         for (const asset of assets) {
             // STEP 4 - map properties to schema and print out property name & value

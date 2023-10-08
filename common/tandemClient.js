@@ -159,7 +159,7 @@ export class TandemClient {
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<object[]>}
      */
-    async getTaggetAssets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.DtProperties ]) {
+    async getTaggedAssets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.DtProperties ]) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
