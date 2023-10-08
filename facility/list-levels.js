@@ -28,25 +28,12 @@ async function main() {
     for (const link of facility.links) {
         const schema = await client.getModelSchema(link.modelId);
         const levels = await client.getLevels(link.modelId);
-        const assets = await client.getTaggetAssets(link.modelId, [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs ]);
 
         for (const level of levels) {
+            // STEP 4 - find elevation property
             const prop = schema.attributes.find(a => a.id === QC.Elevation);
 
             console.log(`${level[QC.Name]}:${level[prop.id]}`);
-            // STEP 4 - find assets associated to level
-            for (const asset of assets) {
-                const assetLevel = asset[QC.Level];
-
-                if (!assetLevel) {
-                    continue;
-                }
-                const levelKey = Encoding.toFullKey(assetLevel, true);
-
-                if (level.k === levelKey) {
-                    console.log(`  ${asset[QC.Name]}`);
-                }
-            }
         }
     }   
 }
