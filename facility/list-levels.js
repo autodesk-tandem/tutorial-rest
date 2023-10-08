@@ -1,11 +1,11 @@
 /*
-    This example demonstrates how to list all levels from facility and find assets for each level.
+    This example demonstrates how to list all levels from facility.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ColumnFamilies, Encoding, QC } from '../common/utils.js';
+import { QC } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
