@@ -17,15 +17,17 @@ export const KeyFlags = {
 };
 
 export const ColumnFamilies = {
-    Standard:   'n',
-    Refs:       'l',
-    Xrefs:      'x'
+    DtProperties:   'z',
+    Standard:       'n',
+    Refs:           'l',
+    Xrefs:          'x'
 };
 
 export const ColumnNames = {
     CategoryId:     'c',
     Classification: 'v',
     ElementFlags:   'a',
+    FamilyType:     't',
     Level:          'l',
     Name:           'n',
     Parent:         'p',
@@ -35,6 +37,7 @@ export const ColumnNames = {
 
 export const QC = {
     ElementFlags:   `${ColumnFamilies.Standard}:${ColumnNames.ElementFlags}`,
+    FamilyType:     `${ColumnFamilies.Refs}:${ColumnNames.FamilyType}`,
     Name:           `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     Level:          `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
     XParent:        `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`
@@ -68,7 +71,7 @@ export class Encoding {
     static fromXrefKey(xrefKey) {
         const binData = Buffer.from(xrefKey, 'base64');
         const modelBuff = Buffer.alloc(kModelIdSize);
-    
+
         binData.copy(modelBuff, 0);
         const modelId = Encoding.makeWebsafe(modelBuff.toString('base64'));
         const keyBuff = Buffer.alloc(kElementIdWithFlagsSize);

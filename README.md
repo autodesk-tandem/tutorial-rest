@@ -21,4 +21,5 @@ The examples use 2-legged authentication in case when authentication is needed. 
 
 ## Examples
 The examples are organized into multiple folders based on topic:
+* **assets** - asset related examples
 * **streams** - streams related examples
