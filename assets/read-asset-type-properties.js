@@ -26,7 +26,7 @@ async function main() {
 
     // STEP 3 - iterate through facility models and collect tagged assets
     for (const link of facility.links) {
-        const assets = await client.getTaggedAssets(link.modelId, [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs ]);
+        const assets = await client.getTaggedAssets(link.modelId);
         const assetTypes = new Set();
         const assetTypeMap = {};
 
