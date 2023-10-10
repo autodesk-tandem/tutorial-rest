@@ -27,7 +27,7 @@ async function main() {
     // STEP 3 - iterate through facility models
     for (const link of facility.links) {
         const levels = await client.getLevels(link.modelId);
-        const assets = await client.getTaggedAssets(link.modelId, [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs ]);
+        const assets = await client.getTaggedAssets(link.modelId);
 
         // STEP 4 - iterate through levels
         for (const level of levels) {
