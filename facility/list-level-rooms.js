@@ -53,15 +53,17 @@ async function main() {
             levelRoomMap[levelKey] = rooms;
         }
         // STEP 6 - iterate through levels and print names of related rooms
-        const levels = await client.getLevels(link.modelId);
-
-        for (const level of levels) {
-            const roomIds = levelRoomMap[level[QC.Key]];
+        // we reuse elements which already got from server and check type of element
+        for (const element of elements) {
+            if (element[QC.ElementFlags] !== ElementFlags.Level) {
+                continue;
+            }
+            const roomIds = levelRoomMap[element[QC.Key]];
 
             if (!roomIds) {
                 continue;
             }
-            console.log(`${level[QC.Name]}`);
+            console.log(`${element[QC.Name]}`);
             // STEP 7 - iterate through related rooms and print their names
             for (const roomId of roomIds) {
                 const room = elements[roomId];
