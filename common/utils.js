@@ -43,7 +43,8 @@ export const QC = {
     Level:          `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
     Name:           `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     Rooms:          `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
-    XParent:        `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`
+    XParent:        `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,
+    Key:            `k`
 };
 
 export const MutateActions = {
@@ -64,6 +65,19 @@ export class Encoding {
         fullKey.writeInt32BE(isLogical ? KeyFlags.Logical : KeyFlags.Physical);
         binData.copy(fullKey, kElementFlagsSize);
         return Encoding.makeWebsafe(fullKey.toString('base64'));
+    }
+
+    /**
+     * Converts full key to short key.
+     * @param {string} fullKey 
+     * @returns {string}
+     */
+    static toShortKey(fullKey) {
+        const binData = Buffer.from(fullKey, 'base64');
+        const shortKey = Buffer.alloc(kElementIdSize);
+
+        binData.copy(shortKey, 0, kElementFlagsSize);
+        return Encoding.makeWebsafe(shortKey.toString('base64'));
     }
 
     /**
