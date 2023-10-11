@@ -26,10 +26,10 @@ export class TandemClient {
     }
 
     /**
-     * 
-     * @param {string} urn 
-     * @param {string[]} keys 
-     * @param {string[]} [columnFamilies]
+     * Returns elements from given model.
+     * @param {string} urn - URN of the model.
+     * @param {string[]} [keys] - optional array of keys. 
+     * @param {string[]} [columnFamilies] - optional array of column families.
      * @returns {Promise<object[]>}
      */
     async getElements(urn, keys = undefined, columnFamilies = [ ColumnFamilies.Standard ]) {

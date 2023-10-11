@@ -53,7 +53,7 @@ export const MutateActions = {
 export class Encoding {
     /**
      * Converts element short key to full key.
-     * @param {*} shortKey 
+     * @param {string} shortKey 
      * @param {boolean} [isLogical] 
      * @returns {string}
      */
@@ -68,7 +68,8 @@ export class Encoding {
 
     /**
      * Decodes array of keys from provided text.
-     * @param {string} key 
+     * @param {string} text 
+     * @param {boolean} [isLogical] 
      * @returns {string[]}
      */
     static fromShortKeyArray(key) {
