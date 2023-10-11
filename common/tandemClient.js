@@ -97,7 +97,7 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if ((item[QC.ElementFlags] & ElementFlags.Level) === ElementFlags.Level) {
+            if ((item[QC.ElementFlags] & ElementFlags.Level) !== 0) {
                 results.push(item);
             }
         }
@@ -146,7 +146,7 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if ((item[QC.ElementFlags] & ElementFlags.Room) === ElementFlags.Room) {
+            if ((item[QC.ElementFlags] & ElementFlags.Room) !== 0) {
                 results.push(item);
             }
         }
