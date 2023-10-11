@@ -73,6 +73,7 @@ export class Encoding {
      */
     static fromShortKeyArray(key) {
         const binData = Buffer.from(key, 'base64');
+        const buff = Buffer.alloc(kElementIdWithFlagsSize);
         const result = [];
         let offset = 0;
 
@@ -82,10 +83,8 @@ export class Encoding {
             if (size < kElementIdSize) {
                 break;
             }
-            var elementBuff = Buffer.alloc(kElementIdWithFlagsSize);
-
-            binData.copy(elementBuff, kElementFlagsSize, offset, offset + kElementIdSize);
-            const elementKey = Encoding.makeWebsafe(elementBuff.toString('base64'));
+            binData.copy(buff, kElementFlagsSize, offset, offset + kElementIdSize);
+            const elementKey = Encoding.makeWebsafe(buff.toString('base64'));
 
             result.push(elementKey);
             offset += kElementIdSize;
