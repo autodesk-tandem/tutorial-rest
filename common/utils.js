@@ -72,8 +72,8 @@ export class Encoding {
      * @param {boolean} [isLogical] 
      * @returns {string[]}
      */
-    static fromShortKeyArray(key) {
-        const binData = Buffer.from(key, 'base64');
+    static fromShortKeyArray(text, isLogical) {
+        const binData = Buffer.from(text, 'base64');
         const buff = Buffer.alloc(kElementIdWithFlagsSize);
         const result = [];
         let offset = 0;
@@ -84,6 +84,7 @@ export class Encoding {
             if (size < kElementIdSize) {
                 break;
             }
+            buff.writeInt32BE(isLogical ? KeyFlags.Logical : KeyFlags.Physical);
             binData.copy(buff, kElementFlagsSize, offset, offset + kElementIdSize);
             const elementKey = Encoding.makeWebsafe(buff.toString('base64'));
 
