@@ -42,7 +42,7 @@ async function main() {
                 continue;
             }
             // STEP 5 - decode level reference to key
-            const levelKey = Encoding.fromShortKeyArray(levelRef, true);
+            const levelKey = Encoding.toFullKey(levelRef, true);
             // store index of room in map
             let rooms = levelRoomMap[levelKey];
 
@@ -53,7 +53,7 @@ async function main() {
             levelRoomMap[levelKey] = rooms;
         }
         // STEP 6 - iterate through levels and print names of related rooms
-        // we reuse elements which already got from server and check type of element
+        // we reuse elements which we already got from server and skip lement which aren't of type level
         for (const element of elements) {
             if (element[QC.ElementFlags] !== ElementFlags.Level) {
                 continue;
