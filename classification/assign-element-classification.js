@@ -33,7 +33,7 @@ async function main() {
         'Door - Exterior - Single' : 'Exterior Doors'
     };
     // STEP 3 - build map between element name and classification id
-    const classMap = {};
+    const classMap = new Map();
 
     for (const name in elementClassMap) {
         const className = elementClassMap[name];
@@ -42,7 +42,7 @@ async function main() {
         });
 
         if (classData) {
-            classMap[name] = classData[0];
+            classMap.set(name, classData[0]);
         }
     }
     // STEP 4 - iterate through facility models and apply classification based on mapping
@@ -57,11 +57,11 @@ async function main() {
             if (!elementName) {
                 continue;
             }
-            const classId = classMap[elementName];
-
-            if (!classId) {
+            if (!classMap.has(elementName)) {
                 continue;
             }
+            const classId = classMap.get(elementName);
+
             // we don't want to apply same classification again
             if ((element[QC.Classification] === classId) || (element[QC.OClassification] === classId)) {
                 continue;
