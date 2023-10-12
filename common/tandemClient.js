@@ -74,6 +74,24 @@ export class TandemClient {
     }
 
     /**
+     * Returns facility template based on facility URN.
+     * @param {string} facilityId - URN of the facility
+     * @returns {Promise<object>}
+     */
+    async getFacilityTemplate(facilityId) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}v1/twins/${facilityId}/inlinetemplate`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
      * Returns level elements from given model.
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
@@ -185,5 +203,35 @@ export class TandemClient {
             }
         }
         return results;
+    }
+
+    /**
+     * Applies provided changes (mutations) to the elements.
+     * @param {string} urn - URN of the model.
+     * @param {string[]} keys - array of keys to modify.
+     * @param {any[][]} mutations - arry of mutations.
+     * @param {string} [description] - optional description.
+     * @returns {Promise<object>}
+     */
+    async mutateElements(urn, keys, mutations, description = undefined) {
+        const token = this._authProvider();
+        const inputs = {
+            keys,
+            muts: mutations
+        };
+
+        if (description) {
+            inputs.desc = description;
+        }
+        const response = await fetch(`${this.basePath}v1/modeldata/${urn}/mutate`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const result = await response.json();
+        
+        return result;
     }
 }
