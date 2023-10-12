@@ -27,6 +27,7 @@ export const ColumnNames = {
     CategoryId:     'c',
     Classification: 'v',
     ElementFlags:   'a',
+    Elevation:      'el',
     FamilyType:     't',
     Level:          'l',
     Name:           'n',
@@ -37,10 +38,13 @@ export const ColumnNames = {
 
 export const QC = {
     ElementFlags:   `${ColumnFamilies.Standard}:${ColumnNames.ElementFlags}`,
+    Elevation:      `${ColumnFamilies.Standard}:${ColumnNames.Elevation}`,
     FamilyType:     `${ColumnFamilies.Refs}:${ColumnNames.FamilyType}`,
-    Name:           `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     Level:          `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
-    XParent:        `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`
+    Name:           `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
+    Rooms:          `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
+    XParent:        `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,
+    Key:            `k`
 };
 
 export const MutateActions = {
@@ -50,7 +54,7 @@ export const MutateActions = {
 export class Encoding {
     /**
      * Converts element short key to full key.
-     * @param {*} shortKey 
+     * @param {string} shortKey 
      * @param {boolean} [isLogical] 
      * @returns {string}
      */
@@ -61,6 +65,47 @@ export class Encoding {
         fullKey.writeInt32BE(isLogical ? KeyFlags.Logical : KeyFlags.Physical);
         binData.copy(fullKey, kElementFlagsSize);
         return Encoding.makeWebsafe(fullKey.toString('base64'));
+    }
+
+    /**
+     * Converts full key to short key.
+     * @param {string} fullKey 
+     * @returns {string}
+     */
+    static toShortKey(fullKey) {
+        const binData = Buffer.from(fullKey, 'base64');
+        const shortKey = Buffer.alloc(kElementIdSize);
+
+        binData.copy(shortKey, 0, kElementFlagsSize);
+        return Encoding.makeWebsafe(shortKey.toString('base64'));
+    }
+
+    /**
+     * Decodes array of keys from provided text.
+     * @param {string} text 
+     * @param {boolean} [isLogical] 
+     * @returns {string[]}
+     */
+    static fromShortKeyArray(text, isLogical) {
+        const binData = Buffer.from(text, 'base64');
+        const buff = Buffer.alloc(kElementIdWithFlagsSize);
+        const result = [];
+        let offset = 0;
+
+        while (offset < binData.length) {
+            const size = binData.length - offset;
+
+            if (size < kElementIdSize) {
+                break;
+            }
+            buff.writeInt32BE(isLogical ? KeyFlags.Logical : KeyFlags.Physical);
+            binData.copy(buff, kElementFlagsSize, offset, offset + kElementIdSize);
+            const elementKey = Encoding.makeWebsafe(buff.toString('base64'));
+
+            result.push(elementKey);
+            offset += kElementIdSize;
+        }
+        return result;
     }
 
     /**

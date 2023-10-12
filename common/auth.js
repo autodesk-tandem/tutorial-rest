@@ -19,6 +19,9 @@ export async function createToken(clientID, clientSecret, scope) {
         }
     });
 
+    if (tokenResponse.status !== 200) {
+        throw new Error(tokenResponse.statusText);
+    }
     const token = await tokenResponse.json();
 
     return token.access_token;
