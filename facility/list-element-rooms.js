@@ -33,7 +33,7 @@ async function main() {
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i];
 
-            if ((element[QC.ElementFlags] & ElementFlags.Room) !== 0) {
+            if (element[QC.ElementFlags] === ElementFlags.Room) {
                 roomIndexMap[element.k] = i;
             }
         }
