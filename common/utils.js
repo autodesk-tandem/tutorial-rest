@@ -24,27 +24,30 @@ export const ColumnFamilies = {
 };
 
 export const ColumnNames = {
-    CategoryId:     'c',
-    Classification: 'v',
-    ElementFlags:   'a',
-    Elevation:      'el',
-    FamilyType:     't',
-    Level:          'l',
-    Name:           'n',
-    Parent:         'p',
-    Rooms:          'r',
-    UniformatClass: 'u'
+    CategoryId:         'c',
+    Classification:     'v',
+    OClassification:    '!v',
+    ElementFlags:       'a',
+    Elevation:          'el',
+    FamilyType:         't',
+    Level:              'l',
+    Name:               'n',
+    Parent:             'p',
+    Rooms:              'r',
+    UniformatClass:     'u'
 };
 
 export const QC = {
-    ElementFlags:   `${ColumnFamilies.Standard}:${ColumnNames.ElementFlags}`,
-    Elevation:      `${ColumnFamilies.Standard}:${ColumnNames.Elevation}`,
-    FamilyType:     `${ColumnFamilies.Refs}:${ColumnNames.FamilyType}`,
-    Level:          `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
-    Name:           `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
-    Rooms:          `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
-    XParent:        `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,
-    Key:            `k`
+    Classification:     `${ColumnFamilies.Standard}:${ColumnNames.Classification}`,
+    OClassification:    `${ColumnFamilies.Standard}:${ColumnNames.OClassification}`,
+    ElementFlags:       `${ColumnFamilies.Standard}:${ColumnNames.ElementFlags}`,
+    Elevation:          `${ColumnFamilies.Standard}:${ColumnNames.Elevation}`,
+    FamilyType:         `${ColumnFamilies.Refs}:${ColumnNames.FamilyType}`,
+    Level:              `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
+    Name:               `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
+    Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
+    XParent:            `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,
+    Key:                `k`
 };
 
 export const MutateActions = {
