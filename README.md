@@ -36,5 +36,6 @@ Most of the examples are self-contained. To run the example use following steps:
 ## Examples
 The examples are organized into multiple folders based on topic:
 * **assets** - asset related examples
+* **classification** - classification related examples
 * **facility** - facility related examples
 * **streams** - streams related examples
