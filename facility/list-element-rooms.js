@@ -34,7 +34,7 @@ async function main() {
             const element = elements[i];
 
             if (element[QC.ElementFlags] === ElementFlags.Room) {
-                roomIndexMap[element.k] = i;
+                roomIndexMap[element[QC.Key]] = i;
             }
         }
         // STEP 5 - check if element has reference to rooms. If so then decode keys of referenced
