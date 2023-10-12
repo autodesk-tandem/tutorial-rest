@@ -26,23 +26,23 @@ async function main() {
     const facility = await client.getFacility(facilityId);
     const template = await client.getFacilityTemplate(facilityId);
     // this defines mapping between element name and classification
-    const elementClassificationMap = {
+    const elementClassMap = {
         'Door - Interior - Double' : 'Interior Doors',
         'Door - Interior - Single' : 'Interior Doors',
         'Door - Exterior - Double' : 'Exterior Doors',
         'Door - Exterior - Single' : 'Exterior Doors'
     };
     // STEP 3 - build map between element name and classification id
-    const classificationMap = {};
+    const classMap = {};
 
-    for (const name in elementClassificationMap) {
-        const classificationName = elementClassificationMap[name];
-        const classificationData = template.classification.rows.find(r => {
-            return r[1] === classificationName;
+    for (const name in elementClassMap) {
+        const className = elementClassMap[name];
+        const classData = template.classification.rows.find(r => {
+            return r[1] === className;
         });
 
-        if (classificationData) {
-            classificationMap[name] = classificationData[0];
+        if (classData) {
+            classMap[name] = classData[0];
         }
     }
     // STEP 4 - iterate through facility models and apply classification based on mapping
@@ -57,13 +57,13 @@ async function main() {
             if (!elementName) {
                 continue;
             }
-            const classificationId = classificationMap[elementName];
+            const classId = classMap[elementName];
 
-            if (!classificationId) {
+            if (!classId) {
                 continue;
             }
             // we don't want to apply same classification again
-            if ((element[QC.Classification] === classificationId) || (element[QC.OClassification] === classificationId)) {
+            if ((element[QC.Classification] === classId) || (element[QC.OClassification] === classId)) {
                 continue;
             }
             console.log(`${elementName}:${element[QC.Key]}`);
@@ -73,7 +73,7 @@ async function main() {
                 MutateActions.Insert,
                 ColumnFamilies.Standard,
                 ColumnNames.OClassification,
-                classificationId
+                classId
             ]);
         }
         if (keys.length === 0) {
