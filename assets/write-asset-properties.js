@@ -39,13 +39,13 @@ async function main() {
     // STEP 3 - iterate through facility models
     for (const link of facility.links) {
         // STEP 4 - collect property names
-        const propertNames = new Set();
+        const propertyNames = new Set();
         
         for (const assetId in assetPropertyMap) {
             const props = assetPropertyMap[assetId];
 
             for (const propName in props) {
-                propertNames.add(propName);
+                propertyNames.add(propName);
             }
         }
         // STEP 5 - create map between name and id
@@ -54,7 +54,7 @@ async function main() {
         let idProp; // use to store property wich is used to identify asset (i.e. Device ID by default)
 
         for (const prop of schema.attributes) {
-            if (propertNames.has(prop.name)) {
+            if (propertyNames.has(prop.name)) {
                 propertyMap[prop.name] = prop;
             }
             if (prop.name === ASSET_ID_PROPERTY) {
