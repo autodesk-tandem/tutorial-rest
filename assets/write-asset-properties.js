@@ -54,10 +54,12 @@ async function main() {
         let idProp; // use to store property wich is used to identify asset (i.e. Device ID by default)
 
         for (const prop of schema.attributes) {
-            if (propertyNames.has(prop.name)) {
+            // we would like to check only custom properties
+            if (prop.fam === ColumnFamilies.DtProperties && propertyNames.has(prop.name)) {
                 propertyMap[prop.name] = prop;
             }
-            if (prop.name === ASSET_ID_PROPERTY) {
+            // check for our key property
+            if (prop.fam === ColumnFamilies.DtProperties && prop.name === ASSET_ID_PROPERTY) {
                 idProp = prop;
             }            
         }
