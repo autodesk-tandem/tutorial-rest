@@ -1,7 +1,7 @@
 {
-    "name": "streams-examples",
+    "name": "tutorial-rest",
     "version": "1.0.0",
-    "description": "",
+    "description": "JavaScript examples for Tandem REST API",
     "type": "module",
     "author": "aleksandr.bakharev@autodesk.com",
     "license": "Apache-2.0"
