@@ -4,13 +4,8 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import {
-    ColumnFamilies,
-    ColumnNames,
-    ElementFlags,
-    Encoding,
-    MutateActions,
-    QC,
+import { TandemClient } from '../common/tandemClient.js';
+import { ColumnFamilies, Encoding, QC,
     getDefaultModel } from './../common/utils.js';
 
 // update values below according to your environment
@@ -26,10 +21,13 @@ async function main() {
     // assuming that user has access to the facility
     const token = await createToken(APS_CLIENT_ID,
         APS_CLIENT_SECRET, 'data:read data:write');
+    const client = new TandemClient(() => {
+        return token;
+    });
 
     // STEP 2 - get facility and default model.
     const facilityId = FACILITY_URN;
-    const facility = await getFacility(token, facilityId);
+    const facility = await client.getFacility(facilityId);
     const defaultModel = getDefaultModel(facilityId, facility);
 
     if (!defaultModel) {
@@ -45,7 +43,8 @@ async function main() {
 
     // iterate through rooms
     for (const link of facility.links) {
-        const rooms = await getRooms(token, link.modelId);
+        // we need to query for refs because we want to know related level
+        const rooms = await client.getRooms(link.modelId, [ ColumnFamilies.Standard, ColumnFamilies.Refs ]);
         const room = rooms.find(r => r[QC.Name] === roomName);
 
         if (room) {
@@ -59,212 +58,30 @@ async function main() {
     }
     // STEP 4 - find level. Level with same name should exist in default model.
     const levelKey = Encoding.toFullKey(targetRoom[QC.Level], true);
-    const levelDetails = await getElementData(token, targetRoomModelId, levelKey);
-    const levels = await getLevels(token, defaultModel.modelId);
+    const levelDetails = await client.getElement(targetRoomModelId, levelKey);
+    const levels = await client.getLevels(defaultModel.modelId);
     const targetLevel = levels.find(l => l[QC.Name] === levelDetails[QC.Name]);
 
     if (!targetLevel) {
         throw new Error(`Level ${levelDetails[QC.Name]} doesn't exist`);
     }
     // STEP 5 - create new stream. First step is to encode keys for references. In our case host element and room are same.
-    const parentXref = Encoding.toXrefKey(targetRoomModelId, targetRoom.k);
+    const targetRoomKey = targetRoom[QC.Key];
+    const parentXref = Encoding.toXrefKey(targetRoomModelId, targetRoomKey);
     // creeate new stream
-    const streamId = await createStream(token,
-        defaultModel.modelId,
+    const streamId = await client.createStream(defaultModel.modelId,
         roomName,
         uniformatClassId,
         categoryId,
         classification,
         parentXref, // becuse stream is assigned to room we use same key for host & room
         parentXref, 
-        targetLevel.k);
+        targetLevel[QC.Key]);
 
     console.log(`New stream: ${streamId}`);
     // STEP 6 - reset stream secrets
-    await resetStreamsSecrets(token, defaultModel.modelId, [ streamId ]);
+    await client.resetStreamsSecrets(defaultModel.modelId, [ streamId ]);
     // to push data to stream follow other stream examples
-}
-
-/**
- * Returns facility based on given URN.
- * @param {string} token 
- * @param {string} urn 
- * @returns {Promise<object>}
- */
-async function getFacility(token, urn) {
-    const response = await fetch(`https://tandem.autodesk.com/api/v1/twins/${urn}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-
-    const data = await response.json();
-
-    return data;
-}
-
-/**
- * Returns level elements from given model. The elements include standard (n) properties.
- * @param {string} token 
- * @param {string} urn 
- * @returns {Promise<object[]>}
- */
-async function getLevels(token, urn) {
-    const inputs = {
-        families: [ ColumnFamilies.Standard ],
-        includeHistory: false,
-        skipArrays: true
-    };
-    const response = await fetch(`https://tandem.autodesk.com/api/v2/modeldata/${urn}/scan`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(inputs)
-    });
-
-    const data = await response.json();
-    const results = [];
-
-    for (const item of data) {
-        if ((item[QC.ElementFlags] & ElementFlags.Level) === ElementFlags.Level) {
-            results.push(item);
-        }
-    }
-    return results;
-}
-
-/**
- * Returns room elements from given model. The elements include standard (n) and local ref (l) properties.
- * @param {string} token 
- * @param {string} urn 
- * @returns {Promise<object[]>}
- */
-async function getRooms(token, urn) {
-    const inputs = {
-        families: [ ColumnFamilies.Standard, ColumnFamilies.Refs ],
-        includeHistory: false,
-        skipArrays: true
-    };
-    const response = await fetch(`https://tandem.autodesk.com/api/v2/modeldata/${urn}/scan`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(inputs)
-    });
-
-    const data = await response.json();
-    const results = [];
-
-    for (const item of data) {
-        if ((item[QC.ElementFlags] & ElementFlags.Room) === ElementFlags.Room) {
-            results.push(item);
-        }
-    }
-    return results;
-}
-
-/**
- * Returns data of given element. Includes standard (n) properties.
- * @param {string} token - Authentication token
- * @param {string} urn - URN of the model
- * @param {string} key - key to query for element data
- * @returns {Promise<object>}
- */
-async function getElementData(token, urn, key) {
-    const inputs = {
-        keys: [ key ],
-        families: [ ColumnFamilies.Standard ],
-        includeHistory: false,
-        skipArrays: true
-    };
-    const response = await fetch(`https://tandem.autodesk.com/api/v2/modeldata/${urn}/scan`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(inputs)
-    });
-
-    const data = await response.json();
-
-    if (data.length > 0) {
-        return data[1];
-    }
-    return undefined;
-}
-
-/**
- * Creates new stream using provided data
- * @param {string} token - Authentication token
- * @param {string} urn - URN of the model
- * @param {string} name - Name of the stream
- * @param {string} uniformatClass 
- * @param {number} categoryId 
- * @param {string} [classification]
- * @param {string} [parentXref]
- * @param {string} [roomXref]
- * @param {string} [levelKey]
- * @returns 
- */
-async function createStream(token, urn, name, uniformatClass, categoryId, classification, parentXref, roomXref, levelKey) {
-    const inputs = {
-        muts: [
-            [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.Name, name ],
-            [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.ElementFlags, ElementFlags.Stream ], // this flag identifies stream
-            [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.UniformatClass, uniformatClass ],
-            [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.CategoryId, categoryId ],
-
-        ],
-        desc: 'Create stream'
-    };
-
-    if (classification) {
-        inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.Classification, classification ]);
-    }
-    if (parentXref) {
-        inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Xrefs, ColumnNames.Parent, parentXref ]);
-    }
-    if (roomXref) {
-        inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Xrefs, ColumnNames.Rooms, roomXref ]);
-    }
-    if (levelKey) {
-        inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Refs, ColumnNames.Level, levelKey ]);
-    }
-    const response = await fetch(`https://tandem.autodesk.com/api/v1/modeldata/${urn}/create`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(inputs)
-    });
-
-    const data = await response.json();
-
-    return data.key;
-}
-
-/**
- * Resets secrets for given streams.
- * @param {string} token
- * @param {string} urn 
- * @param {string[]} streamIds 
- * @returns {Promise}
- */
-async function resetStreamsSecrets(token, urn, streamIds) {
-    const inputs = {
-        keys: streamIds,
-        hardReset: false
-    };
-    const response = await fetch(`https://tandem.autodesk.com/api/v1/models/${urn}/resetstreamssecrets`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(inputs)
-    });
 }
 
 main()
