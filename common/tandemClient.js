@@ -13,7 +13,7 @@ export class TandemClient {
      */
 
     /**
-     * Class constructores. It accepts function which returns valid authentication token.
+     * Class constructor. It accepts function which returns valid authentication token.
      * @param {authCallback} authProvider 
      */
     constructor(authProvider) {
@@ -120,6 +120,24 @@ export class TandemClient {
             }
         }
         return results;
+    }
+
+    /**
+     * Returns metadata of te model
+     * @param {string} modelId - URN of the model
+     * @returns {Promise<object>}
+     */
+    async getModel(modelId) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}v1/modeldata/${modelId}/model`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
     }
 
     /**
