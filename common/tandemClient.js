@@ -190,6 +190,37 @@ export class TandemClient {
     }
 
     /**
+     * Returns stream elements from given model.
+     * @param {string} urn - URN of the model.
+     * @param {string[]} [columnFamilies] - optional list of columns
+     * @returns {Promise<object[]>}
+     */
+    async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+        const token = this._authProvider();
+        const inputs = {
+            families: columnFamilies,
+            includeHistory: false,
+            skipArrays: true
+        };
+        const response = await fetch(`${this.basePath}v2/modeldata/${urn}/scan`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+        const results = [];
+
+        for (const item of data) {
+            if (item[QC.ElementFlags] === ElementFlags.Stream) {
+                results.push(item);
+            }
+        }
+        return results;
+    }
+
+    /**
      * Returns asset elements from given model. Tagged asset is element with custom properties ('z' family).
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
