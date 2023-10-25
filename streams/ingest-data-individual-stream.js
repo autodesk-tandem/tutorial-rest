@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-
 /*
 This example demonstrates how to send sensor readings to Tandem for individual sensor, using a dedicated per-sensor endpoint
 */
