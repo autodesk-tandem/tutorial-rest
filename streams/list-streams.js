@@ -4,11 +4,8 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import {
-    ColumnFamilies,
-    ElementFlags,
-    Encoding,
-    QC,
+import { TandemClient } from '../common/tandemClient.js';
+import { ColumnFamilies, Encoding, QC,
     getDefaultModel
 } from '../common/utils.js';
 
@@ -22,14 +19,17 @@ async function main() {
     // assuming that user has access to the facility
     const token = await createToken(APS_CLIENT_ID,
         APS_CLIENT_SECRET, 'data:read');
+    const client = new TandemClient(() => {
+        return token;
+    });
     
     // STEP 2 - get facility and default model. The default model has same id as facility
     const facilityId = FACILITY_URN;
-    const facility = await getFacility(token, facilityId);
+    const facility = await client.getFacility(facilityId);
     const defaultModel = getDefaultModel(facilityId, facility);
 
     // STEP 3 - get streams and their parents
-    const streams = await getStreams(token, defaultModel.modelId);
+    const streams = await client.getStreams(defaultModel.modelId, [ ColumnFamilies.Standard, ColumnFamilies.Xrefs ]);
     const modelStreamMap = {};
 
     for (let i = 0; i < streams.length; i++) {
@@ -60,11 +60,11 @@ async function main() {
     for (const modelId in modelStreamMap) {
         const items = modelStreamMap[modelId];
         const keys = items.map(n => n.key);
-        const elementData = await getElementData(token, `urn:adsk.dtm:${modelId}`, keys);
+        const elementData = await client.getElements(`urn:adsk.dtm:${modelId}`, keys);
         
         for (const item of items) {
             const stream = streams[item.streamIndex];
-            const parentData = elementData.find(i => i.k === item.key);
+            const parentData = elementData.find(i => i[QC.Key] === item.key);
 
             if (!parentData) {
                 continue;
@@ -72,83 +72,6 @@ async function main() {
             console.log(`${stream[QC.Name]}:${parentData[QC.Name]}`);
         }
     }
-}
-
-/**
- * Returns facility based on given URN.
- * @param {string} token 
- * @param {string} urn 
- * @returns {Promise<object>}
- */
-async function getFacility(token, urn) {
-    const response = await fetch(`https://tandem.autodesk.com/api/v1/twins/${urn}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-
-    const data = await response.json();
-
-    return data;
-}
-
-/**
- * Return array of stream elements from given model. The elements include standard (n) and xref (x) properties.
- * @param {string} token 
- * @param {string} urn 
- * @returns {Promise<object[]>}
- */
-async function getStreams(token, urn) {
-    const inputs = {
-        families: [ ColumnFamilies.Standard, ColumnFamilies.Xrefs ],
-        includeHistory: false,
-        skipArrays: true
-    };
-    const response = await fetch(`https://tandem.autodesk.com/api/v2/modeldata/${urn}/scan`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(inputs)
-    });
-
-    const data = await response.json();
-    const results = [];
-
-    for (const item of data) {
-        if ((item[QC.ElementFlags] & ElementFlags.Stream) === ElementFlags.Stream) {
-            results.push(item);
-        }
-    }
-    return results;
-}
-
-/**
- * Returns data of given elements. Includes standard (n) properties.
- * @param {string} token 
- * @param {string} urn 
- * @param {string[]} keys 
- * @returns {Promise<object>}
- */
-async function getElementData(token, urn, keys) {
-    const inputs = {
-        keys: keys,
-        families: [ ColumnFamilies.Standard ],
-        includeHistory: false,
-        skipArrays: true
-    };
-    const response = await fetch(`https://tandem.autodesk.com/api/v2/modeldata/${urn}/scan`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(inputs)
-    });
-
-    const data = await response.json();
-
-    return data;
 }
 
 main()

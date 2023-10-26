@@ -1,4 +1,4 @@
-import { ColumnFamilies, ElementFlags, QC } from './utils.js';
+import { ColumnFamilies, ColumnNames, ElementFlags, MutateActions, QC } from './utils.js';
 
 /**
  * Simple wrapper for Tandem REST API
@@ -23,6 +23,70 @@ export class TandemClient {
 
     get basePath() {
         return this._basePath;
+    }
+
+    /**
+     * Creates new stream using provided data
+     * @param {string} token - Authentication token
+     * @param {string} urn - URN of the model
+     * @param {string} name - Name of the stream
+     * @param {string} uniformatClass 
+     * @param {number} categoryId 
+     * @param {string} [classification]
+     * @param {string} [parentXref]
+     * @param {string} [roomXref]
+     * @param {string} [levelKey]
+     * @returns 
+     */
+    async createStream(urn, name, uniformatClass, categoryId, classification = undefined, parentXref = undefined, roomXref = undefined, levelKey = undefined) {
+        const token = this._authProvider();
+        const inputs = {
+            muts: [
+                [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.Name, name ],
+                [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.ElementFlags, ElementFlags.Stream ], // this flag identifies stream
+                [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.UniformatClass, uniformatClass ],
+                [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.CategoryId, categoryId ],
+
+            ],
+            desc: 'Create stream'
+        };
+
+        if (classification) {
+            inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.Classification, classification ]);
+        }
+        if (parentXref) {
+            inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Xrefs, ColumnNames.Parent, parentXref ]);
+        }
+        if (roomXref) {
+            inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Xrefs, ColumnNames.Rooms, roomXref ]);
+        }
+        if (levelKey) {
+            inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Refs, ColumnNames.Level, levelKey ]);
+        }
+        const response = await fetch(`${this.basePath}v1/modeldata/${urn}/create`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+
+        const data = await response.json();
+
+        return data.key;
+    }
+
+    /**
+     * Returns single element from given model.
+     * @param {string} urn - URN of the model.
+     * @param {string} key - key of the element. 
+     * @param {string[]} [columnFamilies] - optional array of column families.
+     * @returns {Promise<object[]>}
+     */
+    async getElement(urn, key, columnFamilies = [ ColumnFamilies.Standard ]) {
+        const data = await this.getElements(urn, [ key ] , columnFamilies);
+    
+        return data[1];
     }
 
     /**
@@ -190,6 +254,37 @@ export class TandemClient {
     }
 
     /**
+     * Returns stream elements from given model.
+     * @param {string} urn - URN of the model.
+     * @param {string[]} [columnFamilies] - optional list of columns
+     * @returns {Promise<object[]>}
+     */
+    async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+        const token = this._authProvider();
+        const inputs = {
+            families: columnFamilies,
+            includeHistory: false,
+            skipArrays: true
+        };
+        const response = await fetch(`${this.basePath}v2/modeldata/${urn}/scan`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+        const results = [];
+
+        for (const item of data) {
+            if (item[QC.ElementFlags] === ElementFlags.Stream) {
+                results.push(item);
+            }
+        }
+        return results;
+    }
+
+    /**
      * Returns asset elements from given model. Tagged asset is element with custom properties ('z' family).
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
@@ -251,5 +346,27 @@ export class TandemClient {
         const result = await response.json();
         
         return result;
+    }
+
+    /**
+     * Resets secrets for given streams.
+     * @param {string} token
+     * @param {string} urn 
+     * @param {string[]} streamIds 
+     * @returns {Promise}
+     */
+    async resetStreamsSecrets(urn, streamIds) {
+        const token = this._authProvider();
+        const inputs = {
+            keys: streamIds,
+            hardReset: false
+        };
+        const response = await fetch(`${this.basePath}v1/models/${urn}/resetstreamssecrets`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
     }
 }
