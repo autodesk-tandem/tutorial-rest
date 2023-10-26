@@ -2,6 +2,7 @@ const kModelIdSize = 16;
 const kElementIdSize = 20;
 const kElementFlagsSize = 4;
 const kElementIdWithFlagsSize = kElementIdSize + kElementFlagsSize;
+const kRecordSize = 28;
 
 export const ElementFlags = {
     SimpleElement:  0x00000000,
@@ -18,12 +19,14 @@ export const KeyFlags = {
 
 export const ColumnFamilies = {
     DtProperties:   'z',
+    LMV:            '0',
     Standard:       'n',
     Refs:           'l',
     Xrefs:          'x'
 };
 
 export const ColumnNames = {
+    BoundingBox:        '0',
     CategoryId:         'c',
     Classification:     'v',
     OClassification:    '!v',
@@ -38,6 +41,7 @@ export const ColumnNames = {
 };
 
 export const QC = {
+    BoundingBox:        `${ColumnFamilies.LMV}:${ColumnNames.BoundingBox}`,
     Classification:     `${ColumnFamilies.Standard}:${ColumnNames.Classification}`,
     OClassification:    `${ColumnFamilies.Standard}:${ColumnNames.OClassification}`,
     ElementFlags:       `${ColumnFamilies.Standard}:${ColumnNames.ElementFlags}`,
@@ -55,6 +59,32 @@ export const MutateActions = {
 };
 
 export class Encoding {
+    /**
+     * Decodes bounding box of element from string
+     * @param {string} text 
+     * @param {object} offset 
+     * @returns {object}
+     */
+    static decodeBBox(text, offset) {
+        const buff = Buffer.from(text, 'base64');
+        let minx = buff.readFloatLE(0) + offset.x;
+        let miny = buff.readFloatLE(4) + offset.y;
+        let minz = buff.readFloatLE(8) + offset.z;
+        let maxx = buff.readFloatLE(12) + offset.x;
+        let maxy = buff.readFloatLE(16) + offset.y;
+        let maxz = buff.readFloatLE(20) + offset.z;
+
+        for (let i = kRecordSize; i < buff.length; i += kRecordSize) {
+            minx = Math.min(minx, buff.readFloatLE(i) + offset.x);
+            miny = Math.min(miny, buff.readFloatLE(i + 4) + offset.y);
+            minz = Math.min(miny, buff.readFloatLE(i + 8) + offset.z);
+            maxx = Math.max(maxz, buff.readFloatLE(i + 12) + offset.x);
+            maxy = Math.max(maxy, buff.readFloatLE(i + 16) + offset.y);
+            maxz = Math.max(maxz, buff.readFloatLE(i + 20) + offset.z);
+        }
+        return { minx, miny, minz, maxx, maxy, maxz };
+    }
+
     /**
      * Converts element short key to full key.
      * @param {string} shortKey 
