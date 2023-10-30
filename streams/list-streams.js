@@ -50,7 +50,7 @@ async function main() {
             modelStreamMap[modelId] = items;
         };
         items.push({
-            key,
+            key: Encoding.toShortKey(key),
             streamIndex: i
         });
     }
