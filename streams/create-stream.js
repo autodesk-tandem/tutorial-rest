@@ -74,7 +74,7 @@ async function main() {
         uniformatClassId,
         categoryId,
         classification,
-        parentXref, // becuse stream is assigned to room we use same key for host & room
+        parentXref, // because stream is assigned to room we use same key for host & room
         parentXref, 
         targetLevel[QC.Key]);
 
