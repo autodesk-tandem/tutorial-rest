@@ -119,12 +119,17 @@ export class Encoding {
     /**
      * Decodes array of keys from provided text.
      * @param {string} text 
-     * @param {boolean} [isLogical] 
+     * @param {boolean} [useFullKeys] - if specified returns full keys, otherwise returns short keys. 
+     * @param {boolean} [isLogical]  - when useFullKeys is true it specifies if key is logical or physical.
      * @returns {string[]}
      */
-    static fromShortKeyArray(text, isLogical) {
+    static fromShortKeyArray(text, useFullKeys, isLogical) {
         const binData = Buffer.from(text, 'base64');
-        const buff = Buffer.alloc(kElementIdWithFlagsSize);
+        let buff = Buffer.alloc(kElementIdSize);
+        
+        if (useFullKeys) {
+            buff = Buffer.alloc(kElementIdWithFlagsSize);
+        }
         const result = [];
         let offset = 0;
 
@@ -134,8 +139,12 @@ export class Encoding {
             if (size < kElementIdSize) {
                 break;
             }
-            buff.writeInt32BE(isLogical ? KeyFlags.Logical : KeyFlags.Physical);
-            binData.copy(buff, kElementFlagsSize, offset, offset + kElementIdSize);
+            if (useFullKeys) {
+                buff.writeInt32BE(isLogical ? KeyFlags.Logical : KeyFlags.Physical);
+                binData.copy(buff, kElementFlagsSize, offset, offset + kElementIdSize);
+            } else {
+                binData.copy(buff, 0, offset, offset + kElementIdSize);
+            }
             const elementKey = Encoding.makeWebsafe(buff.toString('base64'));
 
             result.push(elementKey);

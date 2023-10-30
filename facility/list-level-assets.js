@@ -39,12 +39,10 @@ async function main() {
                 if (!assetLevel) {
                     continue;
                 }
-                // STEP 8 - level needs to be decoded
-                // if level key is matching to current level the we print out
+                // STEP 8 - compare key with level key of an asset
+                // if level key is matching to current level then we print out
                 // asset name.
-                const levelKey = Encoding.toFullKey(assetLevel, true);
-
-                if (level.k === levelKey) {
+                if (level.k === assetLevel) {
                     console.log(`  ${asset[QC.Name]}`);
                 }
             }

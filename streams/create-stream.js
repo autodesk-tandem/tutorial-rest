@@ -57,8 +57,7 @@ async function main() {
         throw new Error(`Room ${roomName} doesn't exist`);
     }
     // STEP 4 - find level. Level with same name should exist in default model.
-    const levelKey = Encoding.toFullKey(targetRoom[QC.Level], true);
-    const levelDetails = await client.getElement(targetRoomModelId, levelKey);
+    const levelDetails = await client.getElement(targetRoomModelId, targetRoom[QC.Level]);
     const levels = await client.getLevels(defaultModel.modelId);
     const targetLevel = levels.find(l => l[QC.Name] === levelDetails[QC.Name]);
 
@@ -66,7 +65,7 @@ async function main() {
         throw new Error(`Level ${levelDetails[QC.Name]} doesn't exist`);
     }
     // STEP 5 - create new stream. First step is to encode keys for references. In our case host element and room are same.
-    const targetRoomKey = targetRoom[QC.Key];
+    const targetRoomKey = Encoding.toFullKey(targetRoom[QC.Key]);
     const parentXref = Encoding.toXrefKey(targetRoomModelId, targetRoomKey);
     // creeate new stream
     const streamId = await client.createStream(defaultModel.modelId,
@@ -74,7 +73,7 @@ async function main() {
         uniformatClassId,
         categoryId,
         classification,
-        parentXref, // becuse stream is assigned to room we use same key for host & room
+        parentXref, // because stream is assigned to room we use same key for host & room
         parentXref, 
         targetLevel[QC.Key]);
 

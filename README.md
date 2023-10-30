@@ -10,6 +10,7 @@ Use `npm` to install required dependencies
 ```sh
 npm i
 ```
+
 ## Configuration
 The examples use 2-legged authentication in cases where authentication is needed. This requires that an application be added to a facility as a service:
 1. Create new application using the [APS Portal](https://aps.autodesk.com/myapps/).
@@ -32,6 +33,9 @@ Most of the examples are self-contained. To run a specific example, use the foll
   ```
 4. Check `main` function and place breakpoints as needed.
 5. Start debugger. During debugging use the debuger windows to inspect values of variables.
+
+### How to use in the browser environment?
+The examples can be executed using Node.js runtime. When using in the browser environment it's necessary to use polyfill for Node.js [Buffer](https://nodejs.org/api/buffer.html) - i.e. [this one](https://github.com/feross/buffer).
 
 ## Examples
 The examples are organized into multiple folders based on topic:

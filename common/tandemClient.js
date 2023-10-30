@@ -17,7 +17,7 @@ export class TandemClient {
      * @param {authCallback} authProvider 
      */
     constructor(authProvider) {
-        this._basePath = 'https://tandem.autodesk.com/api/';
+        this._basePath = 'https://developer.api.autodesk.com/tandem/v1';
         this._authProvider = authProvider;
     }
 
@@ -63,7 +63,7 @@ export class TandemClient {
         if (levelKey) {
             inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Refs, ColumnNames.Level, levelKey ]);
         }
-        const response = await fetch(`${this.basePath}v1/modeldata/${urn}/create`, {
+        const response = await fetch(`${this.basePath}/modeldata/${urn}/create`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -106,7 +106,7 @@ export class TandemClient {
         if (keys) {
             inputs.keys = keys;
         }
-        const response = await fetch(`${this.basePath}v2/modeldata/${urn}/scan`, {
+        const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -126,7 +126,7 @@ export class TandemClient {
      */
     async getFacility(facilityId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}v1/twins/${facilityId}`, {
+        const response = await fetch(`${this.basePath}/twins/${facilityId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -144,7 +144,7 @@ export class TandemClient {
      */
     async getFacilityTemplate(facilityId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}v1/twins/${facilityId}/inlinetemplate`, {
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/inlinetemplate`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -168,7 +168,7 @@ export class TandemClient {
             includeHistory: false,
             skipArrays: true
         };
-        const response = await fetch(`${this.basePath}v2/modeldata/${urn}/scan`, {
+        const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -193,7 +193,7 @@ export class TandemClient {
      */
     async getModel(modelId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}v1/modeldata/${modelId}/model`, {
+        const response = await fetch(`${this.basePath}/modeldata/${modelId}/model`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -211,7 +211,7 @@ export class TandemClient {
      */
     async getModelSchema(modelId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}v1/modeldata/${modelId}/schema`, {
+        const response = await fetch(`${this.basePath}/modeldata/${modelId}/schema`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -235,7 +235,7 @@ export class TandemClient {
             includeHistory: false,
             skipArrays: true
         };
-        const response = await fetch(`${this.basePath}v2/modeldata/${urn}/scan`, {
+        const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -266,7 +266,7 @@ export class TandemClient {
             includeHistory: false,
             skipArrays: true
         };
-        const response = await fetch(`${this.basePath}v2/modeldata/${urn}/scan`, {
+        const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -297,7 +297,7 @@ export class TandemClient {
             includeHistory: false,
             skipArrays: true
         };
-        const response = await fetch(`${this.basePath}v2/modeldata/${urn}/scan`, {
+        const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -328,7 +328,7 @@ export class TandemClient {
             includeHistory: false,
             skipArrays: true
         };
-        const response = await fetch(`${this.basePath}v2/modeldata/${urn}/scan`, {
+        const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -367,7 +367,7 @@ export class TandemClient {
         if (description) {
             inputs.desc = description;
         }
-        const response = await fetch(`${this.basePath}v1/modeldata/${urn}/mutate`, {
+        const response = await fetch(`${this.basePath}/modeldata/${urn}/mutate`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -384,15 +384,16 @@ export class TandemClient {
      * @param {string} token
      * @param {string} urn 
      * @param {string[]} streamIds 
+     * @param {boolean} [hardReset]
      * @returns {Promise}
      */
-    async resetStreamsSecrets(urn, streamIds) {
+    async resetStreamsSecrets(urn, streamIds, hardReset) {
         const token = this._authProvider();
         const inputs = {
             keys: streamIds,
-            hardReset: false
+            hardReset: hardReset ? true : false
         };
-        const response = await fetch(`${this.basePath}v1/models/${urn}/resetstreamssecrets`, {
+        const response = await fetch(`${this.basePath}/models/${urn}/resetstreamssecrets`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
