@@ -65,7 +65,7 @@ async function main() {
         throw new Error(`Level ${levelDetails[QC.Name]} doesn't exist`);
     }
     // STEP 5 - create new stream. First step is to encode keys for references. In our case host element and room are same.
-    const targetRoomKey = targetRoom[QC.Key];
+    const targetRoomKey = Encoding.toFullKey(targetRoom[QC.Key]);
     const parentXref = Encoding.toXrefKey(targetRoomModelId, targetRoomKey);
     // creeate new stream
     const streamId = await client.createStream(defaultModel.modelId,
