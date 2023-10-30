@@ -31,7 +31,7 @@ async function main() {
 
         for (const asset of assets) {
             // STEP 4 - map properties to schema and print out property name & value
-            console.log(`${asset[QC.Name]}: ${asset.k}`);
+            console.log(`${asset[QC.Name]}: ${asset[QC.Key]}`);
             for (const propId in asset) {
                 const prop = schema.attributes.find(p => p.id === propId);
 
