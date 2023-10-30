@@ -28,7 +28,6 @@ async function main() {
     for (const link of facility.links) {
         const systems = await client.getSystems(link.modelId);
 
-        console.debug(systems);
         // STEP 4 - iterate through systems and print their names
         for (const system of systems) {
             let name = system[QC.OName];
