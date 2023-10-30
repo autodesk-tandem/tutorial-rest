@@ -1,7 +1,7 @@
 /*
-    This example demonstrates how to get assets from facility and print their properties.
+    This example demonstrates how to get systems from facility and print their names.
     
-    It uses 2-legged authentication - this requires athat application is added to facility as service.
+    It uses 2-legged authentication - this requires ahat application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
@@ -24,22 +24,18 @@ async function main() {
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
 
-    // STEP 3 - iterate through facility models and collect tagged assets
+    // STEP 3 - iterate through facility models and collect systems
     for (const link of facility.links) {
-        const schema = await client.getModelSchema(link.modelId);
-        const assets = await client.getTaggedAssets(link.modelId);
+        const systems = await client.getSystems(link.modelId);
 
-        for (const asset of assets) {
-            // STEP 4 - map properties to schema and print out property name & value
-            console.log(`${asset[QC.Name]}: ${asset[QC.Key]}`);
-            for (const propId in asset) {
-                const prop = schema.attributes.find(p => p.id === propId);
+        // STEP 4 - iterate through systems and print their names
+        for (const system of systems) {
+            let name = system[QC.OName];
 
-                if (!prop) {
-                    continue;
-                }
-                console.log(`  ${prop.category}.${prop.name}: ${asset[propId]}`);
+            if (!name) {
+               name = system[QC.Name];
             }
+            console.log(`${name}`);
         }
     }   
 }

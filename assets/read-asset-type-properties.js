@@ -5,7 +5,7 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ColumnFamilies, Encoding, QC } from '../common/utils.js';
+import { Encoding, QC } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -40,7 +40,7 @@ async function main() {
             var key = Encoding.toFullKey(familyType, true);
 
             assetTypes.add(key);
-            assetTypeMap[asset.k] = key;
+            assetTypeMap[asset[QC.Key]] = familyType;
         }
         if (assetTypes.size === 0) {
             continue;
@@ -49,15 +49,15 @@ async function main() {
         const familyTypes = await client.getElements(link.modelId, [... assetTypes]);
 
         for (const asset of assets) {
-            const assetTypeKey = assetTypeMap[asset.k];
+            const assetTypeKey = assetTypeMap[asset[QC.Key]];
 
             if (!assetTypeKey) {
                 continue;
             }
             // STEP 6 - print out asset name & asset type name
-            const familyType = familyTypes.find(i => i.k === assetTypeKey);
+            const familyType = familyTypes.find(i => i[QC.Key] === assetTypeKey);
 
-            console.log(`${asset[QC.Name]}: ${familyType[QC.Name]}`);
+            console.log(`${asset[QC.Name]}: ${familyType?.[QC.Name]}`);
         }
     }   
 }

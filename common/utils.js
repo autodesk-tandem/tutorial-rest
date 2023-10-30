@@ -9,7 +9,8 @@ export const ElementFlags = {
     Room:           0x00000005,
     FamilyType:     0x01000000,
     Level:          0x01000001,
-    Stream:         0x01000003
+    Stream:         0x01000003,
+    System:         0x01000004
 };
 
 export const KeyFlags = {
@@ -35,6 +36,7 @@ export const ColumnNames = {
     FamilyType:         't',
     Level:              'l',
     Name:               'n',
+    OName:              '!n',
     Parent:             'p',
     Rooms:              'r',
     UniformatClass:     'u'
@@ -49,6 +51,7 @@ export const QC = {
     FamilyType:         `${ColumnFamilies.Refs}:${ColumnNames.FamilyType}`,
     Level:              `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
     Name:               `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
+    OName:              `${ColumnFamilies.Standard}:${ColumnNames.OName}`,
     Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
     XParent:            `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,
     Key:                `k`
