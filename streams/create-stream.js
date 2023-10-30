@@ -57,8 +57,7 @@ async function main() {
         throw new Error(`Room ${roomName} doesn't exist`);
     }
     // STEP 4 - find level. Level with same name should exist in default model.
-    const levelKey = Encoding.toFullKey(targetRoom[QC.Level], true);
-    const levelDetails = await client.getElement(targetRoomModelId, levelKey);
+    const levelDetails = await client.getElement(targetRoomModelId, targetRoom[QC.Level]);
     const levels = await client.getLevels(defaultModel.modelId);
     const targetLevel = levels.find(l => l[QC.Name] === levelDetails[QC.Name]);
 
