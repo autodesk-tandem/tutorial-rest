@@ -37,9 +37,7 @@ async function main() {
             if (!familyType) {
                 continue;
             }
-            var key = Encoding.toFullKey(familyType, true);
-
-            assetTypes.add(key);
+            assetTypes.add(familyType);
             assetTypeMap[asset[QC.Key]] = familyType;
         }
         if (assetTypes.size === 0) {
