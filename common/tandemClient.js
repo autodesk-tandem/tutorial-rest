@@ -384,13 +384,14 @@ export class TandemClient {
      * @param {string} token
      * @param {string} urn 
      * @param {string[]} streamIds 
+     * @param {boolean} [hardReset]
      * @returns {Promise}
      */
-    async resetStreamsSecrets(urn, streamIds) {
+    async resetStreamsSecrets(urn, streamIds, hardReset) {
         const token = this._authProvider();
         const inputs = {
             keys: streamIds,
-            hardReset: false
+            hardReset: hardReset ? true : false
         };
         const response = await fetch(`${this.basePath}/models/${urn}/resetstreamssecrets`, {
             method: 'POST',
