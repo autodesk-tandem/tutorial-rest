@@ -3,6 +3,7 @@ const kElementIdSize = 20;
 const kElementFlagsSize = 4;
 const kElementIdWithFlagsSize = kElementIdSize + kElementFlagsSize;
 const kRecordSize = 28;
+const kSystemIdSize = 9;
 
 export const ElementFlags = {
     SimpleElement:  0x00000000,
@@ -22,6 +23,7 @@ export const ColumnFamilies = {
     DtProperties:   'z',
     LMV:            '0',
     Standard:       'n',
+    Systems:        'm',
     Refs:           'l',
     Xrefs:          'x'
 };
@@ -114,6 +116,27 @@ export class Encoding {
 
         binData.copy(shortKey, 0, kElementFlagsSize);
         return Encoding.makeWebsafe(shortKey.toString('base64'));
+    }
+
+    /**
+     * Encodes element key to system id
+     * @param {string} key 
+     * @returns {string}
+     */
+    static toSystemId(fullKey) {
+        const buff = Buffer.from(fullKey, 'base64');
+        let id = buff[buff.length - 4] << 24;
+        
+        id |= buff[buff.length - 3] << 16;
+        id |= buff[buff.length - 2] << 8;
+        id |= buff[buff.length - 1];
+        const res = Buffer.alloc(kSystemIdSize);
+        const offset = [0];
+
+        const len = writeVarint(res, offset, id)
+        const result = res.slice(0, len).toString('base64').replaceAll('=', '');
+
+        return result;
     }
 
     /**
@@ -213,4 +236,26 @@ export function getDefaultModel(facilityId, facilityData) {
     });
 
     return defaultModel;
+}
+
+/**
+ * 
+ * @param {*} buff 
+ * @param {*} offset 
+ * @param {*} value 
+ * @returns 
+ */
+function writeVarint(buff, offset, value) {
+    const startOffset = offset[0];
+
+    do {
+        let byte = 0 | (value & 0x7f);
+
+        value >>>= 7;
+        if (value) {
+            byte |= 0x80;
+        }
+        buff[offset[0]++] = byte;
+    } while (value);
+    return offset[0] - startOffset;
 }
