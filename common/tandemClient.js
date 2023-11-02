@@ -257,13 +257,26 @@ export class TandemClient {
      * Returns stream data
      * @param {string} urn - URN of the model.
      * @param {string} streamKey - full key of the stream. 
-     * @param {number} from - lower time boundary (in Unix epoch).
-     * @param {number} to - upper time boundary (in Unix epoch).
+     * @param {number} [from] - lower time boundary (in Unix epoch).
+     * @param {number} [to] - upper time boundary (in Unix epoch).
      * @returns {object}
      */
     async getStreamData(urn, streamKey, from, to) {
+        const queryParams = new URLSearchParams();
+
+        if (from) {
+            queryParams.append('from', `${from}`);
+        }
+        if (to) {
+            queryParams.append('to', `${to}`);
+        }
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/timeseries/models/${urn}/streams/${streamKey}?from=${from}&to=${to}`, {
+        let url = `${this.basePath}/timeseries/models/${urn}/streams/${streamKey}`;
+        
+        if (queryParams.size > 0) {
+            url += `?${queryParams}`;
+        }
+        const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
