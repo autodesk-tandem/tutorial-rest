@@ -254,6 +254,25 @@ export class TandemClient {
     }
 
     /**
+     * 
+     * @param {*} urn 
+     * @param {*} columnFamilies 
+     * @returns 
+     */
+    async getStreamData(urn, streamKey, from, to) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/timeseries/models/${urn}/streams/${streamKey}?from=${from}&to=${to}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
      * Returns stream elements from given model.
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
