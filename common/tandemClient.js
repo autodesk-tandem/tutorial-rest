@@ -254,10 +254,12 @@ export class TandemClient {
     }
 
     /**
-     * 
-     * @param {*} urn 
-     * @param {*} columnFamilies 
-     * @returns 
+     * Returns stream data
+     * @param {string} urn - URN of the model.
+     * @param {string} streamKey - full key of the stream. 
+     * @param {number} from - lower time boundary (in Unix epoch).
+     * @param {number} to - upper time boundary (in Unix epoch).
+     * @returns {object}
      */
     async getStreamData(urn, streamKey, from, to) {
         const token = this._authProvider();
