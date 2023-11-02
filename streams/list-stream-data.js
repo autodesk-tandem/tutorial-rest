@@ -5,9 +5,7 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ColumnFamilies, Encoding, QC,
-    getDefaultModel
-} from '../common/utils.js';
+import { ColumnFamilies, Encoding, QC, getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -29,11 +27,14 @@ async function main() {
     const facility = await client.getFacility(facilityId);
     const defaultModel = getDefaultModel(facilityId, facility);
 
-    // STEP 3 - get streams
-    const streams = await client.getStreams(defaultModel.modelId);
+    // STEP 3 - get schema
+    const schema = await client.getModelSchema(defaultModel.modelId);
+    // STEP 4 - calculate dates (from, to)
     const now = new Date();
     const to = now.getTime();
     const from = new Date(now.getTime() - OFFSET_DAYS * 24 * 60 * 60 * 1000).getTime();
+    // STEP 5 - get streams
+    const streams = await client.getStreams(defaultModel.modelId);
 
     for (const stream of streams) {
         // STEP 4 - get stream data for last NN days and print their values
@@ -41,8 +42,14 @@ async function main() {
 
         console.log(`${stream[QC.Name]}`);
         const data = await client.getStreamData(defaultModel.modelId, streamKey, from, to);
+
         for (const item in data) {
-            console.log(`  ${item}`);
+            const propDef = schema.attributes.find(p => p.fam === ColumnFamilies.DtProperties && p.col === item);
+
+            if (!propDef) {
+                console.warn(`Unable to find property definition: ${item}`);
+            }
+            console.log(`  ${propDef?.name} (${item})`);
             const values = data[item];
 
             for (const ts in values) {
