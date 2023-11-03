@@ -77,6 +77,25 @@ export class TandemClient {
     }
 
     /**
+     * Returns details for given document.
+     * @param {string} facilityId - URN of the facility.
+     * @param {string} documentId - URN of the document.
+     * @returns {object}
+     */
+    async getDocument(facilityId, documentId) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/documents/${documentId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
      * Returns single element from given model.
      * @param {string} urn - URN of the model.
      * @param {string} key - key of the element. 
