@@ -41,6 +41,7 @@ The examples can be executed using Node.js runtime. When using in the browser en
 The examples are organized into multiple folders based on topic:
 * **assets** - asset related examples
 * **classification** - classification related examples
+* **documents** - document related examples
 * **facility** - facility related examples
 * **streams** - streams related examples
 * **systems** - system related examples
