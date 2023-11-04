@@ -1,3 +1,7 @@
+import * as fs from 'fs';
+import { Readable } from 'stream';
+import { finished } from 'stream/promises';
+
 import { ColumnFamilies, ColumnNames, ElementFlags, MutateActions, QC } from './utils.js';
 
 /**
@@ -453,5 +457,28 @@ export class TandemClient {
             },
             body: JSON.stringify(inputs)
         });
+    }
+
+    /**
+     * Saves document content to file
+     * @param {string} url 
+     * @param {string} fileName
+     * @returns {Promise} 
+     */
+    async saveDocumentContent(url, fileName) {
+        const token = this._authProvider();
+        const res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    
+        if (res.status !== 200) {
+            return;
+        }
+        const stream = fs.createWriteStream(fileName);
+    
+        await finished(Readable.fromWeb(res.body).pipe(stream));
     }
 }
