@@ -30,6 +30,26 @@ export class TandemClient {
     }
 
     /**
+     * Adds documents to the facility.
+     * @param {string} facilityId 
+     * @param {object[]} inputs 
+     * @returns {object[]} 
+     */
+    async createDocuments(facilityId, inputs) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/documents`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
      * Creates new stream using provided data
      * @param {string} token - Authentication token
      * @param {string} urn - URN of the model
