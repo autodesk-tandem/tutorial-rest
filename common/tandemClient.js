@@ -427,6 +427,24 @@ export class TandemClient {
     }
 
     /**
+     * Returns saved facility views
+     * @param {string} urn - URN of the facility.
+     * @returns {Promise<object[]} - array of views.
+     */
+    async getViews(urn) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${urn}/views`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        
+        return data;
+    }
+
+    /**
      * Applies provided changes (mutations) to the elements.
      * @param {string} urn - URN of the model.
      * @param {string[]} keys - array of keys to modify.
