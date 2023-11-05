@@ -429,7 +429,7 @@ export class TandemClient {
     /**
      * Returns saved facility views
      * @param {string} urn - URN of the facility.
-     * @returns {Promise<object[]} - array of views.
+     * @returns {Promise<object[]>} - array of views.
      */
     async getViews(urn) {
         const token = this._authProvider();
