@@ -45,3 +45,4 @@ The examples are organized into multiple folders based on topic:
 * **facility** - facility related examples
 * **streams** - streams related examples
 * **systems** - system related examples
+* **views** - view related examples
