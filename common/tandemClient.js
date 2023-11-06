@@ -30,6 +30,22 @@ export class TandemClient {
     }
 
     /**
+     * Checks access to the facility.
+     * @param {string} facilityId - URN of the facility.
+     * @returns {Promise<string>}
+     */
+    async checkFacilityAccess(facilityId) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}`, {
+            method: 'HEAD',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.headers.get('x-dt-access-level');
+    }
+
+    /**
      * Adds documents to the facility.
      * @param {string} facilityId 
      * @param {object[]} inputs 
