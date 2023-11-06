@@ -43,6 +43,7 @@ The examples are organized into multiple folders based on topic:
 * **classification** - classification related examples
 * **documents** - document related examples
 * **facility** - facility related examples
+* **groups** = group related examples
 * **streams** - streams related examples
 * **systems** - system related examples
 * **views** - view related examples
