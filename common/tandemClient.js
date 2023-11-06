@@ -413,6 +413,29 @@ export class TandemClient {
     }
 
     /**
+     * Returns secrets for streams.
+     * @param {string} urn - the URN of the facility.
+     * @param {string[]} keys - list of stream keys to query.
+     * @returns {Promise<object>}
+     */
+    async getStreamsSecrets(urn, keys) {
+        const token = this._authProvider();
+        const inputs = {
+            keys: keys
+        };
+        const response = await fetch(`${this.basePath}/models/${urn}/getstreamssecrets`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+        
+        return data;
+    }
+
+    /**
      * Returns system elements from given model.
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
