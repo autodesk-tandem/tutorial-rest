@@ -1,5 +1,5 @@
 /*
-    This example demonstrates how to get streams from given facility and get their data.
+    This example demonstrates how to get streams from given facility and their secrets.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
