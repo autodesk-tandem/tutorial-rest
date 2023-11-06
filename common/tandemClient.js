@@ -199,6 +199,41 @@ export class TandemClient {
     }
 
     /**
+     * Returns list of groups.
+     * @returns {Promise<object[]>}
+     */
+    async getGroups() {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/groups`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
+     * Returns group details
+     * @param {string} groupId - URN of the group.
+     * @returns {Promise<object>}
+     */
+    async getGroup(groupId) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/groups/${groupId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
      * Returns level elements from given model.
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
