@@ -28,8 +28,12 @@ async function main() {
     const facilityId = FACILITY_URN;
     // STEP 2 - get facility
     const facility = await client.getFacility(facilityId);
-    // STEP 3 - get documents from ACC/BIM360
-    let docs = await getDocuments(token, ACC_PROJECT_ID, ACC_FOLDER_ID);
+    // STEP 3 - get documents from ACC/BIM360. Note getDocuments returns async generator thus we need to use for await...of to process results
+    let docs = [];
+
+    for await (const doc of getDocuments(token, ACC_PROJECT_ID, ACC_FOLDER_ID)) {
+        docs.push(doc);
+    }
     // STEP 4 - filter out documents which are already imported into facility
     if (facility.docs) {
         docs = docs.filter(d => {
@@ -58,29 +62,38 @@ async function main() {
 }
 
 /**
+ * Returns documents from given folder. It's generator function which handles pagination under the hood in case that folder contains large number of files.
  * 
+ * @generator
  * @param {string} url 
- * @param {string} fileName 
-  */
-async function getDocuments(token, projectId, folderId) {
-    const res = await fetch(`https://developer.api.autodesk.com/data/v1/projects/${projectId}/folders/${folderId}/contents`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
+ * @param {string} fileName
+ * @yields {Promise<object>} 
+ */
+async function* getDocuments(token, projectId, folderId) {
+    let url = `https://developer.api.autodesk.com/data/v1/projects/${projectId}/folders/${folderId}/contents`;
 
-    const items = await res.json();
-    const results = [];
-    
-    for (const item of items.data) {
-        results.push({
-            name: item.attributes.displayName,
-            item: item.id,
-            version: item.relationships.tip.data.id,
+    while (url) {
+        const res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
+        const items = await res.json();
+   
+        for (const item of items.data) {
+            yield {
+                name: item.attributes.displayName,
+                item: item.id,
+                version: item.relationships.tip.data.id,
+            };
+        }
+        if (items.links.next) {
+            url = items.links.next.href;
+        } else {
+            url = null;
+        }
     }
-    return results;
 }
 
 main()
