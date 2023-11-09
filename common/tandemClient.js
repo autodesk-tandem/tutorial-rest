@@ -1,3 +1,7 @@
+import * as fs from 'fs';
+import { Readable } from 'stream';
+import { finished } from 'stream/promises';
+
 import { ColumnFamilies, ColumnNames, ElementFlags, MutateActions, QC } from './utils.js';
 
 /**
@@ -23,6 +27,42 @@ export class TandemClient {
 
     get basePath() {
         return this._basePath;
+    }
+
+    /**
+     * Checks access to the facility.
+     * @param {string} facilityId - URN of the facility.
+     * @returns {Promise<string>}
+     */
+    async checkFacilityAccess(facilityId) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}`, {
+            method: 'HEAD',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.headers.get('x-dt-access-level');
+    }
+
+    /**
+     * Adds documents to the facility.
+     * @param {string} facilityId 
+     * @param {object[]} inputs 
+     * @returns {object[]} 
+     */
+    async createDocuments(facilityId, inputs) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/documents`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+
+        return data;
     }
 
     /**
@@ -74,6 +114,25 @@ export class TandemClient {
         const data = await response.json();
 
         return data.key;
+    }
+
+    /**
+     * Returns details for given document.
+     * @param {string} facilityId - URN of the facility.
+     * @param {string} documentId - URN of the document.
+     * @returns {object}
+     */
+    async getDocument(facilityId, documentId) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/documents/${documentId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
     }
 
     /**
@@ -145,6 +204,41 @@ export class TandemClient {
     async getFacilityTemplate(facilityId) {
         const token = this._authProvider();
         const response = await fetch(`${this.basePath}/twins/${facilityId}/inlinetemplate`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
+     * Returns list of groups.
+     * @returns {Promise<object[]>}
+     */
+    async getGroups() {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/groups`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
+     * Returns group details
+     * @param {string} groupId - URN of the group.
+     * @returns {Promise<object>}
+     */
+    async getGroup(groupId) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/groups/${groupId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -254,6 +348,40 @@ export class TandemClient {
     }
 
     /**
+     * Returns stream data
+     * @param {string} urn - URN of the model.
+     * @param {string} streamKey - full key of the stream. 
+     * @param {number} [from] - lower time boundary (in Unix epoch).
+     * @param {number} [to] - upper time boundary (in Unix epoch).
+     * @returns {object}
+     */
+    async getStreamData(urn, streamKey, from, to) {
+        const queryParams = new URLSearchParams();
+
+        if (from) {
+            queryParams.append('from', `${from}`);
+        }
+        if (to) {
+            queryParams.append('to', `${to}`);
+        }
+        const token = this._authProvider();
+        let url = `${this.basePath}/timeseries/models/${urn}/streams/${streamKey}`;
+        
+        if (queryParams.size > 0) {
+            url += `?${queryParams}`;
+        }
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
      * Returns stream elements from given model.
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
@@ -282,6 +410,29 @@ export class TandemClient {
             }
         }
         return results;
+    }
+
+    /**
+     * Returns secrets for streams.
+     * @param {string} urn - the URN of the facility.
+     * @param {string[]} keys - list of stream keys to query.
+     * @returns {Promise<object>}
+     */
+    async getStreamsSecrets(urn, keys) {
+        const token = this._authProvider();
+        const inputs = {
+            keys: keys
+        };
+        const response = await fetch(`${this.basePath}/models/${urn}/getstreamssecrets`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+        
+        return data;
     }
 
     /**
@@ -350,6 +501,24 @@ export class TandemClient {
     }
 
     /**
+     * Returns saved facility views
+     * @param {string} urn - URN of the facility.
+     * @returns {Promise<object[]>} - array of views.
+     */
+    async getViews(urn) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${urn}/views`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        
+        return data;
+    }
+
+    /**
      * Applies provided changes (mutations) to the elements.
      * @param {string} urn - URN of the model.
      * @param {string[]} keys - array of keys to modify.
@@ -400,5 +569,28 @@ export class TandemClient {
             },
             body: JSON.stringify(inputs)
         });
+    }
+
+    /**
+     * Saves document content to file
+     * @param {string} url 
+     * @param {string} fileName
+     * @returns {Promise} 
+     */
+    async saveDocumentContent(url, fileName) {
+        const token = this._authProvider();
+        const res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    
+        if (res.status !== 200) {
+            return;
+        }
+        const stream = fs.createWriteStream(fileName);
+    
+        await finished(Readable.fromWeb(res.body).pipe(stream));
     }
 }
