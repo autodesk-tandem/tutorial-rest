@@ -1,7 +1,7 @@
 /*
     This example demonstrates how to get systems from facility and print their names.
     
-    It uses 2-legged authentication - this requires ahat application is added to facility as service.
+    It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
