@@ -49,7 +49,7 @@ export class TandemClient {
      * Adds documents to the facility.
      * @param {string} facilityId 
      * @param {object[]} inputs 
-     * @returns {object[]} 
+     * @returns {Promise<object[]>} 
      */
     async createDocuments(facilityId, inputs) {
         const token = this._authProvider();
@@ -76,7 +76,7 @@ export class TandemClient {
      * @param {string} [parentXref]
      * @param {string} [roomXref]
      * @param {string} [levelKey]
-     * @returns 
+     * @returns {Promise}
      */
     async createStream(urn, name, uniformatClass, categoryId, classification = undefined, parentXref = undefined, roomXref = undefined, levelKey = undefined) {
         const token = this._authProvider();
@@ -281,7 +281,7 @@ export class TandemClient {
     }
 
     /**
-     * Returns metadata of te model
+     * Returns metadata of the model.
      * @param {string} modelId - URN of the model
      * @returns {Promise<object>}
      */
@@ -353,7 +353,7 @@ export class TandemClient {
      * @param {string} streamKey - full key of the stream. 
      * @param {number} [from] - lower time boundary (in Unix epoch).
      * @param {number} [to] - upper time boundary (in Unix epoch).
-     * @returns {object}
+     * @returns {Promise<object>}
      */
     async getStreamData(urn, streamKey, from, to) {
         const queryParams = new URLSearchParams();
@@ -501,7 +501,7 @@ export class TandemClient {
     }
 
     /**
-     * Returns saved facility views
+     * Returns saved facility views.
      * @param {string} urn - URN of the facility.
      * @returns {Promise<object[]>} - array of views.
      */
