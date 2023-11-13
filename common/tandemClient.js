@@ -21,12 +21,40 @@ export class TandemClient {
      * @param {authCallback} authProvider 
      */
     constructor(authProvider) {
+        this._appPath = 'https://tandem.autodesk.com/client/viewer/1.0.396';
         this._basePath = 'https://developer.api.autodesk.com/tandem/v1';
+        this._otgPath = 'https://tandem.autodesk.com/otg';
         this._authProvider = authProvider;
+    }
+
+    get appPath() {
+        return this._appPath;
     }
 
     get basePath() {
         return this._basePath;
+    }
+
+    get otgPath() {
+        return this._otgPath;
+    }
+
+    /**
+     * Applies template to facility.
+     * @param {string} facilityId - URN of the facility.
+     * @param {object} template - input facility template.
+     */
+    async applyFacilityTemplate(facilityId, template) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/template`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(template)
+        });
+        
+        return;
     }
 
     /**
@@ -54,6 +82,46 @@ export class TandemClient {
     async createDocuments(facilityId, inputs) {
         const token = this._authProvider();
         const response = await fetch(`${this.basePath}/twins/${facilityId}/documents`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
+     * Creates new facility.
+     * @param {string} groupId - URN of the group. 
+     * @param {object} inputs 
+     * @returns {Promise<object>} 
+     */
+    async createFacility(groupId, inputs) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/groups/${groupId}/twins`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
+     * Adds new model to the facility.
+     * @param {string} facilityId - URN of the facility.
+     * @param {object} inputs 
+     * @returns {Promise<object>}
+     */
+    async createModel(facilityId, inputs) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/model`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -114,6 +182,23 @@ export class TandemClient {
         const data = await response.json();
 
         return data.key;
+    }
+
+    /**
+     * Returns stored classifications.
+     * @returns {Promise<object[]>}
+     */
+    async getClassifications() {
+        const token = this._authProvider();
+        const response = await fetch(`${this.appPath}/classifications.json`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
     }
 
     /**
@@ -215,6 +300,23 @@ export class TandemClient {
     }
 
     /**
+     * Returns stored facility templates.
+     * @returns {Promise<object[]>}
+     */
+    async getFacilityTemplates() {
+        const token = this._authProvider();
+        const response = await fetch(`${this.appPath}/facilityTemplates.json`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        
+        return data;
+    }
+
+    /**
      * Returns list of groups.
      * @returns {Promise<object[]>}
      */
@@ -281,6 +383,24 @@ export class TandemClient {
     }
 
     /**
+     * Returns manifes for given URN.
+     * @param {string} urn - URN of the document.
+     * @returns {Promise<object>}
+     */
+    async getManifest(urn) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.otgPath}/modeldata/manifest/${urn}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
      * Returns metadata of the model.
      * @param {string} modelId - URN of the model
      * @returns {Promise<object>}
@@ -313,6 +433,23 @@ export class TandemClient {
         });
         const data = await response.json();
 
+        return data;
+    }
+
+    /**
+     * Returns stored parameters.
+     * @returns {Promise<object[]}
+     */
+    async getParameters() {
+        const token = this._authProvider();
+        const response = await fetch(`${this.appPath}/parameters.json`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        
         return data;
     }
 
@@ -516,6 +653,23 @@ export class TandemClient {
         const data = await response.json();
         
         return data;
+    }
+
+    /**
+     * Imports model for given facility. The model must be created using {@link createModel} function.
+     * @param {string} facilityId 
+     * @param {object} inputs
+     * @returns {Promise} 
+     */
+    async importModel(facilityId, inputs) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/import`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
     }
 
     /**
