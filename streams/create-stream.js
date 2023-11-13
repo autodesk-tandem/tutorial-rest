@@ -62,7 +62,7 @@ async function main() {
     const targetLevel = levels.find(l => l[QC.Name] === levelDetails[QC.Name]);
 
     if (!targetLevel) {
-        throw new Error(`Level ${levelDetails[QC.Name]} doesn't exist`);
+        console.warn(`Level ${levelDetails[QC.Name]} doesn't exist`);
     }
     // STEP 5 - create new stream. First step is to encode keys for references. In our case host element and room are same.
     const targetRoomKey = Encoding.toFullKey(targetRoom[QC.Key]);
@@ -75,7 +75,7 @@ async function main() {
         classification,
         parentXref, // because stream is assigned to room we use same key for host & room
         parentXref, 
-        targetLevel[QC.Key]);
+        targetLevel?.[QC.Key]);
 
     console.log(`New stream: ${streamId}`);
     // STEP 6 - reset stream secrets
