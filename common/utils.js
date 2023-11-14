@@ -239,6 +239,19 @@ export function getDefaultModel(facilityId, facilityData) {
 }
 
 /**
+ * Returns main model of the facility. Main model is the one marked with star in the UI.
+ * @param {object} facilityData 
+ * @returns {object}
+ */
+export function getMainModel(facilityData) {
+    const mainModel = facilityData.links.find((m) => {
+        return  m.main === true;
+    });
+
+    return mainModel;
+}
+
+/**
  * 
  * @param {*} buff 
  * @param {*} offset 
