@@ -1,5 +1,5 @@
 /*
-    This example demonstrates how to create default model for the facility. Default model is used to store logical elements which are not part of origin model (i.e. streams).
+    This example demonstrates how to create default model for the facility. Default model is used to store elements which are not part of original model (i.e. streams).
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
