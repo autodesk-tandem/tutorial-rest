@@ -46,6 +46,23 @@ export class TandemClient {
     }
 
     /**
+     * Adds default model to the facility.
+     * @param {string} facilityId - URN of the facility.
+     * @param {object} inputs 
+     * @returns {Promise}
+     */
+    async createDefaultModel(facilityId, inputs) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/defaultmodel`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+    }
+
+    /**
      * Adds documents to the facility.
      * @param {string} facilityId 
      * @param {object[]} inputs 
