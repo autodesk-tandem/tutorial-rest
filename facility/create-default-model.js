@@ -1,7 +1,7 @@
 /*
     This example demonstrates how to create default model for the facility. Default model is used to store elements which are not part of original model (i.e. streams).
     
-    It uses 2-legged authentication - this requires that application is added to facility as service.
+    It uses 2-legged authentication - this requires that application is added to facility as service (Manage permission is needed).
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
@@ -68,10 +68,9 @@ async function main() {
         modelInputs['georeference'] = georeference;
     }
     // STEP 5 - create default model and print its id
-    await client.createDefaultModel(facilityId);
-    facility = await client.getFacility(facilityId);
-    defaultModel = getDefaultModel(facilityId, facility);
-    console.log(`default model id: ${defaultModel.modelId}`);
+    const defaultModelResult = await client.createDefaultModel(facilityId);
+    
+    console.log(`default model id: ${defaultModelResult.modelId}`);
 }
 
 main()
