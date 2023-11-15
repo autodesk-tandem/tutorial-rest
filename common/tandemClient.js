@@ -60,6 +60,9 @@ export class TandemClient {
             },
             body: JSON.stringify(inputs)
         });
+        const data = await response.json();
+
+        return data;
     }
 
     /**
