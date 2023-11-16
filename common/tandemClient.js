@@ -439,6 +439,25 @@ export class TandemClient {
     }
 
     /**
+     * Returns model properties including status.
+     * 
+     * @param {string} modelId - URN of the model
+     * @returns {Promise<object}
+     */
+    async getModelProps(modelId) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/models/${modelId}/props`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
      * Returns schema of the model.
      * @param {string} modelId - URN of the model
      * @returns {Promise<object>}
