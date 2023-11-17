@@ -4,5 +4,8 @@
     "description": "JavaScript examples for Tandem REST API",
     "type": "module",
     "author": "aleksandr.bakharev@autodesk.com",
-    "license": "Apache-2.0"
+    "license": "Apache-2.0",
+    "dependencies": {
+        "stream-json": "^1.8.0"
+    }
 }
