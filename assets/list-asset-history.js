@@ -5,7 +5,7 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ColumnFamilies, Encoding, QC } from '../common/utils.js';
+import { ColumnFamilies, QC } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -63,7 +63,6 @@ async function main() {
                     console.log(`    ${tsDate.toLocaleString()}:${value} ${modelHistoryItem ? modelHistoryItem.n : 'NA'}`);
                 }
             }
-            
         }
     }   
 }
