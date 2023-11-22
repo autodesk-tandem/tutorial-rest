@@ -68,6 +68,12 @@ async function main() {
     }   
 }
 
+/**
+ * Returns array of timestamp values.
+ * 
+ * @param {object[]} assets - list of inputs assets.
+ * @returns {number[]}
+ */
 function getTimestamps(assets) {
     const timestamps = new Set();
 
@@ -82,7 +88,7 @@ function getTimestamps(assets) {
                     if (Number.isInteger(ts)) {
                         timestamps.add(ts);
                     }
-                } 
+                }
             }
         }
     }
