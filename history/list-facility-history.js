@@ -49,10 +49,13 @@ async function main() {
         // STEP 7 - iterate through elements and print out changes
         for (const element of elements) {
             console.log(`  ${element[QC.Name][0]}:${element[QC.Key]}`);
+            // get list of timestamps
             const timestamps = entries.filter(i => i.k === element[QC.Key])
                 .map(j => j.t)
                 .sort();
 
+            // iterate through properties and identify the ones which were changed
+            // using timestamp
             for (const prop in element) {
                 const props = element[prop];
 
