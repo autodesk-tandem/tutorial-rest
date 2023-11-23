@@ -165,7 +165,7 @@ export class TandemClient {
     async getElement(urn, key, columnFamilies = [ ColumnFamilies.Standard ]) {
         const data = await this.getElements(urn, [ key ] , columnFamilies);
     
-        return data[1];
+        return data[0];
     }
 
     /**
@@ -196,7 +196,7 @@ export class TandemClient {
     
         const data = await response.json();
     
-        return data;
+        return data.slice(1);
     }
 
     /**
