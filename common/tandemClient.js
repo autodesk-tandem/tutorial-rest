@@ -173,13 +173,14 @@ export class TandemClient {
      * @param {string} urn - URN of the model.
      * @param {string[]} [keys] - optional array of keys. 
      * @param {string[]} [columnFamilies] - optional array of column families.
+     * @param {boolean} [includeHistory] - controls if history is included.
      * @returns {Promise<object[]>}
      */
-    async getElements(urn, keys = undefined, columnFamilies = [ ColumnFamilies.Standard ]) {
+    async getElements(urn, keys = undefined, columnFamilies = [ ColumnFamilies.Standard ], includeHistory = false) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
-            includeHistory: false,
+            includeHistory: includeHistory,
             skipArrays: true
         };
         if (keys) {
