@@ -78,11 +78,11 @@ function getTimestamps(assets) {
 
     for (const asset of assets) {
         for (const prop in asset) {
-            const items = asset[prop];
+            const props = asset[prop];
 
-            if (Array.isArray(items)) {
-                for (let i = 0; i < items.length; i += 2) {
-                    const ts = Number.parseInt(items[i + 1]);
+            if (Array.isArray(props)) {
+                for (let i = 0; i < props.length; i += 2) {
+                    const ts = props[i + 1];
 
                     if (Number.isInteger(ts)) {
                         timestamps.add(ts);
