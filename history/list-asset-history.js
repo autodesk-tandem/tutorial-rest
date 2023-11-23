@@ -81,6 +81,7 @@ function getTimestamps(assets) {
             const props = asset[prop];
 
             if (Array.isArray(props)) {
+                // timestamps are even items from array, i.e. [ 'val1', ts1, 'val2', ts2 ]
                 for (let i = 0; i < props.length; i += 2) {
                     const ts = props[i + 1];
 
