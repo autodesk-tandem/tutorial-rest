@@ -319,6 +319,35 @@ export class TandemClient {
     }
 
     /**
+     * Returns model changes.
+     * 
+     * @param {string} modelId - URN of the model.
+     * @param {number[]} timestamps - array of timestamps.
+     * @param {boolean} [includeChanges] - include change details.
+     * @param {boolean} [useFullKeys] - include full keys. Used only if includeChanges = true.
+     * @returns {Promise<object[]>}
+     */
+    async getModelHistory(modelId, timestamps, includeChanges = false, useFullKeys = false) {
+        const token = this._authProvider();
+        const inputs = {
+            timestamps: timestamps,
+            includeChanges: includeChanges,
+            useFullKeys: useFullKeys
+        };
+
+        const response = await fetch(`${this.basePath}/modeldata/${modelId}/history`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
      * Returns schema of the model.
      * @param {string} modelId - URN of the model
      * @returns {Promise<object>}
@@ -488,15 +517,17 @@ export class TandemClient {
 
     /**
      * Returns asset elements from given model. Tagged asset is element with custom properties ('z' family).
+     * 
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
+     * @param {boolean} [includeHistory] - controls if history information is included in response
      * @returns {Promise<object[]>}
      */
-    async getTaggedAssets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs ]) {
+    async getTaggedAssets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs ], includeHistory = false) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
-            includeHistory: false,
+            includeHistory: includeHistory,
             skipArrays: true
         };
         const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
