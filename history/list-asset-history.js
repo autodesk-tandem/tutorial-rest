@@ -41,9 +41,9 @@ async function main() {
             console.log(`${asset[QC.Name][0]}`);
             console.log(`${asset[QC.Key]}`);
             for (const prop in asset) {
-                const items = asset[prop];
+                const props = asset[prop];
 
-                if (!Array.isArray(items)) {
+                if (!Array.isArray(props)) {
                     continue;
                 }
                 const propDef = schema.attributes.find(a => a.id === prop);
@@ -53,9 +53,9 @@ async function main() {
                 }
                 console.log(`  ${propDef.category}:${propDef.name}`);
                 
-                for (let i = 0; i < items.length; i += 2) {
-                    const value = items[i];
-                    const ts = items[i + 1];
+                for (let i = 0; i < props.length; i += 2) {
+                    const value = props[i];
+                    const ts = props[i + 1];
                     const tsDate = new Date(ts);
                     // find change details using timestamp
                     const modelHistoryItem = modelHistory.find(n => n.t === ts);
