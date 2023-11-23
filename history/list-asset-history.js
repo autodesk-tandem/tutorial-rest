@@ -34,7 +34,7 @@ async function main() {
         }
         // STEP 4 - collect timestamps and get list of model changes
         const timestamps = getTimestamps(assets);
-        const modelHistory = await client.getModelHistory(link.modelId, [ ...timestamps ]);
+        const modelHistory = await client.getModelHistory(link.modelId, timestamps);
 
         // STEP 4 - iterate through assets and print their properties including timestamp and author of change
         for (const asset of assets) {
