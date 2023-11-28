@@ -145,7 +145,7 @@ export class Encoding {
         const offset = [0];
 
         const len = writeVarint(res, offset, id)
-        const result = res.slice(0, len).toString('base64').replaceAll('=', '');
+        const result = res.subarray(0, len).toString('base64').replaceAll('=', '');
 
         return result;
     }
