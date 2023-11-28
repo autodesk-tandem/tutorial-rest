@@ -37,9 +37,9 @@ async function main() {
         const schema = await client.getModelSchema(link.modelId);
         // STEP 5 - get history between dates
         const history = await client.getModelHistoryBetweenDates(link.modelId, from, to, true, false);
-        // extract list of keys and related timestamp (k, t)
-        const entries = history.flatMap((i) => i.k?.map((j) => ( { k: j, t: i.t })))
-            .filter(n => n !== undefined);
+        // extract list of keys and related timestamp (k = key, t = timestamp)
+        const entries = history.flatMap((item) => item.k?.map((key) => ( { k: key, t: i.t })))
+            .filter(entry => entry !== undefined);
 
         if (entries.length === 0) {
             continue;
