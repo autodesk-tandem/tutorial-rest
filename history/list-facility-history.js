@@ -38,7 +38,7 @@ async function main() {
         // STEP 5 - get history between dates
         const history = await client.getModelHistoryBetweenDates(link.modelId, from, to, true, false);
         // extract list of keys and related timestamp (k = key, t = timestamp)
-        const entries = history.flatMap((item) => item.k?.map((key) => ( { k: key, t: i.t })))
+        const entries = history.flatMap((item) => item.k?.map((key) => ( { k: key, t: item.t })))
             .filter(entry => entry !== undefined);
 
         if (entries.length === 0) {
