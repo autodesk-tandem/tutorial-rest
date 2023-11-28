@@ -2,6 +2,9 @@
     This example demonstrates how to get asset history.
     
     It uses 2-legged authentication - this requires athat application is added to facility as service.
+
+    NOTE - This example uses API which is NOT SUPPORTED at the moment:
+        POST https://developer.api.autodesk.com/tandem/v1/modeldata/:modelId/history
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';

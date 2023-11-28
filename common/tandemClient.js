@@ -166,7 +166,7 @@ export class TandemClient {
     async getElement(urn, key, columnFamilies = [ ColumnFamilies.Standard ]) {
         const data = await this.getElements(urn, [ key ] , columnFamilies);
     
-        return data[1];
+        return data[0];
     }
 
     /**
@@ -174,13 +174,14 @@ export class TandemClient {
      * @param {string} urn - URN of the model.
      * @param {string[]} [keys] - optional array of keys. 
      * @param {string[]} [columnFamilies] - optional array of column families.
+     * @param {boolean} [includeHistory] - controls if history is included.
      * @returns {Promise<object[]>}
      */
-    async getElements(urn, keys = undefined, columnFamilies = [ ColumnFamilies.Standard ]) {
+    async getElements(urn, keys = undefined, columnFamilies = [ ColumnFamilies.Standard ], includeHistory = false) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
-            includeHistory: false,
+            includeHistory: includeHistory,
             skipArrays: true
         };
         if (keys) {
@@ -196,7 +197,7 @@ export class TandemClient {
     
         const data = await response.json();
     
-        return data;
+        return data.slice(1);
     }
 
     /**
@@ -359,6 +360,36 @@ export class TandemClient {
         const token = this._authProvider();
         const inputs = {
             timestamps: timestamps,
+            includeChanges: includeChanges,
+            useFullKeys: useFullKeys
+        };
+
+        const response = await fetch(`${this.basePath}/modeldata/${modelId}/history`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
+     * Returns model changes.
+     * 
+     * @param {string} modelId - URN of the model.
+     * @param {number[]} timestamps - array of timestamps.
+     * @param {boolean} [includeChanges] - include change details.
+     * @param {boolean} [useFullKeys] - include full keys. Used only if includeChanges = true.
+     * @returns {Promise<object[]>}
+     */
+    async getModelHistoryBetweenDates(modelId, from, to, includeChanges = true, useFullKeys = true) {
+        const token = this._authProvider();
+        const inputs = {
+            min: from,
+            max: to,
             includeChanges: includeChanges,
             useFullKeys: useFullKeys
         };
