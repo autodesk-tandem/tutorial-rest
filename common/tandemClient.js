@@ -22,7 +22,7 @@ export class TandemClient {
      * @param {authCallback} authProvider 
      */
     constructor(authProvider) {
-        this._appPath = 'https://tandem.autodesk.com/client/viewer/1.0.396';
+        this._appPath = 'https://tandem.autodesk.com/client/viewer/1.0.400';
         this._basePath = 'https://developer.api.autodesk.com/tandem/v1';
         this._otgPath = 'https://tandem.autodesk.com/otg';
         this._authProvider = authProvider;
