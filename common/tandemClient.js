@@ -1,6 +1,7 @@
 import * as fs from 'fs';
-import { Readable } from 'stream';
+import { Readable, Transform } from 'stream';
 import { finished } from 'stream/promises';
+import StreamArray from 'stream-json/streamers/StreamArray.js';
 
 import { ColumnFamilies, ColumnNames, ElementFlags, MutateActions, QC } from './utils.js';
 
@@ -196,6 +197,33 @@ export class TandemClient {
         const data = await response.json();
     
         return data;
+    }
+
+    /**
+     * Reads elements from model using streaming.
+     * 
+     * @param {string} modelId - URN of the model.
+     * @param {string[]} [columnFamilies] - optional array of column families.
+     * @yields {Promise<object>} - async iterator of elements.
+     */
+    async *getElementStream(modelId, columnFamilies = [ ColumnFamilies.Standard ]) {
+        const token = this._authProvider();
+        const inputs = {
+            families: columnFamilies,
+            includeHistory: false,
+            skipArrays: true
+        };
+
+        const response = await fetch(`${this.basePath}/modeldata/${modelId}/scan`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const elementStream = Readable.fromWeb(response.body).pipe(StreamArray.withParser()).pipe(new ElementFilter());
+
+        yield* elementStream;
     }
 
     /**
