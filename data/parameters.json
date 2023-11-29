@@ -1,0 +1,1344 @@
+[
+    {
+        "uuid": "03Jj3kx3SyOX82tm7JwADQ",
+        "name": "Abbreviation",
+        "category": "General",
+        "dataType": 20,
+        "description": "Equipment subcategory abbreviation",
+        "context": "t"
+    },
+    {
+        "uuid": "gwq_ULUASMqOB4gxG3Mm8Q",
+        "name": "Bar Code",
+        "category": "General",
+        "dataType": 20,
+        "description": "Equipment bar code",
+        "context": "e"
+    },
+    {
+        "uuid": "ZyHwtA-RStK4qQKdem2Rfg",
+        "name": "Description",
+        "category": "General",
+        "dataType": 20,
+        "description": "Item description",
+        "context": "t"
+    },
+    {
+        "uuid": "gSVpA95qTK6qtxJSPOUj5Q",
+        "name": "Discipline",
+        "category": "General",
+        "dataType": 20,
+        "description": "Primary discipline",
+        "context": "t"
+    },
+    {
+        "uuid": "6OuuknhjSj-x3Dko8YiTrQ",
+        "name": "Expected Life",
+        "category": "General",
+        "dataType": 20,
+        "description": "Expected lifespan of the equipment",
+        "context": "t"
+    },
+    {
+        "uuid": "ftF8pvXMQKKC5ZTDXUWv5g",
+        "name": "Installation Date",
+        "category": "General",
+        "dataType": 20,
+        "description": "Date of installation",
+        "context": "e"
+    },
+    {
+        "uuid": "6YjaCcwLR_OFL-rmD7KGmQ",
+        "name": "Location",
+        "category": "General",
+        "dataType": 20,
+        "description": "Location of equipment",
+        "context": "e"
+    },
+    {
+        "uuid": "gVjCHAqUROqTJi-GSQmPMA",
+        "name": "Manufacturer",
+        "category": "General",
+        "dataType": 20,
+        "description": "Manufacturer's name",
+        "context": "t"
+    },
+    {
+        "uuid": "6YJsWImEQF6bdzXKs1ldaw",
+        "name": "Model",
+        "category": "General",
+        "dataType": 20,
+        "description": "Model number",
+        "context": "t"
+    },
+    {
+        "uuid": "RDFJQDQNTSGOzeA_3LYBEQ",
+        "name": "Serial Number",
+        "category": "General",
+        "dataType": 20,
+        "description": "Equipment serial number",
+        "context": "e"
+    },
+    {
+        "uuid": "o_aWcGgNTg-eMgA5l3nBow",
+        "name": "Warranty Duration, Labor",
+        "category": "General",
+        "dataType": 20,
+        "description": "Duration of warranty for labor of installation",
+        "context": "t"
+    },
+    {
+        "uuid": "QPADS8qyTci-BtodOu4UHQ",
+        "name": "Warranty Duration, Parts",
+        "category": "General",
+        "dataType": 20,
+        "description": "Duration of warranty for parts",
+        "context": "t"
+    },
+    {
+        "uuid": "gGmioaLkR9uBUzS4S4nJ1Q",
+        "name": "Warranty Start Date",
+        "category": "General",
+        "dataType": 20,
+        "description": "Date warranty begins",
+        "context": "e"
+    },
+    {
+        "uuid": "K7RQePN4TIa9w7Djc1kMcQ",
+        "name": "Height",
+        "category": "All Disciplines",
+        "dataType": 3,
+        "forgeUnit": "feet",
+        "forgeSymbol": "lf",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Nominal height",
+        "context": "t"
+    },
+    {
+        "uuid": "J8she83tSYaYbrJahPnMgQ",
+        "name": "Inspection Date",
+        "category": "All Disciplines",
+        "dataType": 20,
+        "description": "Date of most recent inspection",
+        "context": "e"
+    },
+    {
+        "uuid": "LGmvalCOS8CEOz8oFkWjWg",
+        "name": "Length",
+        "category": "All Disciplines",
+        "dataType": 3,
+        "forgeUnit": "feet",
+        "forgeSymbol": "lf",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Nominal length",
+        "context": "t"
+    },
+    {
+        "uuid": "OBCSZ_atTUm6bTWQ3OP41A",
+        "name": "Material",
+        "category": "All Disciplines",
+        "dataType": 20,
+        "description": "Construction material",
+        "context": "t"
+    },
+    {
+        "uuid": "6FPQ86vPTZa2gM-W4k9sWg",
+        "name": "Mounting",
+        "category": "All Disciplines",
+        "dataType": 20,
+        "description": "Mounting method",
+        "context": "t"
+    },
+    {
+        "uuid": "s6Meq5-fSb2Ac2W50cVMlw",
+        "name": "System",
+        "category": "All Disciplines",
+        "dataType": 20,
+        "description": "Name of the connected system",
+        "context": "e"
+    },
+    {
+        "uuid": "SVD0kJD7RQyrQwISXEkqqQ",
+        "name": "Thickness",
+        "category": "All Disciplines",
+        "dataType": 3,
+        "forgeUnit": "inches",
+        "forgeSymbol": "in",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Nominal thickness",
+        "context": "t"
+    },
+    {
+        "uuid": "rmKuCsM1SKaE3Gp_z-k5hQ",
+        "name": "Weight",
+        "category": "All Disciplines",
+        "dataType": 3,
+        "precision": 2,
+        "description": "Operating weight",
+        "context": "t"
+    },
+    {
+        "uuid": "G4RtB9e_RhK4tKeKwhv8ng",
+        "name": "Width",
+        "category": "All Disciplines",
+        "dataType": 3,
+        "forgeUnit": "feet",
+        "forgeSymbol": "lf",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Nominal width",
+        "context": "t"
+    },
+    {
+        "uuid": "9C61lqRlQvmrwhF1--jK-w",
+        "name": "Air Flow Control",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of device used to control the rate of air flow",
+        "context": "t"
+    },
+    {
+        "uuid": "JAUof53iRLKOXL2meYuxbA",
+        "name": "Ambient Wet Bulb Temperature",
+        "category": "Mechanical",
+        "dataType": 3,
+        "forgeUnit": "fahrenheit",
+        "forgeSymbol": "degreeF",
+        "forgeSpec": "hvac.temperature",
+        "precision": 2,
+        "description": "Ambient design wet bulb temperature",
+        "context": "t"
+    },
+    {
+        "uuid": "3YvmAgFLRYG7nnqrdWPJpQ",
+        "name": "Boiler Output",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Heated substance produced by the boiler",
+        "context": "t"
+    },
+    {
+        "uuid": "GI_EpXfjTlekpt-t0lksSQ",
+        "name": "Branch Selector Unit Capacity",
+        "category": "Mechanical",
+        "dataType": 3,
+        "precision": 2,
+        "description": "Capacity of each branch of the branch selector unit",
+        "context": "t"
+    },
+    {
+        "uuid": "vxMmtRp-T8ydpo7iBn9HRw",
+        "name": "Branch Selector Unit Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of branch selector unit",
+        "context": "t"
+    },
+    {
+        "uuid": "0tn7vZbsRPSSNC3rRsnJxQ",
+        "name": "Capacity",
+        "category": "Mechanical",
+        "dataType": 2,
+        "forgeUnit": "usGallons",
+        "forgeSymbol": "gal",
+        "forgeSpec": "volume",
+        "description": "Tank storage capacity",
+        "context": "t"
+    },
+    {
+        "uuid": "6sp8X99nRLm4gHWYnWxV-w",
+        "name": "Capacity Control",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Description of how fan controls capacity",
+        "context": "t"
+    },
+    {
+        "uuid": "GaBkk_1JT2yp6b-HycxagA",
+        "name": "Cathodic Protection",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of cathodic protection system used",
+        "context": "t"
+    },
+    {
+        "uuid": "X1W1ZN4nSuiTo0FFnByiVA",
+        "name": "Chilled Water Flow",
+        "category": "Mechanical",
+        "dataType": 3,
+        "forgeUnit": "usGallonsPerMinute",
+        "forgeSymbol": "gpm",
+        "forgeSpec": "piping.flow",
+        "precision": 2,
+        "description": "Chilled water design flow",
+        "context": "t"
+    },
+    {
+        "uuid": "ElafoxOiSamnh9Wr3sHsZw",
+        "name": "Chilled Water Supply Temperature",
+        "category": "Mechanical",
+        "dataType": 3,
+        "forgeUnit": "fahrenheit",
+        "forgeSymbol": "degreeF",
+        "forgeSpec": "piping.temperature",
+        "precision": 2,
+        "description": "Chilled water design supply temperature",
+        "context": "t"
+    },
+    {
+        "uuid": "c0OAZckRT1SeXP1QchMTfg",
+        "name": "Chilled Water Temperature Delta",
+        "category": "Mechanical",
+        "dataType": 3,
+        "forgeUnit": "fahrenheitInterval",
+        "forgeSymbol": "deltaDegreeF",
+        "forgeSpec": "piping.temperatureDifference",
+        "precision": 2,
+        "description": "Chilled water design temperature delta",
+        "context": "t"
+    },
+    {
+        "uuid": "mkXdyjGtTxqhx48WNflVXA",
+        "name": "Chiller Compressor Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of compressor used by the chiller",
+        "context": "t"
+    },
+    {
+        "uuid": "TVK72nmxSjCHMWKlbxephg",
+        "name": "Coil Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Number of pipes used by the fan coil",
+        "context": "t"
+    },
+    {
+        "uuid": "OSRW1AIYR5K3R5uRi1UdpA",
+        "name": "Condenser Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of condenser used by the chiller",
+        "context": "t"
+    },
+    {
+        "uuid": "N7AK1QJxQeOrIWrT_-6d9g",
+        "name": "Condenser Water Flow",
+        "category": "Mechanical",
+        "dataType": 3,
+        "forgeUnit": "usGallonsPerMinute",
+        "forgeSymbol": "gpm",
+        "forgeSpec": "piping.flow",
+        "precision": 2,
+        "description": "Condenser water design flow",
+        "context": "t"
+    },
+    {
+        "uuid": "YZ5ObytFRBSkrWZYaFnuIA",
+        "name": "Condenser Water Inlet Temperature",
+        "category": "Mechanical",
+        "dataType": 3,
+        "forgeUnit": "fahrenheit",
+        "forgeSymbol": "degreeF",
+        "forgeSpec": "piping.temperature",
+        "precision": 2,
+        "description": "Condenser water design inlet temperature",
+        "context": "t"
+    },
+    {
+        "uuid": "I1ZUofiJSPmMfzxDBST6dQ",
+        "name": "Condenser Water Outlet Temperature",
+        "category": "Mechanical",
+        "dataType": 3,
+        "forgeUnit": "fahrenheit",
+        "forgeSymbol": "degreeF",
+        "forgeSpec": "piping.temperature",
+        "precision": 2,
+        "description": "Condenser water design outlet temperature",
+        "context": "t"
+    },
+    {
+        "uuid": "enelJCDzTvOC1b8OQn5Mdg",
+        "name": "Condenser Water Temperature Delta",
+        "category": "Mechanical",
+        "dataType": 3,
+        "forgeUnit": "fahrenheitInterval",
+        "forgeSymbol": "deltaDegreeF",
+        "forgeSpec": "piping.temperatureDifference",
+        "precision": 2,
+        "description": "Condenser water design temperature delta",
+        "context": "t"
+    },
+    {
+        "uuid": "xwGIwqkKSTqk7l6G3h3B-w",
+        "name": "Cooling Tower Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of cooling tower",
+        "context": "t"
+    },
+    {
+        "uuid": "T3AQM_KfQIuqYYkQaTKLtw",
+        "name": "Fan Drive Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of drive for the fan",
+        "context": "t"
+    },
+    {
+        "uuid": "TzdmXLzSTjGL1eIwX36JfQ",
+        "name": "Flame Control",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of device used to control the flame",
+        "context": "t"
+    },
+    {
+        "uuid": "RzMXuBB5R-25odhds7dk8g",
+        "name": "Flow Rate",
+        "category": "Mechanical",
+        "dataType": 3,
+        "forgeUnit": "usGallonsPerMinute",
+        "forgeSymbol": "gpm",
+        "forgeSpec": "piping.flow",
+        "description": "Amount of water that can be treated and output",
+        "context": "t"
+    },
+    {
+        "uuid": "E12PR4-BTr2kLfyGvUaDww",
+        "name": "Fuel Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of fuel consumed",
+        "context": "t"
+    },
+    {
+        "uuid": "Ehh6Spi0T-WTdr6bl-scBg",
+        "name": "Heat Exchanger Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of heat exchanger",
+        "context": "t"
+    },
+    {
+        "uuid": "MtxDtRONRqyq1zWFoJkILQ",
+        "name": "Heat Transfer Process",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Describes two systems heat exchanger is transferring between",
+        "context": "t"
+    },
+    {
+        "uuid": "FtB3oyRMRU6hE3LpMN6R8w",
+        "name": "Heating Input",
+        "category": "Mechanical",
+        "dataType": 2,
+        "forgeUnit": "britishThermalUnitsPerHour",
+        "forgeSymbol": "btuPerH",
+        "forgeSpec": "hvac.power",
+        "description": "Designed heating input",
+        "context": "t"
+    },
+    {
+        "uuid": "Pro_agMeSQC2aQSZI13fcQ",
+        "name": "Humidifier Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of humidifier",
+        "context": "t"
+    },
+    {
+        "uuid": "r5DFjCRSRci_5QBz0VEGiQ",
+        "name": "Impeller Size",
+        "category": "Mechanical",
+        "dataType": 3,
+        "forgeUnit": "inches",
+        "forgeSymbol": "in",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Size of the pump impeller",
+        "context": "t"
+    },
+    {
+        "uuid": "I4gIY2viT969owbL0t00sw",
+        "name": "Leak Detection",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of leak detection system used",
+        "context": "t"
+    },
+    {
+        "uuid": "E_IcmAeJQnOCQx9LN9Lx2g",
+        "name": "Nominal Efficiency",
+        "category": "Mechanical",
+        "dataType": 2,
+        "forgeUnit": "tonsOfRefrigeration",
+        "forgeSymbol": "ton",
+        "forgeSpec": "hvac.coolingLoad",
+        "description": "Nominal efficiency of the chiller",
+        "context": "t"
+    },
+    {
+        "uuid": "jrdXTq1BSEi3b3_n9hx-wA",
+        "name": "Power Source",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of power source",
+        "context": "t"
+    },
+    {
+        "uuid": "MWrxdYVIStCBeUT_q0dIbg",
+        "name": "Pressure",
+        "category": "Mechanical",
+        "dataType": 3,
+        "forgeUnit": "poundsForcePerSquareInch",
+        "forgeSymbol": "psi",
+        "forgeSpec": "piping.pressure",
+        "precision": 2,
+        "description": "Maximum operating pressure",
+        "context": "t"
+    },
+    {
+        "uuid": "DqQVP95SSVuypgioL9uoYw",
+        "name": "Refrigerant Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of refrigerant used by the chiller",
+        "context": "t"
+    },
+    {
+        "uuid": "oqE1BuJKRz-BBgsNgR81zg",
+        "name": "System Served Cold Side",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "The system and/or equipment connected to the cold side of the heat exchanger",
+        "context": "e"
+    },
+    {
+        "uuid": "5xgqzWojRsGKA4gpjt_UIg",
+        "name": "System Served Hot Side",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "The system and/or equipment connected to the hot side of the heat exchanger",
+        "context": "e"
+    },
+    {
+        "uuid": "Q_TafsSrT9eIpbxeRCIiPQ",
+        "name": "System Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of mechanical system",
+        "context": "t"
+    },
+    {
+        "uuid": "OscULN5lQ1W92z0BTvSZyw",
+        "name": "Tank Function",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Function of the tank in the facility",
+        "context": "t"
+    },
+    {
+        "uuid": "b0X3QVRrQmyUq4H6QCo6bw",
+        "name": "Tank Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Above or below ground",
+        "context": "t"
+    },
+    {
+        "uuid": "8c-Qi73VT8eo9JnKldnpDg",
+        "name": "Temperature",
+        "category": "Mechanical",
+        "dataType": 3,
+        "forgeUnit": "fahrenheit",
+        "forgeSymbol": "degreeF",
+        "forgeSpec": "hvac.temperature",
+        "precision": 2,
+        "description": "Maximum operating temperature",
+        "context": "t"
+    },
+    {
+        "uuid": "BU6vgqEbTo2UmEVUXH4fOA",
+        "name": "Water Heater Storage",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Description of the water heater storage method",
+        "context": "t"
+    },
+    {
+        "uuid": "Y8JNcVw2TuOwn02HXAKliQ",
+        "name": "Water Heater Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of water heater",
+        "context": "t"
+    },
+    {
+        "uuid": "t6dkja6mTRuuH0WUitXo_g",
+        "name": "Water Treatment Type",
+        "category": "Mechanical",
+        "dataType": 20,
+        "description": "Type of water treatment system",
+        "context": "t"
+    },
+    {
+        "uuid": "paXGzSlEQKSuzYQFgzG7wQ",
+        "name": "Air Flow",
+        "category": "HVAC",
+        "dataType": 2,
+        "forgeUnit": "cubicFeetPerMinute",
+        "forgeSymbol": "cfm",
+        "forgeSpec": "hvac.airFlow",
+        "description": "Design air flow",
+        "context": "t"
+    },
+    {
+        "uuid": "BSuW48XDT5iZG_n8z1mDSw",
+        "name": "Air Flow, Max",
+        "category": "HVAC",
+        "dataType": 2,
+        "forgeUnit": "cubicFeetPerMinute",
+        "forgeSymbol": "cfm",
+        "forgeSpec": "hvac.airFlow",
+        "description": "Maximum air flow",
+        "context": "t"
+    },
+    {
+        "uuid": "cOVQyn9pS4OrGw0gd2ZHGg",
+        "name": "Air Flow, Min",
+        "category": "HVAC",
+        "dataType": 2,
+        "forgeUnit": "cubicFeetPerMinute",
+        "forgeSymbol": "cfm",
+        "forgeSpec": "hvac.airFlow",
+        "description": "Minimum air flow",
+        "context": "t"
+    },
+    {
+        "uuid": "cm-0LcGbTF6izqnLPMnhsg",
+        "name": "Fan CFM",
+        "category": "HVAC",
+        "dataType": 2,
+        "description": "Design air flow",
+        "context": "t"
+    },
+    {
+        "uuid": "CWovYb2TRbu-sNleW_n5GA",
+        "name": "Fan Type",
+        "category": "HVAC",
+        "dataType": 20,
+        "description": "Type of fan",
+        "context": "t"
+    },
+    {
+        "uuid": "gXJ3YPI4RhWncgr8lA7CfQ",
+        "name": "Filter Type",
+        "category": "HVAC",
+        "dataType": 20,
+        "description": "Type of air filter",
+        "context": "t"
+    },
+    {
+        "uuid": "ZVUxkcCDTZGa_gVoRKWL6A",
+        "name": "Heating Coil Flow Rate",
+        "category": "HVAC",
+        "dataType": 3,
+        "forgeUnit": "usGallonsPerMinute",
+        "forgeSymbol": "gpm",
+        "forgeSpec": "piping.flow",
+        "precision": 2,
+        "description": "Flow rate of the heating coil",
+        "context": "t"
+    },
+    {
+        "uuid": "GRh5c0itSw-I0ndo4_HdxA",
+        "name": "Heating Coil Heat Flow",
+        "category": "HVAC",
+        "dataType": 3,
+        "forgeUnit": "usGallonsPerMinute",
+        "forgeSymbol": "gpm",
+        "forgeSpec": "piping.flow",
+        "precision": 2,
+        "description": "Amount of heat flowing from the heating coil",
+        "context": "t"
+    },
+    {
+        "uuid": "U3VFPVnBTwSjlgXS8QeQsg",
+        "name": "Heating Coil Phases",
+        "category": "HVAC",
+        "dataType": 2,
+        "description": "Number of phases of heating coil",
+        "context": "t"
+    },
+    {
+        "uuid": "18uh4EVlTr-KSeGlhH6RfA",
+        "name": "Heating Coil Type",
+        "category": "HVAC",
+        "dataType": 20,
+        "description": "Type of heating coil",
+        "context": "t"
+    },
+    {
+        "uuid": "-9JiABW9SLSIc0oHaTi_bg",
+        "name": "Heating Coil Voltage",
+        "category": "HVAC",
+        "dataType": 2,
+        "forgeUnit": "volts",
+        "forgeSymbol": "volt",
+        "forgeSpec": "electrical.potential",
+        "description": "Voltage of heating coil",
+        "context": "t"
+    },
+    {
+        "uuid": "TC7nDQJzQcWTqo9SecpYvw",
+        "name": "Heating Coil Wattage",
+        "category": "HVAC",
+        "dataType": 2,
+        "forgeUnit": "kilowatts",
+        "forgeSymbol": "kW",
+        "forgeSpec": "electrical.apparentPower",
+        "description": "Wattage of heating coil",
+        "context": "t"
+    },
+    {
+        "uuid": "H6nDrMlDTPykkQ7PLeJG3Q",
+        "name": "Heating or Cooling Output",
+        "category": "HVAC",
+        "dataType": 2,
+        "forgeUnit": "britishThermalUnitsPerHour",
+        "forgeSymbol": "btuPerH",
+        "forgeSpec": "hvac.power",
+        "description": "Amount of heating or cooling output",
+        "context": "t"
+    },
+    {
+        "uuid": "Q0tT0imuSrKl2Z9lyBleUA",
+        "name": "Heat Recovery Unit Type",
+        "category": "HVAC",
+        "dataType": 20,
+        "description": "Type of heat recovery unit",
+        "context": "t"
+    },
+    {
+        "uuid": "C5i7LlAjS763tYSBxWVw0A",
+        "name": "Inlet Size",
+        "category": "HVAC",
+        "dataType": 3,
+        "forgeUnit": "inches",
+        "forgeSymbol": "in",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Size of the inlet",
+        "context": "t"
+    },
+    {
+        "uuid": "iMvMha4hRUCiBoMYKCXdZg",
+        "name": "Amperage",
+        "category": "Electrical",
+        "dataType": 3,
+        "forgeUnit": "amperes",
+        "forgeSymbol": "ampere",
+        "forgeSpec": "electrical.current",
+        "description": "Maximum load/capacity, Rated Load Amps (RLA), Full Load Amps (FLA) design current, etc.",
+        "context": "t"
+    },
+    {
+        "uuid": "qVsDY_ngRiCHTk-xIu9YXw",
+        "name": "Circuit",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Panel and circuit device is connected to",
+        "context": "e"
+    },
+    {
+        "uuid": "VpoakhY_SdKWzt63Qx-ZAA",
+        "name": "Cooling Type",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Type of internal cooling system used",
+        "context": "t"
+    },
+    {
+        "uuid": "KSlx2JcISEa33kB5lMFIxg",
+        "name": "Device Type",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Type of electrical device",
+        "context": "t"
+    },
+    {
+        "uuid": "esHAMnFWT8a_bQ3Ksx43iQ",
+        "name": "Disconnect Fuse Type",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Type of fuse",
+        "context": "t"
+    },
+    {
+        "uuid": "EFmBRRSWQqydIEUtagIZ7Q",
+        "name": "Efficiency",
+        "category": "Electrical",
+        "dataType": 3,
+        "precision": 2,
+        "description": "Efficiency of motor",
+        "context": "t"
+    },
+    {
+        "uuid": "pEySixbfSJ2RwqH8easHVQ",
+        "name": "Generator Type",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Type of generator",
+        "context": "t"
+    },
+    {
+        "uuid": "_DG1tR-pTqGpyqaMXnOpDQ",
+        "name": "Input Plug Type",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Type of input plug",
+        "context": "t"
+    },
+    {
+        "uuid": "fsZm_7J9ShC0eAPlbMXVGQ",
+        "name": "Lamp Type",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Number and type of Lamps/bulbs",
+        "context": "t"
+    },
+    {
+        "uuid": "zeSx7PG6QH6Z9TXQSiWF8A",
+        "name": "Number of Breakers",
+        "category": "Electrical",
+        "dataType": 2,
+        "description": "Number of breakers installed",
+        "context": "t"
+    },
+    {
+        "uuid": "kG3ck6R1SGSPnzXwrpnifw",
+        "name": "Number of Items Controlled",
+        "category": "Electrical",
+        "dataType": 2,
+        "description": "Number of items controlled by this equipment",
+        "context": "e"
+    },
+    {
+        "uuid": "Ogj8oqInRc2DmayiG8B8CA",
+        "name": "Phases",
+        "category": "Electrical",
+        "dataType": 2,
+        "description": "Number of phases",
+        "context": "t"
+    },
+    {
+        "uuid": "SKFq6SbAQD-5DwpYdulmQA",
+        "name": "Poles",
+        "category": "Electrical",
+        "dataType": 2,
+        "description": "Number of poles",
+        "context": "t"
+    },
+    {
+        "uuid": "Llg5INMCR8udE7esgPlbpQ",
+        "name": "Power",
+        "category": "Electrical",
+        "dataType": 2,
+        "forgeUnit": "horsepower",
+        "forgeSymbol": "hp",
+        "forgeSpec": "electrical.apparentPower",
+        "description": "Horsepower, continuous output, rated power, fan or motor power",
+        "context": "t"
+    },
+    {
+        "uuid": "GpCL2mJ9QAySDMDkrexvdQ",
+        "name": "Software",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Version of software or firmware",
+        "context": "e"
+    },
+    {
+        "uuid": "-1l4x2zCSSeSRJ0tWLiXOw",
+        "name": "Speed",
+        "category": "Electrical",
+        "dataType": 2,
+        "forgeUnit": "revolutionsPerMinute",
+        "forgeSymbol": "rpm",
+        "forgeSpec": "hvac.angularSpeed",
+        "description": "Rotational speed in revolutions per minute for motors or fans",
+        "context": "t"
+    },
+    {
+        "uuid": "0YvZfSLqSDSJCHhoOkVQSQ",
+        "name": "Switch Type",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Type of switch",
+        "context": "t"
+    },
+    {
+        "uuid": "iiqWquENS5CnXaTik8hpZg",
+        "name": "Switchgear Type",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Type of switchgear",
+        "context": "t"
+    },
+    {
+        "uuid": "bzITW_Y2T5ecdnHSoe2e5w",
+        "name": "Tonnage",
+        "category": "Electrical",
+        "dataType": 2,
+        "forgeUnit": "tonsOfRefrigeration",
+        "forgeSymbol": "ton",
+        "forgeSpec": "hvac.coolingLoad",
+        "description": "Size, nominal capacity, unit capacity",
+        "context": "t"
+    },
+    {
+        "uuid": "lCQ25f3_S2iBuoEXI_QQsw",
+        "name": "Transformer Function",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Function of the transformer in the facility",
+        "context": "e"
+    },
+    {
+        "uuid": "qQ8Ex-J_RIGvIMPnicbRdw",
+        "name": "Type of Solar Power System",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Type of solar power generation system",
+        "context": "t"
+    },
+    {
+        "uuid": "UZ2qB-EMTlqQviNHceZN8g",
+        "name": "Type of Lighting System",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Type of lighting system controlled by the panel",
+        "context": "e"
+    },
+    {
+        "uuid": "bj3TI27MTAuQMamJxeOQfg",
+        "name": "UPS Type",
+        "category": "Electrical",
+        "dataType": 20,
+        "description": "Type of uninterruptible power supply system",
+        "context": "t"
+    },
+    {
+        "uuid": "cHlpqr-5SLCkLfUGLu3b5g",
+        "name": "Voltage",
+        "category": "Electrical",
+        "dataType": 2,
+        "forgeUnit": "volts",
+        "forgeSymbol": "volt",
+        "forgeSpec": "electrical.potential",
+        "description": "Nominal voltage, operating voltage",
+        "context": "t"
+    },
+    {
+        "uuid": "vHFBzOhCRQqvXxeOgbwOJQ",
+        "name": "Wattage",
+        "category": "Electrical",
+        "dataType": 2,
+        "forgeUnit": "watts",
+        "forgeSymbol": "watt",
+        "forgeSpec": "electrical.apparentPower",
+        "description": "Nominal wattage / power consumption, power rating",
+        "context": "t"
+    },
+    {
+        "uuid": "RgedhKOHSaq0_Jl09b9Nfw",
+        "name": "Design Head",
+        "category": "Piping/Plumbing",
+        "dataType": 3,
+        "forgeUnit": "feet",
+        "forgeSymbol": "lf",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Height of designed head",
+        "context": "t"
+    },
+    {
+        "uuid": "uiXI7CxyRpmkw-wiipPXVg",
+        "name": "Fixture Units",
+        "category": "Piping/Plumbing",
+        "dataType": 2,
+        "description": "Number of fixture units",
+        "context": "t"
+    },
+    {
+        "uuid": "mmbjWwDyTyaTqrg1L1JLDw",
+        "name": "Pipe Connection Size, Cold",
+        "category": "Piping/Plumbing",
+        "dataType": 3,
+        "forgeUnit": "inches",
+        "forgeSymbol": "in",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Size of pipe connection for cold water",
+        "context": "t"
+    },
+    {
+        "uuid": "NCj7GUi_SNu9vRnkMtebiA",
+        "name": "Pipe Connection Size, Hot",
+        "category": "Piping/Plumbing",
+        "dataType": 3,
+        "forgeUnit": "inches",
+        "forgeSymbol": "in",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Size of pipe connection for hot water",
+        "context": "t"
+    },
+    {
+        "uuid": "VJYgU28RRYihDPTqEvnIVA",
+        "name": "Pipe Connection Size, Vent",
+        "category": "Piping/Plumbing",
+        "dataType": 3,
+        "forgeUnit": "inches",
+        "forgeSymbol": "in",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Size of pipe connection for vent",
+        "context": "t"
+    },
+    {
+        "uuid": "ZAGldNLrQgCfKop51H9kqQ",
+        "name": "Pipe Connection Size, Waste",
+        "category": "Piping/Plumbing",
+        "dataType": 3,
+        "forgeUnit": "inches",
+        "forgeSymbol": "in",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Size of pipe connection for sanitary and waste",
+        "context": "t"
+    },
+    {
+        "uuid": "fQPgFTjnQ8ir1IhRxpeStg",
+        "name": "Pipe Monitoring",
+        "category": "Piping/Plumbing",
+        "dataType": 20,
+        "description": "Type of pipe monitoring system used",
+        "context": "t"
+    },
+    {
+        "uuid": "B-YxPn8BSQueCZwuW8REmQ",
+        "name": "Piping Type",
+        "category": "Piping/Plumbing",
+        "dataType": 20,
+        "description": "Type of piping system used",
+        "context": "t"
+    },
+    {
+        "uuid": "guXbFu6DRZ6c51xSWK6fTg",
+        "name": "Pump Function",
+        "category": "Piping/Plumbing",
+        "dataType": 20,
+        "description": "Function of the pump for the system it is servicing",
+        "context": "t"
+    },
+    {
+        "uuid": "Bq2rcCysT7SXvmSH3f6W4Q",
+        "name": "Pump Type",
+        "category": "Piping/Plumbing",
+        "dataType": 20,
+        "description": "Type of pump",
+        "context": "t"
+    },
+    {
+        "uuid": "TCFSN7LPRCC_4H4B9YKalw",
+        "name": "Trap Size",
+        "category": "Piping/Plumbing",
+        "dataType": 3,
+        "forgeUnit": "inches",
+        "forgeSymbol": "in",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Size of trap",
+        "context": "t"
+    },
+    {
+        "uuid": "ZPrx_uhDRV2qL9bemMQEkg",
+        "name": "Trap Type",
+        "category": "Piping/Plumbing",
+        "dataType": 20,
+        "description": "Type of trap",
+        "context": "t"
+    },
+    {
+        "uuid": "7rJyrhteSOqLIsojLmcCxg",
+        "name": "Valve Function",
+        "category": "Piping/Plumbing",
+        "dataType": 20,
+        "description": "Function of the valve in the facility",
+        "context": "e"
+    },
+    {
+        "uuid": "p5wbZtjQRdiHwQsQUfsKrg",
+        "name": "Valve Position Type",
+        "category": "Piping/Plumbing",
+        "dataType": 20,
+        "description": "Number of valve positions",
+        "context": "t"
+    },
+    {
+        "uuid": "IPKGHftWTcC5MbovNXI7pA",
+        "name": "Valve Size",
+        "category": "Piping/Plumbing",
+        "dataType": 3,
+        "forgeUnit": "inches",
+        "forgeSymbol": "in",
+        "forgeSpec": "length",
+        "precision": 2,
+        "description": "Size of valve",
+        "context": "t"
+    },
+    {
+        "uuid": "rlSGYBzFQAy6x0Wx2hEeuw",
+        "name": "Valve Type",
+        "category": "Piping/Plumbing",
+        "dataType": 20,
+        "description": "Type of valve",
+        "context": "t"
+    },
+    {
+        "uuid": "kp8Tm3EkReiHdTNzEWp-3Q",
+        "name": "Cabinet Size",
+        "category": "Fire Protection",
+        "dataType": 20,
+        "description": "Size of fire extinguisher cabinet",
+        "context": "t"
+    },
+    {
+        "uuid": "COuDm4zIQz2yApsKQpx2hg",
+        "name": "Cabinet Type",
+        "category": "Fire Protection",
+        "dataType": 20,
+        "description": "Type of fire extinguisher cabinet",
+        "context": "t"
+    },
+    {
+        "uuid": "CXvTKX0hTqmRhdZGATb0aw",
+        "name": "Elevator Capacity",
+        "category": "Architecture",
+        "dataType": 2,
+        "description": "Weight capacity of the elevator",
+        "context": "t"
+    },
+    {
+        "uuid": "ocDrgXWKQGahSyLY-rv3Xw",
+        "name": "Elevator Function",
+        "category": "Architecture",
+        "dataType": 20,
+        "description": "Function of the elevator in the facility",
+        "context": "e"
+    },
+    {
+        "uuid": "qo-AqulGQMu1QHsTavjWxQ",
+        "name": "Elevator Speed",
+        "category": "Architecture",
+        "dataType": 3,
+        "precision": 2,
+        "description": "Designed elevator speed",
+        "context": "t"
+    },
+    {
+        "uuid": "BiS--9XPTSquS5oFRJOz3A",
+        "name": "Elevator Type",
+        "category": "Architecture",
+        "dataType": 20,
+        "description": "Elevator design type",
+        "context": "t"
+    },
+    {
+        "uuid": "sG_xj1NYTZa4o3RR2m2WSw",
+        "name": "Frame",
+        "category": "Architecture",
+        "dataType": 20,
+        "description": "Description of frame",
+        "context": "e"
+    },
+    {
+        "uuid": "6dAJAM1JT3-rto3PiR2QoA",
+        "name": "Glazing",
+        "category": "Architecture",
+        "dataType": 20,
+        "description": "Description of glazing",
+        "context": "t"
+    },
+    {
+        "uuid": "GJO11UkOSeGaPHfwEcDLcQ",
+        "name": "Hardware",
+        "category": "Architecture",
+        "dataType": 20,
+        "description": "Description of installed hardware",
+        "context": "e"
+    },
+    {
+        "uuid": "Un_9s4-dR9iVZwGrdZcoTw",
+        "name": "Number of Floors Served",
+        "category": "Architecture",
+        "dataType": 2,
+        "description": "Number of designated elevator stops",
+        "context": "e"
+    },
+    {
+        "uuid": "FsguRQ4fSsCTPi2KsNc99Q",
+        "name": "Toilet Accessory Type",
+        "category": "Architecture",
+        "dataType": 20,
+        "description": "Type of toilet accessory",
+        "context": "t"
+    },
+    {
+        "uuid": "ApcHSjtZRFGBT8bvjHX-uQ",
+        "name": "Workstation Configuration",
+        "category": "Architecture",
+        "dataType": 20,
+        "description": "Configuration of the systems furniture workstation",
+        "context": "t"
+    },
+    {
+        "uuid": "AfYY4uPCQpyJFD09scyj7w",
+        "name": "Asset Tag",
+        "category": "REC Asset",
+        "dataType": 20,
+        "description": "REC Asset",
+        "context": "e"
+    },
+    {
+        "uuid": "S23b-yBkSrCZ5zT3VdizOQ",
+        "name": "Commissioning Date",
+        "category": "REC Asset",
+        "dataType": 22,
+        "forgeUnit": "dateTime",
+        "forgeSymbol": "date",
+        "description": "REC Asset",
+        "context": "e"
+    },
+    {
+        "uuid": "IpuoNgbWQ9Sp4bMMK4Jylw",
+        "name": "Identifiers",
+        "category": "REC Asset",
+        "dataType": 20,
+        "description": "REC Asset",
+        "context": "e"
+    },
+    {
+        "uuid": "xQDWDi-UQv-YzR6MXKDSjg",
+        "name": "Initial Cost",
+        "category": "REC Asset",
+        "dataType": 20,
+        "description": "REC Asset",
+        "context": "e"
+    },
+    {
+        "uuid": "Frw1e_3RSGGt7bkcYN6ThQ",
+        "name": "Installation Date",
+        "category": "REC Asset",
+        "dataType": 22,
+        "forgeUnit": "dateTime",
+        "forgeSymbol": "date",
+        "description": "REC Asset",
+        "context": "e"
+    },
+    {
+        "uuid": "dRHfcU7RTT2G0tjsDq074Q",
+        "name": "IP Address",
+        "category": "REC Asset",
+        "dataType": 20,
+        "description": "REC Asset",
+        "context": "e"
+    },
+    {
+        "uuid": "AlBIgoYuRvKpzUXm-DnWpQ",
+        "name": "MAC Address",
+        "category": "REC Asset",
+        "dataType": 20,
+        "description": "REC Asset",
+        "context": "e"
+    },
+    {
+        "uuid": "DHRkBfswQyGQdl2T3-YtwQ",
+        "name": "Maintenance Interval",
+        "category": "REC Asset",
+        "dataType": 20,
+        "description": "REC Asset",
+        "context": "e"
+    },
+    {
+        "uuid": "ku2xH6f2Ra65zgsQ2ANbsw",
+        "name": "Model Number",
+        "category": "REC Asset",
+        "dataType": 20,
+        "description": "REC Asset",
+        "context": "e"
+    },
+    {
+        "uuid": "a7VZv7_xS3yZJuTKarVRsg",
+        "name": "Name",
+        "category": "REC Asset",
+        "dataType": 20,
+        "description": "REC Asset",
+        "context": "e"
+    },
+    {
+        "uuid": "jaNbAY7cRYCjLCc1FaRtDA",
+        "name": "Serial Number",
+        "category": "REC Asset",
+        "dataType": 20,
+        "description": "REC Asset",
+        "context": "e"
+    },
+    {
+        "uuid": "dv_ScKNWQyOSvC1kU5P0hw",
+        "name": "Turnover Date",
+        "category": "REC Asset",
+        "dataType": 22,
+        "forgeUnit": "dateTime",
+        "forgeSymbol": "date",
+        "description": "REC Asset",
+        "context": "e"
+    },
+    {
+        "uuid": "2YYK0pXNRLqjSvcRb_msjg",
+        "name": "Air Flow",
+        "category": "VAV Boxes",
+        "dataType": 3,
+        "forgeUnit": "cubicFeetPerMinute",
+        "forgeSymbol": "cfm",
+        "forgeSpec": "hvac.airFlow",
+        "precision": 2
+    },
+    {
+        "uuid": "XCHUpTZRTHm_J0gW4V4OvA",
+        "name": "Humidity",
+        "category": "Streams",
+        "dataType": 3,
+        "forgeUnit": "percentage",
+        "forgeSymbol": "percentRH",
+        "forgeSpec": "relativeHumidity",
+        "precision": 2,
+        "context": "e"
+    },
+    {
+        "uuid": "08k-qozBS2SNQLoiliQwRQ",
+        "name": "Temperature",
+        "category": "Streams",
+        "dataType": 3,
+        "forgeUnit": "fahrenheit",
+        "forgeSymbol": "degreeF",
+        "forgeSpec": "hvac.temperature",
+        "precision": 2,
+        "context": "e"
+    }
+]
