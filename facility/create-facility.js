@@ -4,6 +4,7 @@
     It uses 2-legged authentication - this requires that application is added to the account as service. It's also using same token to access ACC/BIM360 so
     it's necessary to whitelist the aplication in ACC/BIM360.
 */
+import fs from 'fs';
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { ModelState, QC } from '../common/utils.js';
@@ -47,15 +48,15 @@ async function main() {
     const facilityId = facilityResult[QC.Key];
 
     console.log(`new facility: ${facilityId}`);
-    // STEP 3 - build & apply facility template
-    const templates = await client.getFacilityTemplates();
+    // STEP 3 - build & apply facility template - we use data downloaded from Tandem app server
+    const templates = await readFile('./data/facilityTemplates.json');
     const template = templates.find(t => t.name === FACILITY_TEMPLATE_NAME);
     // find classification data related to template
-    const classifications = await client.getClassifications();
+    const classifications = await readFile('./data/classifications.json');
     const classification = classifications.find(c => c.uuid == template.classification);
 
     // combine classification and parameters
-    const params = await client.getParameters();
+    const params = await readFile('./data/parameters.json');
     const inlineTemplate = createInlineTemplate(template, classification, params);
     
     await client.applyFacilityTemplate(facilityId, inlineTemplate);
@@ -266,6 +267,28 @@ function collectNodes(node, isMasterView, pred, callback) {
     }
 }
 
+/**
+ * Reads data from local file.
+ * 
+ * @param {string} fileName 
+ * @returns {Promise<object>}
+ */
+async function readFile(fileName) {
+    return new Promise((resolve) => {
+        fs.readFile(fileName, 'utf8', (err, contents) => {
+            const data = JSON.parse(contents);
+
+            resolve(data);
+        });
+    });
+}
+
+/**
+ * Waits for specified time (in miliseconds).
+ * 
+ * @param {number} ms 
+ * @returns 
+ */
 function sleep(ms) {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
