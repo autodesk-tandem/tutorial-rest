@@ -9,7 +9,7 @@
         POST https://developer.api.autodesk.com/tandem/v1/twins/:facilityId/template
         POST https://developer.api.autodesk.com/tandem/v1/twins/:facilityId/model
         POST https://developer.api.autodesk.com/tandem/v1/twins/:facilityId/import
-        POST https://developer.api.autodesk.com/tandem/v1/models/:modelId/props
+        GET https://developer.api.autodesk.com/tandem/v1/models/:modelId/props
 */
 import fs from 'fs';
 import { createToken } from '../common/auth.js';
