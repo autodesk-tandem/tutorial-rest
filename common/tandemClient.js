@@ -432,7 +432,8 @@ export class TandemClient {
     }
 
     /**
-     * Returns manifes for given URN.
+     * Returns manifest for given URN.
+     * 
      * @param {string} urn - URN of the document.
      * @returns {Promise<object>}
      */
