@@ -3,6 +3,13 @@
     
     It uses 2-legged authentication - this requires that application is added to the account as service. It's also using same token to access ACC/BIM360 so
     it's necessary to whitelist the aplication in ACC/BIM360.
+
+    NOTE - the example uses API which is NOT SUPPORTED at the moment:
+        POST https://developer.api.autodesk.com/tandem/v1/groups/:groupId/twins
+        POST https://developer.api.autodesk.com/tandem/v1/twins/:facilityId/template
+        POST https://developer.api.autodesk.com/tandem/v1/twins/:facilityId/model
+        POST https://developer.api.autodesk.com/tandem/v1/twins/:facilityId/import
+        POST https://developer.api.autodesk.com/tandem/v1/models/:modelId/props
 */
 import fs from 'fs';
 import { createToken } from '../common/auth.js';
