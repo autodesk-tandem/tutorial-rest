@@ -269,7 +269,7 @@ export class TandemClient {
             includeHistory: includeHistory,
             skipArrays: true
         };
-        if (keys) {
+        if (keys?.length > 0) {
             inputs.keys = keys;
         }
         const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
