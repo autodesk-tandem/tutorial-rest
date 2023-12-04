@@ -59,6 +59,17 @@ export const QC = {
     Key:                `k`
 };
 
+export const ModelState = {
+    Ready:          'r',
+    Created:        'c',
+    ImportPending:  'q',
+    Importing:      'i',
+    Failed:         'f',
+    Translating:    't',
+    PostProcessing: 'p',
+    Deleted:        'd'
+};
+
 export const MutateActions = {
     Insert: 'i'
 };
