@@ -55,18 +55,10 @@ async function main() {
     const facilityId = facilityResult[QC.Key];
 
     console.log(`new facility: ${facilityId}`);
-    // STEP 3 - build & apply facility template - we use data downloaded from Tandem app server
-    const templates = await readFile('./data/facilityTemplates.json');
-    const template = templates.find(t => t.name === FACILITY_TEMPLATE_NAME);
-    // find classification data related to template
-    const classifications = await readFile('./data/classifications.json');
-    const classification = classifications.find(c => c.uuid == template.classification);
+    // STEP 3 - read & apply facility template - we use data downloaded from Tandem app server
+    const template = await readFile('./data/facilityTemplate.json');
 
-    // combine classification and parameters
-    const params = await readFile('./data/parameters.json');
-    const inlineTemplate = createInlineTemplate(template, classification, params);
-    
-    await client.applyFacilityTemplate(facilityId, inlineTemplate);
+    await client.applyFacilityTemplate(facilityId, template);
     const facility = await client.getFacility(facilityId);
 
     console.log(facility);
@@ -130,67 +122,6 @@ async function main() {
     if (modelProps.state.state === ModelState.Ready) {
         console.log(`facility succesfully created`);
     }
-}
-
-/**
- * Creates inline template which can be applied to the facility.
- * 
- * @param {object} template 
- * @param {object} classification 
- * @param {object[]} params 
- * @returns {object}
- */
-function createInlineTemplate(template, classification, params) {
-    const filterKey = (classification.uuid === 'uniformat' ? 'dtclass' :'userClass');
-
-    // add classification data
-    template.classification = classification;
-    template.classification.isTemplate = true;
-    // combine classification and parameters
-    const combinedParams = {};
-
-    for (const appFilter in template.psetMapping) {
-        const paramIds = template.psetMapping[appFilter];
-
-        for (const paramId of paramIds) {
-            const param = params.find(p => p.uuid === paramId);
-
-            if (!param) {
-                continue;
-            }
-            let clonedParam = combinedParams[paramId];
-
-            if (!clonedParam) {
-                clonedParam = {
-                    ...param,
-                    applicationFilters: new Set()
-                };
-                combinedParams[paramId] = clonedParam;
-            }
-            clonedParam.applicationFilters.add(appFilter);
-        }
-    }
-    const templateParams = Object.values(combinedParams).reduce((params, param) => {
-        param.applicationFilters = {
-            [filterKey]: [...param.applicationFilters].sort()
-        };
-        params.push(param);
-        return params;
-    }, []).sort((a, b) => a.uuid.localeCompare(b.uuid, 'en'));
-
-    const result = {
-        ...template,
-        library: true,
-        psets: [
-            {
-                uuid: template.uuid,
-                name: template.name,
-                parameters: templateParams
-            }
-        ]
-    };
-
-    return result;
 }
 
 /**

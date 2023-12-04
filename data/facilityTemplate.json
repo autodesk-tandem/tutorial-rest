@@ -1,0 +1,1325 @@
+{
+    "uuid": "JqSD5y89TWS1U-HwSK00NA",
+    "name": "Sample Template - Simple Categories",
+    "description": "",
+    "org": "",
+    "psetMapping": {
+        "01.AT": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q",
+            "LGmvalCOS8CEOz8oFkWjWg",
+            "6FPQ86vPTZa2gM-W4k9sWg",
+            "G4RtB9e_RhK4tKeKwhv8ng",
+            "paXGzSlEQKSuzYQFgzG7wQ",
+            "BSuW48XDT5iZG_n8z1mDSw",
+            "cOVQyn9pS4OrGw0gd2ZHGg"
+        ],
+        "02.CD": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q",
+            "6FPQ86vPTZa2gM-W4k9sWg",
+            "qVsDY_ngRiCHTk-xIu9YXw",
+            "KSlx2JcISEa33kB5lMFIxg",
+            "cHlpqr-5SLCkLfUGLu3b5g"
+        ],
+        "03.DD": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q",
+            "6FPQ86vPTZa2gM-W4k9sWg",
+            "qVsDY_ngRiCHTk-xIu9YXw",
+            "KSlx2JcISEa33kB5lMFIxg",
+            "cHlpqr-5SLCkLfUGLu3b5g"
+        ],
+        "04.Do": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "05.EE": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "06.EF": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "07.FA": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "08.FS": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "09.LD": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "10.LF": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "11.ME": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "12.NC": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "13.PA": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "14.PF": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "15.SD": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "16.SE": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "17.TD": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ],
+        "18.Wi": [
+            "03Jj3kx3SyOX82tm7JwADQ",
+            "gwq_ULUASMqOB4gxG3Mm8Q",
+            "ZyHwtA-RStK4qQKdem2Rfg",
+            "gSVpA95qTK6qtxJSPOUj5Q",
+            "6OuuknhjSj-x3Dko8YiTrQ",
+            "ftF8pvXMQKKC5ZTDXUWv5g",
+            "6YjaCcwLR_OFL-rmD7KGmQ",
+            "gVjCHAqUROqTJi-GSQmPMA",
+            "6YJsWImEQF6bdzXKs1ldaw",
+            "RDFJQDQNTSGOzeA_3LYBEQ",
+            "o_aWcGgNTg-eMgA5l3nBow",
+            "QPADS8qyTci-BtodOu4UHQ",
+            "gGmioaLkR9uBUzS4S4nJ1Q"
+        ]
+    },
+    "classification": {
+        "uuid": "simplecategories_v2",
+        "name": "Simple Categories",
+        "rows": [
+            [
+                "01.AT",
+                "Air Terminals",
+                1
+            ],
+            [
+                "02.CD",
+                "Communication Devices",
+                1
+            ],
+            [
+                "03.DD",
+                "Data Devices",
+                1
+            ],
+            [
+                "04.Do",
+                "Doors",
+                1
+            ],
+            [
+                "04.Do.Ext",
+                "Exterior Doors",
+                2
+            ],
+            [
+                "04.Do.Int",
+                "Interior Doors",
+                2
+            ],
+            [
+                "05.EE",
+                "Electrical Equipment",
+                1
+            ],
+            [
+                "05.EE.Ats",
+                "Automatic Transfer Switch",
+                2
+            ],
+            [
+                "05.EE.Dis",
+                "Disconnect",
+                2
+            ],
+            [
+                "05.EE.Gen",
+                "Generator",
+                2
+            ],
+            [
+                "05.EE.LPS",
+                "Lightning Protection System",
+                2
+            ],
+            [
+                "05.EE.MD",
+                "Metering Device",
+                2
+            ],
+            [
+                "05.EE.MCC",
+                "Motor Control Center",
+                2
+            ],
+            [
+                "05.EE.PDis",
+                "Panel, Distribution",
+                2
+            ],
+            [
+                "05.EE.PFAC",
+                "Panel, Fire Alarm Control",
+                2
+            ],
+            [
+                "05.EE.PLC",
+                "Panel, Lighting Control",
+                2
+            ],
+            [
+                "05.EE.PP",
+                "Panel, Power",
+                2
+            ],
+            [
+                "05.EE.PR",
+                "Panel, Receptacle",
+                2
+            ],
+            [
+                "05.EE.PSec",
+                "Panel, Security",
+                2
+            ],
+            [
+                "05.EE.PSD",
+                "Panel, Switchgear Distribution",
+                2
+            ],
+            [
+                "05.EE.PS",
+                "Paralleling Switchgear",
+                2
+            ],
+            [
+                "05.EE.PDU",
+                "Power Distribution Unit",
+                2
+            ],
+            [
+                "05.EE.SPG",
+                "Solar Power Generation System",
+                2
+            ],
+            [
+                "05.EE.Trf",
+                "Transformer",
+                2
+            ],
+            [
+                "05.EE.UPS",
+                "Uninterruptable Power Supply",
+                2
+            ],
+            [
+                "05.EE.VFC",
+                "Variable Frequency Drive",
+                2
+            ],
+            [
+                "06.EF",
+                "Electrical Fixtures",
+                1
+            ],
+            [
+                "06.EF.M",
+                "Motor",
+                2
+            ],
+            [
+                "07.FA",
+                "Fire Alarm Devices",
+                1
+            ],
+            [
+                "08.FS",
+                "Furniture Systems",
+                1
+            ],
+            [
+                "09.LD",
+                "Lighting Devices",
+                1
+            ],
+            [
+                "10.LF",
+                "Lighting Fixtures",
+                1
+            ],
+            [
+                "10.LF.Ext",
+                "Exterior Lighting Fixtures",
+                2
+            ],
+            [
+                "10.LF.Int",
+                "Interior Lighting Fixtures",
+                2
+            ],
+            [
+                "11.ME",
+                "Mechanical Equipment",
+                1
+            ],
+            [
+                "11.ME.AC",
+                "Air Compressor",
+                2
+            ],
+            [
+                "11.ME.AHU",
+                "Air Handling Unit",
+                2
+            ],
+            [
+                "11.ME.AS",
+                "Air Separator",
+                2
+            ],
+            [
+                "11.ME.ATU",
+                "Air Terminal Unit",
+                2
+            ],
+            [
+                "11.ME.Bo",
+                "Boiler",
+                2
+            ],
+            [
+                "11.ME.BSU",
+                "Branch Selector Unit",
+                2
+            ],
+            [
+                "11.ME.Ch",
+                "Chiller",
+                2
+            ],
+            [
+                "11.ME.Co",
+                "Controls for HVAC",
+                2
+            ],
+            [
+                "11.ME.CT",
+                "Cooling Tower",
+                2
+            ],
+            [
+                "11.ME.DEC",
+                "Direct Expansion Cooling Unit",
+                2
+            ],
+            [
+                "11.ME.FCU",
+                "Fan Coil Unit",
+                2
+            ],
+            [
+                "11.ME.Fan",
+                "Fan",
+                2
+            ],
+            [
+                "11.ME.FE",
+                "Fan, Exhaust",
+                2
+            ],
+            [
+                "11.ME.FRA",
+                "Fan, Relief Air",
+                2
+            ],
+            [
+                "11.ME.FR",
+                "Fan, Return",
+                2
+            ],
+            [
+                "11.ME.Fil",
+                "Filter",
+                2
+            ],
+            [
+                "11.ME.HEx",
+                "Heat Exchanger",
+                2
+            ],
+            [
+                "11.ME.HP",
+                "Heat Pump",
+                2
+            ],
+            [
+                "11.ME.HRU",
+                "Heat Recovery Unit",
+                2
+            ],
+            [
+                "11.ME.HED",
+                "Heater, Electric Duct",
+                2
+            ],
+            [
+                "11.ME.HR",
+                "Heater, Radiant",
+                2
+            ],
+            [
+                "11.ME.Hu",
+                "Humidifier",
+                2
+            ],
+            [
+                "11.ME.Pu",
+                "Pump",
+                2
+            ],
+            [
+                "11.ME.PChW",
+                "Pump, Chilled Water",
+                2
+            ],
+            [
+                "11.ME.PCon",
+                "Pump, Condensate",
+                2
+            ],
+            [
+                "11.ME.PCoW",
+                "Pump, Condenser Water",
+                2
+            ],
+            [
+                "11.ME.PFO",
+                "Pump, Fuel Oil",
+                2
+            ],
+            [
+                "11.ME.PGW",
+                "Pump, Glycol Water",
+                2
+            ],
+            [
+                "11.ME.PHW",
+                "Pump, Heating Water",
+                2
+            ],
+            [
+                "11.ME.PH",
+                "Pump, Hydronic",
+                2
+            ],
+            [
+                "11.ME.PSE",
+                "Pump, Sewage Ejector",
+                2
+            ],
+            [
+                "11.ME.PSC",
+                "Pump, Steam Condensate",
+                2
+            ],
+            [
+                "11.ME.SAC",
+                "Supplemental Air Conditioning Unit",
+                2
+            ],
+            [
+                "11.ME.TWB",
+                "Tank, Chilled Water Buffer",
+                2
+            ],
+            [
+                "11.ME.TD",
+                "Tank, Day",
+                2
+            ],
+            [
+                "11.ME.TE",
+                "Tank, Expansion",
+                2
+            ],
+            [
+                "11.ME.TUS",
+                "Tank, Underground Storage",
+                2
+            ],
+            [
+                "11.ME.VDD",
+                "Variable Air Volume Box, Dual Duct",
+                2
+            ],
+            [
+                "11.ME.VFP",
+                "Variable Air Volume Box, Fan-Powered",
+                2
+            ],
+            [
+                "11.ME.VSD",
+                "Variable Air Volume Box, Single Duct",
+                2
+            ],
+            [
+                "11.ME.WaC",
+                "Water Chiller",
+                2
+            ],
+            [
+                "11.ME.WaH",
+                "Water Heater",
+                2
+            ],
+            [
+                "11.ME.WaT",
+                "Water Treatment",
+                2
+            ],
+            [
+                "12.NC",
+                "Nurse Call Devices",
+                1
+            ],
+            [
+                "13.PA",
+                "Pipe Accessories",
+                1
+            ],
+            [
+                "13.PA.Tr",
+                "Trap",
+                2
+            ],
+            [
+                "13.PA.Va",
+                "Valve",
+                2
+            ],
+            [
+                "14.PF",
+                "Plumbing Fixtures",
+                1
+            ],
+            [
+                "14.PF.DF",
+                "Drinking Fountain",
+                2
+            ],
+            [
+                "14.PF.La",
+                "Lavatory",
+                2
+            ],
+            [
+                "14.PF.Si",
+                "Sink, Service",
+                2
+            ],
+            [
+                "14.PF.Ur",
+                "Urinal",
+                2
+            ],
+            [
+                "14.PF.WC",
+                "Water Closet",
+                2
+            ],
+            [
+                "15.SD",
+                "Security Devices",
+                1
+            ],
+            [
+                "16.SE",
+                "Specialty Equipment",
+                1
+            ],
+            [
+                "16.SE.El",
+                "Elevator",
+                2
+            ],
+            [
+                "16.SE.FEC",
+                "Fire Extinguisher Cabinet",
+                2
+            ],
+            [
+                "16.SE.Ta",
+                "Toilet Accessory",
+                2
+            ],
+            [
+                "17.TD",
+                "Telephone Devices",
+                1
+            ],
+            [
+                "18.Wi",
+                "Windows",
+                1
+            ],
+            [
+                "18.Wi.Ext",
+                "Exterior Windows",
+                2
+            ],
+            [
+                "18.Wi.Int",
+                "Interior Windows",
+                2
+            ]
+        ],
+        "isTemplate": true
+    },
+    "library": true,
+    "psets": [
+        {
+            "uuid": "JqSD5y89TWS1U-HwSK00NA",
+            "name": "Sample Template - Simple Categories",
+            "parameters": [
+                {
+                    "uuid": "03Jj3kx3SyOX82tm7JwADQ",
+                    "name": "Abbreviation",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Equipment subcategory abbreviation",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "6FPQ86vPTZa2gM-W4k9sWg",
+                    "name": "Mounting",
+                    "category": "All Disciplines",
+                    "dataType": 20,
+                    "description": "Mounting method",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "6OuuknhjSj-x3Dko8YiTrQ",
+                    "name": "Expected Life",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Expected lifespan of the equipment",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "6YjaCcwLR_OFL-rmD7KGmQ",
+                    "name": "Location",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Location of equipment",
+                    "context": "e",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "6YJsWImEQF6bdzXKs1ldaw",
+                    "name": "Model",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Model number",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "BSuW48XDT5iZG_n8z1mDSw",
+                    "name": "Air Flow, Max",
+                    "category": "HVAC",
+                    "dataType": 2,
+                    "forgeUnit": "cubicFeetPerMinute",
+                    "forgeSymbol": "cfm",
+                    "forgeSpec": "hvac.airFlow",
+                    "description": "Maximum air flow",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "cHlpqr-5SLCkLfUGLu3b5g",
+                    "name": "Voltage",
+                    "category": "Electrical",
+                    "dataType": 2,
+                    "forgeUnit": "volts",
+                    "forgeSymbol": "volt",
+                    "forgeSpec": "electrical.potential",
+                    "description": "Nominal voltage, operating voltage",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "02.CD",
+                            "03.DD"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "cOVQyn9pS4OrGw0gd2ZHGg",
+                    "name": "Air Flow, Min",
+                    "category": "HVAC",
+                    "dataType": 2,
+                    "forgeUnit": "cubicFeetPerMinute",
+                    "forgeSymbol": "cfm",
+                    "forgeSpec": "hvac.airFlow",
+                    "description": "Minimum air flow",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "ftF8pvXMQKKC5ZTDXUWv5g",
+                    "name": "Installation Date",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Date of installation",
+                    "context": "e",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "G4RtB9e_RhK4tKeKwhv8ng",
+                    "name": "Width",
+                    "category": "All Disciplines",
+                    "dataType": 3,
+                    "forgeUnit": "feet",
+                    "forgeSymbol": "lf",
+                    "forgeSpec": "length",
+                    "precision": 2,
+                    "description": "Nominal width",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "gGmioaLkR9uBUzS4S4nJ1Q",
+                    "name": "Warranty Start Date",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Date warranty begins",
+                    "context": "e",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "gSVpA95qTK6qtxJSPOUj5Q",
+                    "name": "Discipline",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Primary discipline",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "gVjCHAqUROqTJi-GSQmPMA",
+                    "name": "Manufacturer",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Manufacturer's name",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "gwq_ULUASMqOB4gxG3Mm8Q",
+                    "name": "Bar Code",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Equipment bar code",
+                    "context": "e",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "KSlx2JcISEa33kB5lMFIxg",
+                    "name": "Device Type",
+                    "category": "Electrical",
+                    "dataType": 20,
+                    "description": "Type of electrical device",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "02.CD",
+                            "03.DD"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "LGmvalCOS8CEOz8oFkWjWg",
+                    "name": "Length",
+                    "category": "All Disciplines",
+                    "dataType": 3,
+                    "forgeUnit": "feet",
+                    "forgeSymbol": "lf",
+                    "forgeSpec": "length",
+                    "precision": 2,
+                    "description": "Nominal length",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "o_aWcGgNTg-eMgA5l3nBow",
+                    "name": "Warranty Duration, Labor",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Duration of warranty for labor of installation",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "paXGzSlEQKSuzYQFgzG7wQ",
+                    "name": "Air Flow",
+                    "category": "HVAC",
+                    "dataType": 2,
+                    "forgeUnit": "cubicFeetPerMinute",
+                    "forgeSymbol": "cfm",
+                    "forgeSpec": "hvac.airFlow",
+                    "description": "Design air flow",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "QPADS8qyTci-BtodOu4UHQ",
+                    "name": "Warranty Duration, Parts",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Duration of warranty for parts",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "qVsDY_ngRiCHTk-xIu9YXw",
+                    "name": "Circuit",
+                    "category": "Electrical",
+                    "dataType": 20,
+                    "description": "Panel and circuit device is connected to",
+                    "context": "e",
+                    "applicationFilters": {
+                        "userClass": [
+                            "02.CD",
+                            "03.DD"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "RDFJQDQNTSGOzeA_3LYBEQ",
+                    "name": "Serial Number",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Equipment serial number",
+                    "context": "e",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                },
+                {
+                    "uuid": "ZyHwtA-RStK4qQKdem2Rfg",
+                    "name": "Description",
+                    "category": "General",
+                    "dataType": 20,
+                    "description": "Item description",
+                    "context": "t",
+                    "applicationFilters": {
+                        "userClass": [
+                            "01.AT",
+                            "02.CD",
+                            "03.DD",
+                            "04.Do",
+                            "05.EE",
+                            "06.EF",
+                            "07.FA",
+                            "08.FS",
+                            "09.LD",
+                            "10.LF",
+                            "11.ME",
+                            "12.NC",
+                            "13.PA",
+                            "14.PF",
+                            "15.SD",
+                            "16.SE",
+                            "17.TD",
+                            "18.Wi"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
