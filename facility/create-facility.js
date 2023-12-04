@@ -23,7 +23,6 @@ const GROUP_URN = 'YOUR_GROUP_URN';
 const ACC_ACCOUNT_ID = 'YOUR_ACC_ACCOUNT_ID';
 const ACC_PROJECT_ID = 'YOUR_ACC_PROJECT_ID';
 const ACC_FOLDER_ID = 'YOUR_ACC_FOLDER_ID';
-const FACILITY_TEMPLATE_NAME = 'Sample Template - Simple Categories';
 const INPUT_MODEL_NAME = 'racbasicsampleproject.rvt';
 
 const MASTER_VIEW_NAME = '08f99ae5-b8be-4f8d-881b-128675723c10';
