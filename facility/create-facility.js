@@ -115,14 +115,17 @@ async function main() {
     });
     // STEP 6 - wait for import to finish
     let modelProps;
+    let count = 0;
 
-    while (true) {
+    // wait for 5 mins max
+    while (count < 60) {
         modelProps = await client.getModelProps(modelResult.modelId);
 
         if ((modelProps.state.state === ModelState.Ready)  || (modelProps.state.state === ModelState.Failed)) {
             break;
         }
         await sleep(5000);
+        count++;
     }
     if (modelProps.state.state === ModelState.Ready) {
         console.log(`facility succesfully created`);
