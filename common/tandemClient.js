@@ -115,9 +115,24 @@ export class TandemClient {
     }
 
     /**
+     * @typedef {Object} TwinSettingsProps
+     * @property {{ key: string, value: Object }} props
+     */
+
+    /**
+     * @typedef {Object} TwinSettings
+     * @property {TwinSettingsProps} props
+     */
+
+    /**
+     * @typedef {Object} TwinCreateInfo
+     * @property {TwinSettings} settings
+     */
+
+    /**
      * Creates new facility.
      * @param {string} groupId - URN of the group. 
-     * @param {object} inputs 
+     * @param {TwinCreateInfo} inputs 
      * @returns {Promise<object>} 
      */
     async createFacility(groupId, inputs) {
