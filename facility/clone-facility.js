@@ -56,18 +56,25 @@ async function main() {
     }
     // STEP 4 - get facility details
     const facility = await client.getFacility(facilityId);
-    // STEP 5 - update facility name (add  suffix to existing name)
+    // STEP 5 - update facility name (add suffix to existing name)
+    // we use existing facility data as starting point
+    const newFacilityData = {
+        links: facility.links,
+        docs: facility.docs,
+        props: facility.props,
+        dateCreated: facility.dateCreated,
+        thumbnailLastUpdate: facility.thumbnailLastUpdate,
+        boundByUpperFloor: facility.boundByUpperFloor,
+        skipRoomBounders: facility.skipRoomBounders
+    };
     const name = facility.props['Identity Data']['Building Name'];
     
-    facility.props['Identity Data']['Building Name'] = `${name} - Copy`;
+    newFacilityData.props['Identity Data']['Building Name'] = `${name} - Copy`;
     // read etag from details
     const etag = Number.parseInt(facility['etag']);
 
-    // remove unused fields
-    delete facility['template'];
-    delete facility['etag'];
     // STEP 6 - update facility data
-    await client.updateFacility(facilityId, facility, etag);
+    await client.updateFacility(facilityId, newFacilityData, etag);
     console.log(`facility succesfully copied. New facility: ${facilityId}`);
 }
 
