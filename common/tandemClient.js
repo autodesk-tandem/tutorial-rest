@@ -893,4 +893,27 @@ export class TandemClient {
     
         await finished(Readable.fromWeb(res.body).pipe(stream));
     }
+
+    /**
+     * Updates facility based on provided inputs.
+     * 
+     * @param {string} facilityId - URN of the facility
+     * @param {object} facilityData - facility data
+     * @param {number} etag - last modification time
+     * @returns {Promise<object>}
+     */
+    async updateFacility(facilityId, facilityData, etag) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Etag': etag
+            },
+            body: JSON.stringify(facilityData)
+        });
+        const data = await response.json();
+
+        return data;
+    }
 }
