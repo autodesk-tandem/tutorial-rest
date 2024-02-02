@@ -90,7 +90,8 @@ export const MutateActions = {
 
 export class Encoding {
     /**
-     * Decodes bounding box of element from string
+     * Decodes bounding box of element from string.
+     * 
      * @param {string} text 
      * @param {object} offset 
      * @returns {object}
@@ -116,7 +117,50 @@ export class Encoding {
     }
 
     /**
+     * Decodes base64 encoded string.
+     * 
+     * @param {string} urn 
+     * @returns {string}
+     */
+    static decodeURN(urn) {
+        const buff = Buffer.from(urn, 'base64');
+
+        return buff.toString('ascii');
+    }
+
+    /**
+     * Converts Tandem element key to Revit GUID.
+     * 
+     * @param {string} key 
+     * @returns {string}
+     */
+    static toElementGUID(key) {
+        const buff = Buffer.from(key, 'base64');
+        
+        // convert to array of hex characters
+        const hex = Array.from(buff, (b) => {
+            return (`0${(b & 0xFF).toString(16)}`).slice(-2);
+        }).join('').split('');
+        // create Revit guid
+        const hexGroups = [ 8, 4, 4, 4, 12 ];
+		let pos = 0;
+        let result = [];
+
+		for (let i = 0; i < hexGroups.length; i++) {
+            let len = hexGroups[i];
+
+            result.push(hex.slice(pos, pos + len).join(''));
+            pos += len;
+		}
+        if (pos < hex.length) {
+            result.push(hex.slice(pos).join(''));
+        }
+		return result.join('-');
+    }
+
+    /**
      * Converts element short key to full key.
+     * 
      * @param {string} shortKey 
      * @param {boolean} [isLogical] 
      * @returns {string}
