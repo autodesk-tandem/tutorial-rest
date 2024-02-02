@@ -14,6 +14,16 @@ export const ElementFlags = {
     System:         0x01000004
 };
 
+export const DataType = {
+    Boolean:    1,
+    Integer:    2,
+    Double:     3,
+    Float:      4,
+    DateTime:   22,
+    Position:   24,
+    URL:        25
+};
+
 export const KeyFlags = {
     Physical:   0x00000000,
     Logical:    0x01000000
@@ -22,6 +32,7 @@ export const KeyFlags = {
 export const ColumnFamilies = {
     DtProperties:   'z',
     LMV:            '0',
+    Source:         'r',
     Standard:       'n',
     Systems:        'm',
     Refs:           'l',
@@ -37,6 +48,7 @@ export const ColumnNames = {
     Elevation:          'el',
     FamilyType:         't',
     Level:              'l',
+    OLevel:             '!l',
     Name:               'n',
     OName:              '!n',
     Parent:             'p',
@@ -52,9 +64,11 @@ export const QC = {
     Elevation:          `${ColumnFamilies.Standard}:${ColumnNames.Elevation}`,
     FamilyType:         `${ColumnFamilies.Refs}:${ColumnNames.FamilyType}`,
     Level:              `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
+    OLevel:             `${ColumnFamilies.Refs}:${ColumnNames.OLevel}`,
     Name:               `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     OName:              `${ColumnFamilies.Standard}:${ColumnNames.OName}`,
     Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
+    XRooms:            `${ColumnFamilies.Xrefs}:${ColumnNames.Rooms}`,
     XParent:            `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,
     Key:                `k`
 };
