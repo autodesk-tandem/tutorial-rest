@@ -44,7 +44,7 @@ async function main() {
         const data = await client.getStreamData(defaultModel.modelId, streamKey, from, to);
 
         for (const item in data) {
-            const propDef = schema.attributes.find(p => p.fam === ColumnFamilies.DtProperties && p.col === item);
+            const propDef = schema.attributes.find(p => p.fam === ColumnFamilies.DtProperties && p.id === item);
 
             if (!propDef) {
                 console.warn(`Unable to find property definition: ${item}`);
