@@ -24,7 +24,7 @@ async function main() {
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
 
-    // STEP 3 - iterate through facility models and get room elements from them model
+    // STEP 3 - iterate through facility models and get room elements from the model
     for (const link of facility.links) {
         const rooms = await client.getRooms(link.modelId);
         
