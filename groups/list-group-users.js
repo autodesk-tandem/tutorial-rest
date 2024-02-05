@@ -1,5 +1,5 @@
 /*
-    This example demonstrates how to list groups are their users.
+    This example demonstrates how to list groups and their users.
     
     It uses 2-legged authentication - this requires that application is added to account as service.
 */

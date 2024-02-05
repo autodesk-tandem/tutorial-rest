@@ -24,7 +24,7 @@ async function main() {
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
 
-    // STEP 3 - iterate through facility models and get all elements from them model
+    // STEP 3 - iterate through facility models and get all elements from the model
     for (const link of facility.links) {
         const elements = await client.getElements(link.modelId, undefined, [ ColumnFamilies.Standard, ColumnFamilies.Refs ]);
         const levelRoomMap = {};
@@ -51,7 +51,7 @@ async function main() {
             levelRoomMap[levelRef] = rooms;
         }
         // STEP 6 - iterate through levels and print names of related rooms
-        // we reuse elements which we already got from server and skip lement which aren't of type level
+        // we reuse elements which we already got from server and skip elements which aren't of type level
         for (const element of elements) {
             if (element[QC.ElementFlags] !== ElementFlags.Level) {
                 continue;

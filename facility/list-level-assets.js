@@ -39,7 +39,7 @@ async function main() {
                 if (!assetLevel) {
                     continue;
                 }
-                // STEP 8 - compare key with level key of an asset
+                // STEP 6 - compare key with level key of an asset
                 // if level key is matching to current level then we print out
                 // asset name.
                 if (level.k === assetLevel) {
