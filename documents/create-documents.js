@@ -2,7 +2,7 @@
     This example demonstrates how to create linked documents for given facility.
     
     It uses 2-legged authentication - this requires that application is added to facility as service. It's also using same token to access ACC/BIM360 so it's necessary
-    to whiteliste aplication in ACC/BIM360.
+    to whitelist aplication in ACC/BIM360.
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';

@@ -39,7 +39,7 @@ async function main() {
         const timestamps = getTimestamps(assets);
         const modelHistory = await client.getModelHistory(link.modelId, timestamps);
 
-        // STEP 4 - iterate through assets and print their properties including timestamp and author of change
+        // STEP 5 - iterate through assets and print their properties including timestamp and author of change
         for (const asset of assets) {
             console.log(`${asset[QC.Name][0]}`);
             console.log(`${asset[QC.Key]}`);
