@@ -68,7 +68,7 @@ export const QC = {
     Name:               `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     OName:              `${ColumnFamilies.Standard}:${ColumnNames.OName}`,
     Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
-    XRooms:            `${ColumnFamilies.Xrefs}:${ColumnNames.Rooms}`,
+    XRooms:             `${ColumnFamilies.Xrefs}:${ColumnNames.Rooms}`,
     XParent:            `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,
     Key:                `k`
 };
@@ -262,6 +262,44 @@ export class Encoding {
         const key = Encoding.makeWebsafe(keyBuff.toString('base64'));
 
         return [ modelId, key ];
+    }
+
+    /**
+     * Decodes array of keys and returns arrays of modelIds and element keys.
+     * 
+     * @param {string} text - input string;
+     * @returns {Array<Array<string>, string>}
+     */
+    static fromXrefKeyArray(text) {
+        const modelKeys = [];
+        const elementKeys = [];
+
+        if (!text) {
+            return [ modelKeys, elementKeys ];
+        }
+        const binData = Buffer.from(text, 'base64');
+        const modelBuff = Buffer.alloc(kModelIdSize);
+        const keyBuff = Buffer.alloc(kElementIdWithFlagsSize);
+        let offset = 0;
+
+        while (offset < binData.length) {
+            const size = binData.length - offset;
+
+            if (size < (kModelIdSize + kElementIdWithFlagsSize)) {
+                break;
+            }
+            binData.copy(modelBuff, offset);
+            const modelKey = Encoding.makeWebsafe(modelBuff.toString('base64'));
+
+            modelKeys.push(modelKey);
+            // element key
+            binData.copy(keyBuff, 0, offset + kModelIdSize);
+            const elementKey = Encoding.makeWebsafe(keyBuff.toString('base64'));
+
+            elementKeys.push(elementKey);
+            offset += (kModelIdSize + kElementIdWithFlagsSize);
+        }
+        return [ modelKeys, elementKeys ];
     }
 
     /**
