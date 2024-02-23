@@ -3,6 +3,7 @@
     
     It uses 2-legged authentication - this requires that application is added to the account as service.
 */
+import * as fs from 'fs';
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies, Encoding, QC } from '../common/utils.js';
