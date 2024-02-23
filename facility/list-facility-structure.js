@@ -22,13 +22,13 @@ async function main() {
 
     // STEP 2 - get facility & facility template
     const facility = await client.getFacility(FACILITY_URN);
-    // this structure is used to keep structure data
+    // this structure is used to keep structure data. it uses full keys as keys for maps.
     const data = {
-        levels: {},
-        rooms: {},
-        assets: {},
-        roomAssetsMap: {}, // map between room and assets
-        roomLevelMap: {} // map between room and level
+        levels: {}, // map between level key and level
+        rooms: {}, // map between room key and room
+        assets: {}, // map between asset key and asset
+        roomAssetsMap: {}, // map between room and assets (asset key - room key)
+        roomLevelMap: {} // map between room and level (room key - level key)
     };
     const modelRooms = [];
 
