@@ -130,6 +130,7 @@ async function main() {
             }
         }
     }
+    await saveToFile(data, 'facility-structure.json');
 }
 
 /**
@@ -180,6 +181,25 @@ function* getAssetsByRoom(data, roomKey) {
         result.push({ assetKey, asset });
     }
     return result;
+}
+
+/**
+ * Save object to JSON file.
+ * 
+ * @param {any} data 
+ * @param {string} fileName 
+ * @returns {Promise<void>}
+ */
+function saveToFile(data, fileName) {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(fileName, JSON.stringify(data), err => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
 }
 
 main()
