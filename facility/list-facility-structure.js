@@ -22,7 +22,7 @@ async function main() {
 
     // STEP 2 - get facility & facility template
     const facility = await client.getFacility(FACILITY_URN);
-    // this structure is used to keep structure data. it uses full keys as keys for maps.
+    // this structure is used to keep structure data. it uses element keys as keys for maps.
     const data = {
         levels: {}, // map between level key and level
         rooms: {}, // map between room key and room
@@ -44,7 +44,7 @@ async function main() {
 
         for (const asset of assets) {
             // unique asset key
-            const assetKey = Encoding.toFullKey(asset[QC.Key]);
+            const assetKey = asset[QC.Key];
 
             data.assets[assetKey] = asset;
             // STEP 4 - find room references. Note that reference can be within same model or across models
@@ -57,7 +57,7 @@ async function main() {
                 for (const roomKey of roomKeys) {
                     assetRooms.push({
                         modelId: modelId,
-                        roomId: Encoding.toFullKey(roomKey)
+                        roomId: roomKey
                     });
                 }
             } else {
@@ -69,7 +69,8 @@ async function main() {
                 for (let i = 0; i < modelIds.length; i++) {
                     assetRooms.push({
                         modelId: `urn:adsk.dtm:${modelIds[i]}`,
-                        roomId: elementKeys[i]
+                        // in case of xref key we need to decode from long key to short key
+                        roomId: Encoding.toShortKey(elementKeys[i])
                     });
                 }
             }
@@ -97,14 +98,14 @@ async function main() {
         const levelIds = new Set();
 
         for (const room of rooms) {
-            const roomKey = Encoding.toFullKey(room[QC.Key]);
+            const roomKey = room[QC.Key];
 
             data.rooms[roomKey] = room;
             const levelRef = room[QC.Level];
 
             if (levelRef) {
                 levelIds.add(levelRef);
-                data.roomLevelMap[roomKey] = Encoding.toFullKey(levelRef);
+                data.roomLevelMap[roomKey] = levelRef, true;
             }
         }
         // process levels
@@ -112,7 +113,7 @@ async function main() {
             const levels = await client.getElements(modelId, [... levelIds ]);
 
             for (const level of levels) {
-                const levelKey = Encoding.toFullKey(level[QC.Key]);
+                const levelKey = level[QC.Key];
 
                 data.levels[levelKey] = level;
             }
