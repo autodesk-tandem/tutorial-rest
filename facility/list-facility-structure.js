@@ -130,6 +130,7 @@ async function main() {
             }
         }
     }
+    // STEP 8 - save structure to file
     await saveToFile(data, 'facility-structure.json');
 }
 
