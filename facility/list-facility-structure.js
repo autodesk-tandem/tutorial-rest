@@ -145,33 +145,41 @@ function isDefaultModel(facilityId, modelId) {
     return defaultModelId == modelId;
 }
 
-function* getLevels(data) {
+function getLevels(data) {
+    const result = [];
+
     for (const levelKey in data.levels) {
         const level = data.levels[levelKey];
 
-        yield { levelKey, level };
+        result.push({ levelKey, level });
     }
+    return result;
 }
 
-function* getRoomsByLevel(data, levelKey) {
+function getRoomsByLevel(data, levelKey) {
+    const result = [];
+
     for (const roomKey in data.rooms) {
         if (data.roomLevelMap[roomKey] !== levelKey) {
             continue;
         }
         const room = data.rooms[roomKey];
 
-        yield { roomKey, room };
+        result.push({ roomKey, room });
     }
+    return result;
 }
 
 function* getAssetsByRoom(data, roomKey) {
     const assetKeys = data.roomAssetsMap[roomKey];
+    const result = [];
 
     for (const assetKey of assetKeys) {
         const asset = data.assets[assetKey];
 
-        yield { assetKey, asset };
+        result.push({ assetKey, asset });
     }
+    return result;
 }
 
 main()
