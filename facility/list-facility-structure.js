@@ -20,7 +20,7 @@ async function main() {
         return token;
     });
 
-    // STEP 2 - get facility & facility template
+    // STEP 2 - get facility
     const facility = await client.getFacility(FACILITY_URN);
     // this structure is used to keep structure data. it uses element keys as keys for maps.
     const data = {
