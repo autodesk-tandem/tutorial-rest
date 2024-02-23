@@ -162,7 +162,7 @@ export class Encoding {
      * Converts element short key to full key.
      * 
      * @param {string} shortKey 
-     * @param {boolean} [isLogical] 
+     * @param {boolean} isLogical 
      * @returns {string}
      */
     static toFullKey(shortKey, isLogical) {
