@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 const kModelIdSize = 16;
 const kElementIdSize = 20;
 const kElementFlagsSize = 4;
@@ -356,6 +358,22 @@ export function getMainModel(facilityData) {
     });
 
     return mainModel;
+}
+
+/**
+ * Reads data from local file.
+ * 
+ * @param {string} fileName 
+ * @returns {any}
+ */
+export async function readJSON(fileName) {
+    return new Promise((resolve) => {
+        fs.readFile(fileName, 'utf8', (err, contents) => {
+            const data = JSON.parse(contents);
+
+            resolve(data);
+        });
+    });
 }
 
 /**
