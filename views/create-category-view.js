@@ -1,0 +1,99 @@
+/*
+    This example demonstrates how to create view using given category as filter. Note the result might be slighltly different
+    compared to UI based workflow. In this case it uses property of give BASE_VIEW as template.
+    
+    It uses 2-legged authentication - this requires that application is added to facility as service.
+
+    NOTE - the example uses API which is NOT SUPPORTED at the moment:
+        POST https://developer.api.autodesk.com/tandem/v1//twins/:facilityId/views
+*/
+import { createToken } from '../common/auth.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { readJSON } from '../common/utils.js';
+
+// update values below according to your environment
+const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
+const APS_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
+const FACILITY_URN = 'YOUR_FACILITY_URN';
+const BASE_VIEW_NAME = 'Home';
+const CATEGORY_NAME = 'Doors';
+const VIEW_LABEL = 'ASSETS';
+
+async function main() {
+    // STEP 1 - obtain token. The sample uses 2-legged token but it would also work with 3-legged token
+    // assuming that user has access to the facility
+    const token = await createToken(APS_CLIENT_ID,
+        APS_CLIENT_SECRET, 'data:read data:write');
+    const client = new TandemClient(() => {
+        return token;
+    });
+    
+    // STEP 2 - get facility & views
+    const facilityId = FACILITY_URN;
+    const facility = await client.getFacility(facilityId);
+    const views = await client.getViews(facilityId);
+    // STEP 3 - find base view and category id
+    const baseView = views.find((v) => v.viewName === BASE_VIEW_NAME);
+
+    if (!baseView) {
+        throw new Error('Base view not found');
+    }
+    // categories are stored in JSON file
+    const rvtCategories = await readJSON('./data/cat_id_to_name.json');
+    const categoryId = Object.keys(rvtCategories).find((key) => rvtCategories[key] === CATEGORY_NAME);
+
+    if (!categoryId) {
+        throw new Error('Base view not found');
+    }
+    // STEP 4 - create input for new view
+    const newView = {
+        author: baseView.author,
+        camera: baseView.camera,
+        charts: baseView.charts,
+        createTime: new Date().toISOString(),
+        cutPlanes: baseView.cutPlanes,
+        facets: {
+            filters: {
+                cats: [ Number.parseInt(categoryId) ],
+                models: [],
+            },
+            isFloorplanEnabled: false,
+            settings: [
+                { id: 'models' },
+                { id: 'levels' },
+                { id: 'spaces' },
+                { id: 'classifications' },
+                { id: 'mepSystems' },
+                { id: 'systems' },
+                { id: 'cats' }
+            ]
+        },
+        heatmap: baseView.heatmap,
+        hiddenElements: baseView.hiddenElements,
+        hud: {},
+        inventory: baseView.inventory,
+        label: VIEW_LABEL,
+        version: 2,
+        viewName: CATEGORY_NAME
+    };
+
+    // STEP 5 - add models to the new view
+    for (const l of facility.links) {
+        newView.facets.filters.models.push(l.modelId);
+    }
+    // STEP 6 - create new view
+    const newViewResult = await client.createView(facilityId, newView);
+
+    console.log(`new view: ${newViewResult.id}`);
+}
+
+main()
+    .then(() => {
+        console.log('success');
+        process.exit(0);
+    })
+    .catch((err) => {
+        console.error('failure', err);
+        process.exit(1);
+    });
+
