@@ -11,7 +11,6 @@
         POST https://developer.api.autodesk.com/tandem/v1/twins/:facilityId/import
         GET https://developer.api.autodesk.com/tandem/v1/models/:modelId/props
 */
-import fs from 'fs';
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { ModelState, QC, readJSON } from '../common/utils.js';
