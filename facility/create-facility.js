@@ -11,10 +11,9 @@
         POST https://developer.api.autodesk.com/tandem/v1/twins/:facilityId/import
         GET https://developer.api.autodesk.com/tandem/v1/models/:modelId/props
 */
-import fs from 'fs';
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ModelState, QC } from '../common/utils.js';
+import { ModelState, QC, readJSON } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -55,7 +54,7 @@ async function main() {
 
     console.log(`new facility: ${facilityId}`);
     // STEP 3 - read & apply facility template - we use data downloaded from Tandem app server
-    const template = await readFile('./data/facilityTemplate.json');
+    const template = await readJSON('./data/facilityTemplate.json');
 
     await client.applyFacilityTemplate(facilityId, template);
     const facility = await client.getFacility(facilityId);
@@ -205,22 +204,6 @@ function collectNodes(node, isMasterView, pred, callback) {
         }
         collectNodes(childNode, isMasterView, pred, callback);
     }
-}
-
-/**
- * Reads data from local file.
- * 
- * @param {string} fileName 
- * @returns {Promise<object>}
- */
-async function readFile(fileName) {
-    return new Promise((resolve) => {
-        fs.readFile(fileName, 'utf8', (err, contents) => {
-            const data = JSON.parse(contents);
-
-            resolve(data);
-        });
-    });
 }
 
 /**

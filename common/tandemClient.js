@@ -221,6 +221,27 @@ export class TandemClient {
     }
 
     /**
+     * Creates saved view based on provided input.
+     * 
+     * @param {string} facilityId 
+     * @param {any} view 
+     * @returns {Promise<any>}
+     */
+    async createView(facilityId, view) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/views`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(view)
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
      * Returns stored classifications.
      * @returns {Promise<object[]>}
      */

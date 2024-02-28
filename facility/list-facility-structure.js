@@ -106,7 +106,7 @@ async function main() {
 
             if (levelRef) {
                 levelIds.add(levelRef);
-                data.roomLevelMap[roomKey] = levelRef, true;
+                data.roomLevelMap[roomKey] = levelRef;
             }
         }
         // process levels
