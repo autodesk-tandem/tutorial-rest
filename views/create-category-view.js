@@ -9,7 +9,6 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { readJSON } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -18,6 +17,17 @@ const FACILITY_URN = 'YOUR_FACILITY_URN';
 const BASE_VIEW_NAME = 'Home';
 const CATEGORY_NAME = 'Doors';
 const VIEW_LABEL = 'ASSETS';
+
+// contains mapping between category name and internal category id
+// category id is coming from Revit
+const REVIT_CATEGORIES = {
+    'Doors': -2000023,
+    'Lighting Fixtures': -2001120,
+    'Mechanical Equipment': -2001140,
+    'Plumbing Fixtures': -2001160,
+    'Walls': -2000011,
+    'Windows': -2000014
+};
 
 async function main() {
     // STEP 1 - obtain token. The sample uses 2-legged token but it would also work with 3-legged token
@@ -38,12 +48,11 @@ async function main() {
     if (!baseView) {
         throw new Error('Base view not found');
     }
-    // categories are stored in JSON file
-    const rvtCategories = await readJSON('./data/cat_id_to_name.json');
-    const categoryId = Object.keys(rvtCategories).find((key) => rvtCategories[key] === CATEGORY_NAME);
+    // find category id based on name
+    const categoryId = REVIT_CATEGORIES[CATEGORY_NAME];
 
     if (!categoryId) {
-        throw new Error('Base view not found');
+        throw new Error(`Category id not found for category: ${CATEGORY_NAME}`);
     }
     // STEP 4 - create input for new view
     const newView = {
@@ -54,7 +63,7 @@ async function main() {
         cutPlanes: baseView.cutPlanes,
         facets: {
             filters: {
-                cats: [ Number.parseInt(categoryId) ],
+                cats: [ categoryId ],
                 models: [],
             },
             isFloorplanEnabled: false,
