@@ -1,6 +1,6 @@
 /*
     This example demonstrates how to create view using given category as filter. Note the result might be slighltly different
-    compared to UI based workflow. In this case it uses property of give BASE_VIEW as template.
+    compared to UI based workflow. In this case it uses properties of given BASE_VIEW as template.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 
