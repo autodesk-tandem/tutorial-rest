@@ -53,9 +53,13 @@ async function main() {
                 continue;
             }
             // STEP 6 - print out asset name & asset type name
-            const familyType = familyTypes.find(i => i[QC.Key] === assetTypeKey);
+            // first check for name override, if empty then use default name
+            let name = asset[QC.OName];
 
-            console.log(`${asset[QC.Name]}: ${familyType?.[QC.Name]}`);
+            name ??= asset[QC.Name];
+            const familyType = familyTypes.find(i => i[QC.Key] === assetTypeKey);
+            
+            console.log(`${name}: ${familyType?.[QC.Name]}`);
         }
     }   
 }
