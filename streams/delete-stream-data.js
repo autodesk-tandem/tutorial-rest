@@ -1,5 +1,5 @@
 /*
-    This example demonstrates how to delete data from all streams.
+    This example demonstrates how to delete data from all streams. Note it deletes all data for all streams - use with caution.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
