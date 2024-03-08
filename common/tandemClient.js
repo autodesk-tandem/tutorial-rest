@@ -242,6 +242,48 @@ export class TandemClient {
     }
 
     /**
+     * Deletes stream data from given keys.
+     * 
+     * @param {string} modelId 
+     * @param {string[]} keys 
+     * @param {string} [from] 
+     * @param {string} [to] 
+     * @returns 
+     */
+    async deleteStreamsData(modelId, keys, from = undefined, to = undefined) {
+        const token = this._authProvider();
+        const inputs = {
+            keys: keys
+        };
+        const queryParams = new URLSearchParams();
+
+        if (from) {
+            queryParams.append('from', `${from}`);
+        }
+        if (to) {
+            queryParams.append('to', `${to}`);
+        }
+        // if there are no input parameters, then delete all stream data
+        if (queryParams.size === 0) {
+            queryParams.append('allSubstreams', 1);
+        }
+        let url = `${this.basePath}/timeseries/models/${modelId}/deletestreamsdata`;
+
+        if (queryParams.size > 0) {
+            url += `?${queryParams}`;
+        }
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        
+        return;
+    }
+
+    /**
      * Returns stored classifications.
      * @returns {Promise<object[]>}
      */
