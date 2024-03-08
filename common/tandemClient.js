@@ -244,19 +244,23 @@ export class TandemClient {
     /**
      * Deletes stream data from given keys.
      * 
-     * @param {string} modelId 
-     * @param {string[]} keys 
-     * @param {string} [from] 
-     * @param {string} [to] 
-     * @returns 
+     * @param {string} modelId - urn of the model which owns the streams.
+     * @param {string[]} keys - stream keys (fully qualified).
+     * @param {string[]} [substreams] - optional array of parameter ids to delete their value. if not provided all stream data will be deleted.
+     * @param {string} [from] - optional lower time boundary (yyyy-MM-dd)
+     * @param {string} [to] - optional upper time boundary (yyyy-MM-dd)
+     * @returns {Promise<void>}
      */
-    async deleteStreamsData(modelId, keys, from = undefined, to = undefined) {
+    async deleteStreamsData(modelId, keys, substreams = undefined, from = undefined, to = undefined) {
         const token = this._authProvider();
         const inputs = {
             keys: keys
         };
         const queryParams = new URLSearchParams();
 
+        if (substreams) {
+            queryParams.append('substreams', `${substreams.join(',')}`);
+        }
         if (from) {
             queryParams.append('from', `${from}`);
         }
