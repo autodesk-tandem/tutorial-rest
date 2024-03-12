@@ -28,8 +28,8 @@ async function main() {
 
     // STEP 3 - get streams
     const streams = await client.getStreams(defaultModel.modelId);
-    // STEP 4 - get fully qualified stream keys
-    const keys = streams.map(s => Encoding.toFullKey(s[QC.Key], true));
+    // STEP 4 - get stream keys
+    const keys = streams.map(s => s[QC.Key]);
     // STEP 5 - delete stream data
     await client.deleteStreamsData(defaultModel.modelId, keys);
 }
