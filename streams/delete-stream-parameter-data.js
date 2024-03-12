@@ -36,7 +36,7 @@ async function main() {
     if (!stream) {
         throw new Error(`Stream ${STREAM_NAME} not found`);
     }
-    // STEP 5 - get stream data
+    // STEP 5 - get stream data - we use full key because getStreamData expects full key
     const streamKey = Encoding.toFullKey(stream[QC.Key], true);
     const streamData = await client.getStreamData(defaultModel.modelId, streamKey);
     // STEP 6 - find substream by parameter name
