@@ -242,6 +242,52 @@ export class TandemClient {
     }
 
     /**
+     * Deletes stream data from given keys.
+     * 
+     * @param {string} modelId - urn of the model which owns the streams.
+     * @param {string[]} keys - stream keys (fully qualified).
+     * @param {string[]} [substreams] - optional array of parameter ids to delete their value. if not provided all stream data will be deleted.
+     * @param {string} [from] - optional lower time boundary (yyyy-MM-dd)
+     * @param {string} [to] - optional upper time boundary (yyyy-MM-dd)
+     * @returns {Promise<void>}
+     */
+    async deleteStreamsData(modelId, keys, substreams = undefined, from = undefined, to = undefined) {
+        const token = this._authProvider();
+        const inputs = {
+            keys: keys
+        };
+        const queryParams = new URLSearchParams();
+
+        if (substreams) {
+            queryParams.append('substreams', `${substreams.join(',')}`);
+        }
+        if (from) {
+            queryParams.append('from', `${from}`);
+        }
+        if (to) {
+            queryParams.append('to', `${to}`);
+        }
+        // if there are no input parameters, then delete all stream data
+        if (queryParams.size === 0) {
+            queryParams.append('allSubstreams', 1);
+        }
+        let url = `${this.basePath}/timeseries/models/${modelId}/deletestreamsdata`;
+
+        if (queryParams.size > 0) {
+            url += `?${queryParams}`;
+        }
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        
+        return;
+    }
+
+    /**
      * Returns stored classifications.
      * @returns {Promise<object[]>}
      */
