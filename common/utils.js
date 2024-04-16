@@ -13,7 +13,8 @@ export const ElementFlags = {
     FamilyType:     0x01000000,
     Level:          0x01000001,
     Stream:         0x01000003,
-    System:         0x01000004
+    System:         0x01000004,
+    GenericAsset:   0x01000005
 };
 
 export const DataType = {
@@ -60,6 +61,7 @@ export const ColumnNames = {
 
 export const QC = {
     BoundingBox:        `${ColumnFamilies.LMV}:${ColumnNames.BoundingBox}`,
+    CategoryId:         `${ColumnFamilies.Standard}:${ColumnNames.CategoryId}`,
     Classification:     `${ColumnFamilies.Standard}:${ColumnNames.Classification}`,
     OClassification:    `${ColumnFamilies.Standard}:${ColumnNames.OClassification}`,
     ElementFlags:       `${ColumnFamilies.Standard}:${ColumnNames.ElementFlags}`,
@@ -361,6 +363,46 @@ export function getMainModel(facilityData) {
 }
 
 /**
+ * Checks if classification b is based on classification a.
+ * 
+ * @param {string} a 
+ * @param {string} b 
+ * @returns {boolean}
+ */
+export function matchClassification(a, b) {
+    const bLength = b.length;
+
+	while(b[bLength - 1] == '0' && b[bLength-2] === '0') {
+		const c = b[bLength - 3];
+
+		if (c === ' ' || c === '.') {
+            bLength -= 3;
+        } else {
+            break;
+        }
+	}
+	// 'startsWith' ignoring non-alphanumeric.
+	let ai = 0, ac = a.charCodeAt(ai),
+		bi = 0, bc = b.charCodeAt(bi);
+
+	while (ai < a.length && bi < bLength) {
+		if (ac !== bc)  {
+            return false;
+        }
+		ai += 1;
+		while(ai < a.length && !isAlphaNumeric(ac = a.charCodeAt(ai))) {
+            ai += 1;
+        }
+		bi += 1;
+		while(bi < bLength && !isAlphaNumeric(bc = b.charCodeAt(bi)))  {
+            bi += 1;
+        }
+	}
+	return bi === bLength;
+
+}
+
+/**
  * Reads data from local file.
  * 
  * @param {string} fileName 
@@ -374,6 +416,19 @@ export async function readJSON(fileName) {
             resolve(data);
         });
     });
+}
+
+/**
+ * Check if character is alphanumeric.
+ * 
+ * @param {string} code 
+ * @returns {boolean}
+ */
+function isAlphaNumeric(code) {
+	return code && // code 0 is not alphanumeric
+		(code > 47 && code < 58) || // 0-9
+		(code > 64 && code < 91) || // A-Z
+		(code > 96 && code < 123);  // a-z
 }
 
 /**

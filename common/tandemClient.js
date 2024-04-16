@@ -115,6 +115,27 @@ export class TandemClient {
     }
 
     /**
+     * Adds new element to the model.
+     * 
+     * @param {string} modelId - URN of the model.
+     * @param {object} inputs 
+     * @returns {Promise}
+     */
+    async createElement(modelId, inputs) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/modeldata/${modelId}/create`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
      * @typedef {Object} TwinSettingsProps
      * @property {{ key: string, value: Object }} props
      */
