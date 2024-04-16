@@ -1,7 +1,7 @@
 /*
     This example demonstrates how to get history of elements within facility.
     
-    It uses 2-legged authentication - this requires athat application is added to facility as service.
+    It uses 2-legged authentication - this requires that application is added to facility as service.
 
     NOTE - This example uses API which is NOT SUPPORTED at the moment:
         POST https://developer.api.autodesk.com/tandem/v1/modeldata/:modelId/history

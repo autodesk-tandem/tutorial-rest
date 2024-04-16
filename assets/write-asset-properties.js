@@ -1,7 +1,7 @@
 /*
     This example demonstrates how to update properties of an asset.
     
-    It uses 2-legged authentication - this requires athat application is added to facility as service.
+    It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
