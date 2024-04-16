@@ -13,7 +13,8 @@ export const ElementFlags = {
     FamilyType:     0x01000000,
     Level:          0x01000001,
     Stream:         0x01000003,
-    System:         0x01000004
+    System:         0x01000004,
+    GenericAsset:   0x01000005
 };
 
 export const DataType = {
@@ -60,6 +61,7 @@ export const ColumnNames = {
 
 export const QC = {
     BoundingBox:        `${ColumnFamilies.LMV}:${ColumnNames.BoundingBox}`,
+    CategoryId:         `${ColumnFamilies.Standard}:${ColumnNames.CategoryId}`,
     Classification:     `${ColumnFamilies.Standard}:${ColumnNames.Classification}`,
     OClassification:    `${ColumnFamilies.Standard}:${ColumnNames.OClassification}`,
     ElementFlags:       `${ColumnFamilies.Standard}:${ColumnNames.ElementFlags}`,
