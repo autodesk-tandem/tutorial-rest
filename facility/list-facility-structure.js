@@ -173,7 +173,7 @@ function getRoomsByLevel(data, levelKey) {
     return result;
 }
 
-function* getAssetsByRoom(data, roomKey) {
+function getAssetsByRoom(data, roomKey) {
     const assetKeys = data.roomAssetsMap[roomKey];
     const result = [];
 
