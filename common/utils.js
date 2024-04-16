@@ -363,6 +363,46 @@ export function getMainModel(facilityData) {
 }
 
 /**
+ * Checks if classification b is based on classification a.
+ * 
+ * @param {string} a 
+ * @param {string} b 
+ * @returns {boolean}
+ */
+export function matchClassification(a, b) {
+    const bLength = b.length;
+
+	while(b[bLength - 1] == '0' && b[bLength-2] === '0') {
+		const c = b[bLength - 3];
+
+		if (c === ' ' || c === '.') {
+            bLength -= 3;
+        } else {
+            break;
+        }
+	}
+	// 'startsWith' ignoring non-alphanumeric.
+	let ai = 0, ac = a.charCodeAt(ai),
+		bi = 0, bc = b.charCodeAt(bi);
+
+	while (ai < a.length && bi < bLength) {
+		if (ac !== bc)  {
+            return false;
+        }
+		ai += 1;
+		while(ai < a.length && !isAlphaNumeric(ac = a.charCodeAt(ai))) {
+            ai += 1;
+        }
+		bi += 1;
+		while(bi < bLength && !isAlphaNumeric(bc = b.charCodeAt(bi)))  {
+            bi += 1;
+        }
+	}
+	return bi === bLength;
+
+}
+
+/**
  * Reads data from local file.
  * 
  * @param {string} fileName 
@@ -376,6 +416,19 @@ export async function readJSON(fileName) {
             resolve(data);
         });
     });
+}
+
+/**
+ * Check if character is alphanumeric.
+ * 
+ * @param {string} code 
+ * @returns {boolean}
+ */
+function isAlphaNumeric(code) {
+	return code && // code 0 is not alphanumeric
+		(code > 47 && code < 58) || // 0-9
+		(code > 64 && code < 91) || // A-Z
+		(code > 96 && code < 123);  // a-z
 }
 
 /**
