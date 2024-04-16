@@ -112,6 +112,7 @@ async function main() {
             value
         ]);
     }
+    // STEP 7 - create new asset. Note that generic asset should be added to default model only.
     const result = await client.createElement(defaultModel.modelId, inputs);
 
     console.log(`New asset created: ${result.key}`);
