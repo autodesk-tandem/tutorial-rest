@@ -50,14 +50,14 @@ async function main() {
 
     console.log(`new facility: ${facilityId}`);
     // STEP 3 - read & apply facility template - we use data downloaded from Tandem app server
-    const template = await readJSON('./data/facilityTemplate.json');
+    const template = readJSON('./data/facilityTemplate.json');
 
     await client.applyFacilityTemplate(facilityId, template);
     // STEP 4 - create link to upload file to S3
     console.log(`uploading file: ${INPUT_MODEL_NAME}`);
     const uploadLink = await client.createUploadLink(facilityId, path.basename(INPUT_MODEL_NAME));
     // STEP 5 - upload file
-    const fileContent = await readBinary(INPUT_MODEL_NAME);
+    const fileContent = readBinary(INPUT_MODEL_NAME);
 
     const uploadResult = await fetch(uploadLink.url, {
         method: 'PUT',
