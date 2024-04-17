@@ -78,7 +78,7 @@ export class TandemClient {
      * Creates link to upload file.
      * 
      * @param {string} facilityId 
-     * @param {string} fileName 
+     * @param {object} inputs 
      * @returns {Promise}
      */
     async confirmUpload(facilityId, inputs) {
