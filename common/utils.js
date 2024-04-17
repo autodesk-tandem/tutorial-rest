@@ -403,10 +403,24 @@ export function matchClassification(a, b) {
 }
 
 /**
- * Reads data from local file.
+ * Reads binary data from local file.
  * 
  * @param {string} fileName 
- * @returns {any}
+ * @returns {Promise<any>}
+ */
+export async function readBinary(fileName) {
+    return new Promise((resolve) => {
+        fs.readFile(fileName, (err, contents) => {
+            resolve(contents);
+        });
+    });
+}
+
+/**
+ * Reads JSON data from local file.
+ * 
+ * @param {string} fileName 
+ * @returns {Promise<any>}
  */
 export async function readJSON(fileName) {
     return new Promise((resolve) => {
