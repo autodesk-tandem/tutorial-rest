@@ -56,7 +56,7 @@ async function main() {
     // STEP 4 - create link to upload file to S3
     console.log(`uploading file: ${INPUT_MODEL_NAME}`);
     const uploadLink = await client.createUploadLink(facilityId, path.basename(INPUT_MODEL_NAME));
-    // STEP 5 - upload file
+    // STEP 5 - upload file. Note it may not work for large files - in this case would be better to use streaming
     const fileContent = readBinary(INPUT_MODEL_NAME);
 
     const uploadResult = await fetch(uploadLink.url, {
