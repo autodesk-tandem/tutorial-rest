@@ -75,6 +75,26 @@ export class TandemClient {
     }
 
     /**
+     * Creates link to upload file.
+     * 
+     * @param {string} facilityId 
+     * @param {string} fileName 
+     * @returns {Promise}
+     */
+    async confirmUpload(facilityId, inputs) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/confirmupload`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+
+        return;
+    }
+
+    /**
      * Adds default model to the facility.
      * @param {string} facilityId - URN of the facility.
      * @param {object} inputs 
@@ -239,6 +259,30 @@ export class TandemClient {
         const data = await response.json();
 
         return data.key;
+    }
+
+    /**
+     * Creates link to upload file.
+     * 
+     * @param {string} facilityId 
+     * @param {string} fileName 
+     * @returns {Promise<object>}
+     */
+    async createUploadLink(facilityId, fileName) {
+        const token = this._authProvider();
+        const inputs = {
+            realFileName: fileName
+        };
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/s3uploadlink`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inputs)
+        });
+        const data = await response.json();
+
+        return data;
     }
 
     /**
