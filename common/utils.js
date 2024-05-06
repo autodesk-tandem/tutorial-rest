@@ -313,6 +313,9 @@ export class Encoding {
      * @returns {string}
      */
     static toXrefKey(modelId, key) {
+        if (modelId.startsWith('urn:')) {
+            modelId = modelId.replace('urn:adsk.dtm:', '');
+        }
         const modelBuff = Buffer.from(Encoding.makeWebsafe(modelId), 'base64');
         const elementBuff = Buffer.from(Encoding.makeWebsafe(key), 'base64');
         const result = Buffer.alloc(kModelIdSize + kElementIdWithFlagsSize);
