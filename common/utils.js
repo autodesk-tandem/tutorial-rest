@@ -56,6 +56,7 @@ export const ColumnNames = {
     OName:              '!n',
     Parent:             'p',
     Rooms:              'r',
+    Settings:           's',
     UniformatClass:     'u'
 };
 
@@ -72,6 +73,7 @@ export const QC = {
     Name:               `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     OName:              `${ColumnFamilies.Standard}:${ColumnNames.OName}`,
     Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
+    Settings:           `${ColumnFamilies.Standard}:${ColumnNames.Settings}`,
     XRooms:             `${ColumnFamilies.Xrefs}:${ColumnNames.Rooms}`,
     XParent:            `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,
     Key:                `k`
