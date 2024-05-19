@@ -96,6 +96,18 @@ export const MutateActions = {
 
 export class Encoding {
     /**
+     * Decodes base64 encoded string.
+     * 
+     * @param {string} text 
+     * @returns {string}
+     */
+    static decode(text) {
+        const buff = Buffer.from(text, 'base64');
+
+        return buff.toString('ascii');
+    }
+
+    /**
      * Decodes bounding box of element from string.
      * 
      * @param {string} text 
@@ -120,18 +132,6 @@ export class Encoding {
             maxz = Math.max(maxz, buff.readFloatLE(i + 20) + offset.z);
         }
         return { minx, miny, minz, maxx, maxy, maxz };
-    }
-
-    /**
-     * Decodes base64 encoded string.
-     * 
-     * @param {string} urn 
-     * @returns {string}
-     */
-    static decodeURN(urn) {
-        const buff = Buffer.from(urn, 'base64');
-
-        return buff.toString('ascii');
     }
 
     /**
