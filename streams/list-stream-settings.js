@@ -39,7 +39,7 @@ async function main() {
         if (!streamSettings) {
             continue;
         }
-        // STEp 5 - decode settings and print thresholds
+        // STEP 5 - decode settings and print thresholds
         const settings = Encoding.decodeStreamSettings(streamSettings);
 
         if (!settings) {
