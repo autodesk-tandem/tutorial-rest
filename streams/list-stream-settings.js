@@ -51,7 +51,23 @@ async function main() {
 
         for (const key of keys) {
             console.log(`    ${settings.thresholds[key].name}`);
+            if (settings.thresholds[key].lower) {
+                console.log(`      lower:`);
+                printThreshold(settings.thresholds[key].lower, 8);
+            }
+            if (settings.thresholds[key].upper) {
+                console.log(`      upper:`);
+                printThreshold(settings.thresholds[key].upper, 8);
+            }
         }
+    }
+}
+
+function printThreshold(threshold, spaces) {
+    const keys = Object.keys(threshold);
+
+    for (const key of keys) {
+        console.log(`${Array(spaces + 1).join(' ')}${key}: ${threshold[key]}`);
     }
 }
 
