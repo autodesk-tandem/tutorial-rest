@@ -135,6 +135,23 @@ export class Encoding {
     }
 
     /**
+     * Decodes stream settings from base64 encoded string.
+     * 
+     * @param {string} text 
+     * @returns {object}
+     */
+    static decodeStreamSettings(text) {
+        const settings = Encoding.decode(text);
+
+        if (!settings) {
+            return null;
+        }
+        const settingsObj = JSON.parse(settings);
+
+        return settingsObj;
+    }
+
+    /**
      * Converts Tandem element key to Revit GUID.
      * 
      * @param {string} key 

@@ -40,19 +40,17 @@ async function main() {
             continue;
         }
         // STEp 5 - decode settings and print thresholds
-        const settings = Encoding.decode(streamSettings);
+        const settings = Encoding.decodeStreamSettings(streamSettings);
 
         if (!settings) {
             continue;
         }
-        const settingsObj = JSON.parse(settings);
-
         console.log(`Stream: ${stream[QC.Name]}`);
         console.log(`  Thresholds:`);
-        const keys = Object.keys(settingsObj.thresholds);
+        const keys = Object.keys(settings.thresholds);
 
         for (const key of keys) {
-            console.log(`    ${settingsObj.thresholds[key].name}`);
+            console.log(`    ${settings.thresholds[key].name}`);
         }
     }
 }
