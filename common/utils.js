@@ -56,6 +56,7 @@ export const ColumnNames = {
     OName:              '!n',
     Parent:             'p',
     Rooms:              'r',
+    Settings:           's',
     UniformatClass:     'u'
 };
 
@@ -72,6 +73,7 @@ export const QC = {
     Name:               `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     OName:              `${ColumnFamilies.Standard}:${ColumnNames.OName}`,
     Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
+    Settings:           `${ColumnFamilies.Standard}:${ColumnNames.Settings}`,
     XRooms:             `${ColumnFamilies.Xrefs}:${ColumnNames.Rooms}`,
     XParent:            `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,
     Key:                `k`
@@ -93,6 +95,18 @@ export const MutateActions = {
 };
 
 export class Encoding {
+    /**
+     * Decodes base64 encoded string.
+     * 
+     * @param {string} text 
+     * @returns {string}
+     */
+    static decode(text) {
+        const buff = Buffer.from(text, 'base64');
+
+        return buff.toString('ascii');
+    }
+
     /**
      * Decodes bounding box of element from string.
      * 
@@ -121,15 +135,20 @@ export class Encoding {
     }
 
     /**
-     * Decodes base64 encoded string.
+     * Decodes stream settings from base64 encoded string.
      * 
-     * @param {string} urn 
-     * @returns {string}
+     * @param {string} text 
+     * @returns {object}
      */
-    static decodeURN(urn) {
-        const buff = Buffer.from(urn, 'base64');
+    static decodeStreamSettings(text) {
+        const settings = Encoding.decode(text);
 
-        return buff.toString('ascii');
+        if (!settings) {
+            return null;
+        }
+        const settingsObj = JSON.parse(settings);
+
+        return settingsObj;
     }
 
     /**
