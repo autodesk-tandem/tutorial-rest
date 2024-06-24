@@ -33,6 +33,7 @@ async function main() {
     // STEP 4 - get parent data
     for (const stream of streams) {
         if (!stream[QC.XParent]) {
+            console.log(`Stream ${stream[QC.Name]} has no parent`);
             continue;
         }
         const [ parentModelId, parentKey ] = Encoding.fromXrefKey(stream[QC.XParent]);
