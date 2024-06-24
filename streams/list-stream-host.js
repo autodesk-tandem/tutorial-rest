@@ -36,6 +36,7 @@ async function main() {
             console.log(`Stream ${stream[QC.Name]} has no parent`);
             continue;
         }
+        // STEP 5 - decode and store model id and key of parent element
         const [ parentModelId, parentKey ] = Encoding.fromXrefKey(stream[QC.XParent]);
         
         streamData.push({
@@ -47,7 +48,7 @@ async function main() {
             }
         });
     }
-    // STEP 5 - build map of model to element key
+    // STEP 6 - build map of model to element key
     const modelKeys = {};
 
     for (const item of streamData) {
