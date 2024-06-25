@@ -49,21 +49,18 @@ async function main() {
         });
     }
     // STEP 6 - build map of model to element key
-    const modelKeys = {};
+    const modelKeys = new Map();
 
     for (const item of streamData) {
         const modelId = item.parent.modelId;
-        let elementKeys = modelKeys[modelId];
 
-        if (!elementKeys) {
-            elementKeys = [];
-            modelKeys[modelId] = elementKeys;
+        if (!modelKeys.has(modelId)) {
+            modelKeys.set(modelId, []);
         }
-        elementKeys.push(item.parent.key);
+        modelKeys.get(modelId).push(item.parent.key);
     }
     // STEP 6 - get element details
-    for (const modelId in modelKeys) {
-        const elementKeys = modelKeys[modelId];
+    for (const [ modelId, elementKeys] of modelKeys) {
         const elements = await client.getElements(modelId, elementKeys);
 
         for (const element of elements) {
