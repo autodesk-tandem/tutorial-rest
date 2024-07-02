@@ -42,6 +42,7 @@ The examples are organized into multiple folders based on topic:
 * **assets** - asset related examples
 * **classification** - classification related examples
 * **documents** - document related examples
+* **elements** - generics examples related to elements
 * **facility** - facility related examples
 * **groups** - group related examples
 * **history** - history related examples
