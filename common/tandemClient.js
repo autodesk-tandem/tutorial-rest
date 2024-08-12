@@ -12,13 +12,14 @@ export class TandemClient {
 
     /**
      * The callback provides valid authentication token
-     
+     *
      * @callback authCallback
      * @returns {string}
      */
 
     /**
      * Class constructor. It accepts function which returns valid authentication token.
+     * 
      * @param {authCallback} authProvider 
      */
     constructor(authProvider) {
@@ -42,6 +43,7 @@ export class TandemClient {
 
     /**
      * Applies template to facility.
+     * 
      * @param {string} facilityId - URN of the facility.
      * @param {object} template - input facility template.
      */
@@ -60,6 +62,7 @@ export class TandemClient {
 
     /**
      * Checks access to the facility.
+     * 
      * @param {string} facilityId - URN of the facility.
      * @returns {Promise<string>}
      */
@@ -96,6 +99,7 @@ export class TandemClient {
 
     /**
      * Adds default model to the facility.
+     * 
      * @param {string} facilityId - URN of the facility.
      * @param {object} inputs 
      * @returns {Promise}
@@ -116,6 +120,7 @@ export class TandemClient {
 
     /**
      * Adds documents to the facility.
+     * 
      * @param {string} facilityId 
      * @param {object[]} inputs 
      * @returns {Promise<object[]>} 
@@ -172,6 +177,7 @@ export class TandemClient {
 
     /**
      * Creates new facility.
+     * 
      * @param {string} groupId - URN of the group. 
      * @param {TwinCreateInfo} inputs 
      * @returns {Promise<object>} 
@@ -192,6 +198,7 @@ export class TandemClient {
 
     /**
      * Adds new model to the facility.
+     * 
      * @param {string} facilityId - URN of the facility.
      * @param {object} inputs 
      * @returns {Promise<object>}
@@ -212,6 +219,7 @@ export class TandemClient {
 
     /**
      * Creates new stream using provided data
+     * 
      * @param {string} token - Authentication token
      * @param {string} urn - URN of the model
      * @param {string} name - Name of the stream
@@ -333,7 +341,7 @@ export class TandemClient {
             queryParams.append('to', `${to}`);
         }
         // if there are no input parameters, then delete all stream data
-        if (queryParams.size === 0) {
+        if (!queryParams.has('substreams')) {
             queryParams.append('allSubstreams', 1);
         }
         let url = `${this.basePath}/timeseries/models/${modelId}/deletestreamsdata`;
@@ -354,6 +362,7 @@ export class TandemClient {
 
     /**
      * Returns stored classifications.
+     * 
      * @returns {Promise<object[]>}
      */
     async getClassifications() {
@@ -371,6 +380,7 @@ export class TandemClient {
 
     /**
      * Returns details for given document.
+     * 
      * @param {string} facilityId - URN of the facility.
      * @param {string} documentId - URN of the document.
      * @returns {object}
@@ -390,6 +400,7 @@ export class TandemClient {
 
     /**
      * Returns single element from given model.
+     * 
      * @param {string} urn - URN of the model.
      * @param {string} key - key of the element. 
      * @param {string[]} [columnFamilies] - optional array of column families.
@@ -403,6 +414,7 @@ export class TandemClient {
 
     /**
      * Returns elements from given model.
+     * 
      * @param {string} urn - URN of the model.
      * @param {string[]} [keys] - optional array of keys. 
      * @param {string[]} [columnFamilies] - optional array of column families.
@@ -461,6 +473,7 @@ export class TandemClient {
 
     /**
      * Returns facility based on given URN.
+     * 
      * @param {string} facilityId - URN of the facility
      * @returns {Promise<object>}
      */
@@ -479,6 +492,7 @@ export class TandemClient {
 
     /**
      * Returns facility template based on facility URN.
+     * 
      * @param {string} facilityId - URN of the facility
      * @returns {Promise<object>}
      */
@@ -497,6 +511,7 @@ export class TandemClient {
 
     /**
      * Returns stored facility templates.
+     * 
      * @returns {Promise<object[]>}
      */
     async getFacilityTemplates() {
@@ -514,6 +529,7 @@ export class TandemClient {
 
     /**
      * Returns list of groups.
+     * 
      * @returns {Promise<object[]>}
      */
     async getGroups() {
@@ -530,7 +546,8 @@ export class TandemClient {
     }
 
     /**
-     * Returns group details
+     * Returns group details.
+     * 
      * @param {string} groupId - URN of the group.
      * @returns {Promise<object>}
      */
@@ -549,6 +566,7 @@ export class TandemClient {
 
     /**
      * Returns level elements from given model.
+     * 
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<object[]>}
@@ -599,6 +617,7 @@ export class TandemClient {
 
     /**
      * Returns metadata of the model.
+     * 
      * @param {string} modelId - URN of the model
      * @returns {Promise<object>}
      */
@@ -696,6 +715,7 @@ export class TandemClient {
 
     /**
      * Returns schema of the model.
+     * 
      * @param {string} modelId - URN of the model
      * @returns {Promise<object>}
      */
@@ -714,6 +734,7 @@ export class TandemClient {
 
     /**
      * Returns stored parameters.
+     * 
      * @returns {Promise<object[]}
      */
     async getParameters() {
@@ -731,6 +752,7 @@ export class TandemClient {
 
     /**
      * Returns room elements from given model.
+     * 
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<object[]>}
@@ -761,14 +783,17 @@ export class TandemClient {
     }
 
     /**
-     * Returns stream data
+     * Returns stream data.
+     * 
      * @param {string} urn - URN of the model.
      * @param {string} streamKey - full key of the stream. 
      * @param {number} [from] - lower time boundary (in Unix epoch).
      * @param {number} [to] - upper time boundary (in Unix epoch).
+     * @param {number} [limit] - number of entries to return.
+     * @param {asc|desc} [sort] - sort order.
      * @returns {Promise<object>}
      */
-    async getStreamData(urn, streamKey, from, to) {
+    async getStreamData(urn, streamKey, from, to, limit, sort) {
         const queryParams = new URLSearchParams();
 
         if (from) {
@@ -776,6 +801,12 @@ export class TandemClient {
         }
         if (to) {
             queryParams.append('to', `${to}`);
+        }
+        if (limit) {
+            queryParams.append('limit', `${limit}`);
+        }
+        if (sort) {
+            queryParams.append('sort', `${sort}`);
         }
         const token = this._authProvider();
         let url = `${this.basePath}/timeseries/models/${urn}/streams/${streamKey}`;
@@ -796,6 +827,7 @@ export class TandemClient {
 
     /**
      * Returns stream elements from given model.
+     * 
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<object[]>}
@@ -827,6 +859,7 @@ export class TandemClient {
 
     /**
      * Returns secrets for streams.
+     * 
      * @param {string} urn - the URN of the facility.
      * @param {string[]} keys - list of stream keys to query.
      * @returns {Promise<object>}
@@ -850,6 +883,7 @@ export class TandemClient {
 
     /**
      * Returns system elements from given model.
+     * 
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<object[]>}
@@ -917,6 +951,7 @@ export class TandemClient {
 
     /**
      * Returns saved facility views.
+     * 
      * @param {string} urn - URN of the facility.
      * @returns {Promise<object[]>} - array of views.
      */
@@ -935,6 +970,7 @@ export class TandemClient {
 
     /**
      * Imports model for given facility. The model must be created using {@link createModel} function.
+     * 
      * @param {string} facilityId 
      * @param {object} inputs
      * @returns {Promise} 
@@ -952,6 +988,7 @@ export class TandemClient {
 
     /**
      * Applies provided changes (mutations) to the elements.
+     * 
      * @param {string} urn - URN of the model.
      * @param {string[]} keys - array of keys to modify.
      * @param {any[][]} mutations - arry of mutations.
@@ -982,6 +1019,7 @@ export class TandemClient {
 
     /**
      * Resets secrets for given streams.
+     * 
      * @param {string} token
      * @param {string} urn 
      * @param {string[]} streamIds 
@@ -1004,7 +1042,8 @@ export class TandemClient {
     }
 
     /**
-     * Saves document content to file
+     * Saves document content to file.
+     * 
      * @param {string} url 
      * @param {string} fileName
      * @returns {Promise} 
@@ -1024,6 +1063,27 @@ export class TandemClient {
         const stream = fs.createWriteStream(fileName);
     
         await finished(Readable.fromWeb(res.body).pipe(stream));
+    }
+
+    /**
+     * Saves document content to file.
+     * 
+     * @param {string} url 
+     * @param {string} fileName
+     * @returns {Promise} 
+     */
+    async sendStreamData(urn, streamKey, data) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/timeseries/models/${urn}/streams/${streamKey}`;
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
     }
 
     /**
