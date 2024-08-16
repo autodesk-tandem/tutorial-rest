@@ -1,6 +1,6 @@
 /*
     This example demonstrates how to delete element from the model. For the simplicity the example locates element by name.
-    Delete elements cane be restored using Restore function in the History panel.
+    Deleted elements can be restored using Restore function in the History panel.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
