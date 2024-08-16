@@ -315,6 +315,25 @@ export class TandemClient {
     }
 
     /**
+     * Deletes given elements from the model.
+     * 
+     * @param {string} modelId - urn of the model.
+     * @param {string[]} keys - element keys to delete.
+     * @param {string} desc - description of the operation.
+     * @returns {Promise<object>}
+     */
+    async deleteElements(modelId, keys, desc) {
+        const mutations = [];
+
+        for (const key of keys) {
+            mutations.push([ MutateActions.DeleteRow, '', '', '']);
+        }
+        const result = await this.mutateElements(modelId, keys, mutations, desc);
+
+        return result;
+    }
+
+    /**
      * Deletes stream data from given keys.
      * 
      * @param {string} modelId - urn of the model which owns the streams.
