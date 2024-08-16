@@ -325,9 +325,7 @@ export class TandemClient {
     async deleteElements(modelId, keys, desc) {
         const mutations = [];
 
-        for (const key of keys) {
-            mutations.push([ MutateActions.DeleteRow, '', '', '']);
-        }
+        Array(keys.length).fill([ MutateActions.DeleteRow, '', '', '']);
         const result = await this.mutateElements(modelId, keys, mutations, desc);
 
         return result;
