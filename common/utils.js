@@ -91,7 +91,10 @@ export const ModelState = {
 };
 
 export const MutateActions = {
-    Insert: 'i'
+    Delete: 'd',
+    DeleteRow: 'a',
+    Insert: 'i',
+    InsertIfDifferent: 'c'
 };
 
 export class Encoding {
