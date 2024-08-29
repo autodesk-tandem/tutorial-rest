@@ -23,7 +23,7 @@ export class TandemClient {
      * @param {authCallback} authProvider 
      */
     constructor(authProvider) {
-        this._appPath = 'https://tandem.autodesk.com/client/viewer/1.0.403';
+        this._appPath = 'https://tandem.autodesk.com/client/viewer/1.0.527';
         this._basePath = 'https://developer.api.autodesk.com/tandem/v1';
         this._otgPath = 'https://tandem.autodesk.com/otg';
         this._authProvider = authProvider;
@@ -75,6 +75,32 @@ export class TandemClient {
             }
         });
         return response.headers.get('x-dt-access-level');
+    }
+
+    /**
+     * Clones given facility.
+     * 
+     * @param {string} groupId 
+     * @param {string} facilityId 
+     * @returns {Promise<object>}
+     */
+    async cloneFacility(groupId, facilityId) {
+        const token = this._authProvider();
+        const input = {
+            clone: {
+                fromTwinUrn: facilityId
+            }
+        };
+        const response = await fetch(`${this.basePath}/groups/${groupId}/clonetwin`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(input)
+        });
+        const data = await response.json();
+
+        return data;
     }
 
     /**
@@ -374,6 +400,8 @@ export class TandemClient {
             body: JSON.stringify(inputs)
         });
         
+        const err = await response.text();
+
         return;
     }
 
