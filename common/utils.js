@@ -131,7 +131,9 @@ export class Encoding {
      * @returns {string}
      */
     static encode(text) {
-        return btoa(text);
+        const buff = Buffer.from(text, 'ascii');
+
+        return Encoding.makeWebsafe(buff.toString('base64'));
     }
 
     /**
