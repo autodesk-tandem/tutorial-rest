@@ -97,6 +97,20 @@ export const MutateActions = {
     InsertIfDifferent: 'c'
 };
 
+export const AttributeContext = {
+    Element: 'e',
+    Type: 't',
+};
+
+export const AttributeType = {
+    Boolean: 1,
+    Integer: 2,
+    Double: 3,
+    String: 20,
+    DateTime: 22,
+    Url: 25
+};
+
 export class Encoding {
     /**
      * Decodes base64 encoded string.
@@ -108,6 +122,18 @@ export class Encoding {
         const buff = Buffer.from(text, 'base64');
 
         return buff.toString('ascii');
+    }
+
+    /**
+     * Encodes text to base64.
+     * 
+     * @param {string} text 
+     * @returns {string}
+     */
+    static encode(text) {
+        const buff = Buffer.from(text, 'ascii');
+
+        return Encoding.makeWebsafe(buff.toString('base64'));
     }
 
     /**
@@ -152,6 +178,18 @@ export class Encoding {
         const settingsObj = JSON.parse(settings);
 
         return settingsObj;
+    }
+
+    /**
+     * Decodes stream settings from base64 encoded string.
+     * 
+     * @param {object} settings 
+     * @returns {string}
+     */
+    static encodeStreamSettings(settings) {
+        const text = JSON.stringify(settings);
+        
+        return Encoding.encode(text);
     }
 
     /**
