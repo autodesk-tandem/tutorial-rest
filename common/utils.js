@@ -125,7 +125,7 @@ export class Encoding {
     }
 
     /**
-     * Encodes base64 encoded string.
+     * Encodes text to base64.
      * 
      * @param {string} text 
      * @returns {string}
