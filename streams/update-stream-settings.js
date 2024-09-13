@@ -88,7 +88,7 @@ async function main() {
     }
     // STEP 8 - apply changes
     if (muts.length > 0) {
-        await client.mutateElements(defaultModel.modelId, keys, muts);
+        await client.mutateElements(defaultModel.modelId, keys, muts, 'Update streams thresholds');
     }
 }
 
