@@ -36,11 +36,10 @@ async function main() {
     if (!defaultModel) {
         throw new Error('Default model not found');
     }
-    // STEP 3 - get template for facility and related psets
+    // STEP 3 - get template for facility and related parameter set
     const template = await client.getFacilityTemplate(facilityId);
     const pset = template.psets.find(p => p.name === template.name);
     // STEP 4 - get schema
-    
     const schema = await client.getModelSchema(defaultModel.modelId);
     // STEP 5 - iterate through streams and apply threshold to streams that have parameter with name 'Temperature'
     const streams = await client.getStreams(defaultModel.modelId);
@@ -59,6 +58,7 @@ async function main() {
         }
         const parameterDef = schema.attributes.find(a => a.name === parameter.name);
         const parameterId = parameterDef.id;
+        // STEP 6 - create stream settings for specific parameter
         const streamSettings = {
             thresholds: {
             }
@@ -74,7 +74,7 @@ async function main() {
                 alert: 23
             }
         };
-        // STEP 6 - encode stream settings and store it in list of mutations
+        // STEP 7 - encode stream settings and store it in list of mutations
         const settingsEnc = Encoding.encodeStreamSettings(streamSettings);
 
         console.log(`Applying threshold to stream: ${stream[QC.Name]}`);
@@ -86,7 +86,7 @@ async function main() {
             settingsEnc
         ]);
     }
-    // STEP 7 - apply changes
+    // STEP 8 - apply changes
     if (muts.length > 0) {
         await client.mutateElements(defaultModel.modelId, keys, muts);
     }
