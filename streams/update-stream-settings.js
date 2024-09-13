@@ -58,20 +58,23 @@ async function main() {
         }
         const parameterDef = schema.attributes.find(a => a.name === parameter.name);
         const parameterId = parameterDef.id;
-        // STEP 6 - create stream settings for specific parameter
+        // STEP 6 - create stream settings for specific parameter. Note this will overwrite existing settings.
         const streamSettings = {
             thresholds: {
             }
         };
 
+        // define threshold for specific parameter
         streamSettings.thresholds[parameterId] = {
             schema: 'v1',
             name: parameter.name,
             lower: {
-                alert: 14
+                alert: 14,
+                warn: 16
             },
             upper: {
-                alert: 23
+                alert: 23,
+                warn: 21
             }
         };
         // STEP 7 - encode stream settings and store it in list of mutations
