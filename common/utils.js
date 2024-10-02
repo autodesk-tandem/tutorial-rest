@@ -22,6 +22,7 @@ export const DataType = {
     Integer:    2,
     Double:     3,
     Float:      4,
+    String:     20,
     DateTime:   22,
     Position:   24,
     URL:        25
