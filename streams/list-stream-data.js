@@ -5,7 +5,7 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ColumnFamilies, Encoding, QC, getDefaultModel } from '../common/utils.js';
+import { ColumnFamilies, DataType, Encoding, QC, getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -49,13 +49,29 @@ async function main() {
             if (!propDef) {
                 console.warn(`Unable to find property definition: ${item}`);
             }
+            const valueMap = new Map();
+
+            if (propDef && propDef.dataType === DataType.String) {
+                for (const name in propDef.allowedValues.map) {
+                    const value = propDef.allowedValues.map[name];
+
+                    valueMap.set(value, name);
+                }
+            }
             console.log(`  ${propDef?.name} (${item})`);
             const values = data[item];
 
             for (const ts in values) {
                 const date = new Date(parseInt(ts));
+                const value = values[ts];
                 
-                console.log(`    [${date.toLocaleString()}]: ${values[ts]}`);
+                if (propDef?.dataType === DataType.String) {
+                    const name = valueMap.get(value);
+
+                    console.log(`    [${date.toLocaleString()}]: ${name}`);
+                } else {
+                    console.log(`    [${date.toLocaleString()}]: ${value}`);
+                }
             }
         }
     }
