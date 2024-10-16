@@ -7,9 +7,9 @@ import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies,
     ColumnNames,
-    Encoding, 
     MutateActions, 
-    QC,
+    QC } from '../common/constants.js';
+import { Encoding,
     getDefaultModel,
     matchClassification } from '../common/utils.js';
 

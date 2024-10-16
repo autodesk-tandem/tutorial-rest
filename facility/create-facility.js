@@ -13,7 +13,8 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ModelState, QC, readJSON } from '../common/utils.js';
+import { ModelState, QC } from '../common/constants.js';
+import { readJSON } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';

@@ -9,9 +9,9 @@ import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies,
     ColumnNames,
     ElementFlags,
-    MutateActions, 
-    getDefaultModel, 
-    matchClassification} from '../common/utils.js';
+    MutateActions } from '../common/constants.js';
+import { getDefaultModel, matchClassification } from '../common/utils.js';
+    
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';

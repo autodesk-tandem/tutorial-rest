@@ -1,116 +1,15 @@
 import fs from 'fs';
 
-const kModelIdSize = 16;
-const kElementIdSize = 20;
-const kElementFlagsSize = 4;
-const kElementIdWithFlagsSize = kElementIdSize + kElementFlagsSize;
-const kRecordSize = 28;
-const kSystemIdSize = 9;
+import {
+    kElementFlagsSize,
+    kElementIdSize,
+    kElementIdWithFlagsSize,
+    kModelIdSize,
+    kRecordSize,
+    kSystemIdSize,
+    KeyFlags
+ } from './constants.js';
 
-export const ElementFlags = {
-    SimpleElement:  0x00000000,
-    Room:           0x00000005,
-    FamilyType:     0x01000000,
-    Level:          0x01000001,
-    Stream:         0x01000003,
-    System:         0x01000004,
-    GenericAsset:   0x01000005
-};
-
-export const DataType = {
-    Boolean:    1,
-    Integer:    2,
-    Double:     3,
-    Float:      4,
-    String:     20,
-    DateTime:   22,
-    Position:   24,
-    URL:        25
-};
-
-export const KeyFlags = {
-    Physical:   0x00000000,
-    Logical:    0x01000000
-};
-
-export const ColumnFamilies = {
-    DtProperties:   'z',
-    LMV:            '0',
-    Source:         'r',
-    Standard:       'n',
-    Systems:        'm',
-    Refs:           'l',
-    Xrefs:          'x'
-};
-
-export const ColumnNames = {
-    BoundingBox:        '0',
-    CategoryId:         'c',
-    Classification:     'v',
-    OClassification:    '!v',
-    ElementFlags:       'a',
-    Elevation:          'el',
-    FamilyType:         't',
-    Level:              'l',
-    OLevel:             '!l',
-    Name:               'n',
-    OName:              '!n',
-    Parent:             'p',
-    Rooms:              'r',
-    Settings:           's',
-    UniformatClass:     'u'
-};
-
-export const QC = {
-    BoundingBox:        `${ColumnFamilies.LMV}:${ColumnNames.BoundingBox}`,
-    CategoryId:         `${ColumnFamilies.Standard}:${ColumnNames.CategoryId}`,
-    Classification:     `${ColumnFamilies.Standard}:${ColumnNames.Classification}`,
-    OClassification:    `${ColumnFamilies.Standard}:${ColumnNames.OClassification}`,
-    ElementFlags:       `${ColumnFamilies.Standard}:${ColumnNames.ElementFlags}`,
-    Elevation:          `${ColumnFamilies.Standard}:${ColumnNames.Elevation}`,
-    FamilyType:         `${ColumnFamilies.Refs}:${ColumnNames.FamilyType}`,
-    Level:              `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
-    OLevel:             `${ColumnFamilies.Refs}:${ColumnNames.OLevel}`,
-    Name:               `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
-    OName:              `${ColumnFamilies.Standard}:${ColumnNames.OName}`,
-    Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
-    Settings:           `${ColumnFamilies.Standard}:${ColumnNames.Settings}`,
-    XRooms:             `${ColumnFamilies.Xrefs}:${ColumnNames.Rooms}`,
-    XParent:            `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,
-    Key:                `k`
-};
-
-export const ModelState = {
-    Ready:          'r',
-    Created:        'c',
-    ImportPending:  'q',
-    Importing:      'i',
-    Failed:         'f',
-    Translating:    't',
-    PostProcessing: 'p',
-    Deleted:        'd'
-};
-
-export const MutateActions = {
-    Delete: 'd',
-    DeleteRow: 'a',
-    Insert: 'i',
-    InsertIfDifferent: 'c'
-};
-
-export const AttributeContext = {
-    Element: 'e',
-    Type: 't',
-};
-
-export const AttributeType = {
-    Boolean: 1,
-    Integer: 2,
-    Double: 3,
-    String: 20,
-    DateTime: 22,
-    Url: 25
-};
 
 export class Encoding {
     /**
@@ -254,7 +153,7 @@ export class Encoding {
 
     /**
      * Encodes element key to system id
-     * @param {string} key 
+     * @param {string} fullKey 
      * @returns {string}
      */
     static toSystemId(fullKey) {
@@ -434,7 +333,7 @@ export function getMainModel(facilityData) {
  * @returns {boolean}
  */
 export function matchClassification(a, b) {
-    const bLength = b.length;
+    let bLength = b.length;
 
 	while(b[bLength - 1] == '0' && b[bLength-2] === '0') {
 		const c = b[bLength - 3];
@@ -494,7 +393,7 @@ export function readJSON(fileName) {
 /**
  * Check if character is alphanumeric.
  * 
- * @param {string} code 
+ * @param {number} code 
  * @returns {boolean}
  */
 function isAlphaNumeric(code) {

@@ -5,7 +5,8 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ColumnFamilies, ElementFlags, Encoding, QC } from '../common/utils.js';
+import { ColumnFamilies, ElementFlags, QC } from '../common/constants.js';
+import { Encoding } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';

@@ -3,7 +3,7 @@ import { Readable } from 'stream';
 import { finished } from 'stream/promises';
 import StreamArray from 'stream-json/streamers/StreamArray.js';
 
-import { ColumnFamilies, ColumnNames, ElementFlags, MutateActions, QC } from './utils.js';
+import { ColumnFamilies, ColumnNames, ElementFlags, MutateActions, QC } from './constants.js';
 
 /**
  * Simple wrapper for Tandem REST API
@@ -23,10 +23,16 @@ export class TandemClient {
      * @param {authCallback} authProvider 
      */
     constructor(authProvider) {
-        this._appPath = 'https://tandem.autodesk.com/client/viewer/1.0.527';
+        this._appBasePath = 'https://tandem.autodesk.com';
+        this._appPath = `${this._appBasePath}/app`;
         this._basePath = 'https://developer.api.autodesk.com/tandem/v1';
-        this._otgPath = 'https://tandem.autodesk.com/otg';
+        this._clientPath = `${this._appBasePath}/client/viewer/1.0.567`;
+        this._otgPath = `${this._appBasePath}/otg`;
         this._authProvider = authProvider;
+    }
+
+    get appBasePath() {
+        return this._appBasePath;
     }
 
     get appPath() {
@@ -35,6 +41,10 @@ export class TandemClient {
 
     get basePath() {
         return this._basePath;
+    }
+
+    get clientPath() {
+        return this._clientPath;
     }
 
     get otgPath() {
@@ -64,7 +74,7 @@ export class TandemClient {
      * Checks access to the facility.
      * 
      * @param {string} facilityId - URN of the facility.
-     * @returns {Promise<string>}
+     * @returns {Promise<string | null>}
      */
     async checkFacilityAccess(facilityId) {
         const token = this._authProvider();
@@ -149,7 +159,7 @@ export class TandemClient {
      * 
      * @param {string} facilityId 
      * @param {object[]} inputs 
-     * @returns {Promise<object[]>} 
+     * @returns {Promise<object>} 
      */
     async createDocuments(facilityId, inputs) {
         const token = this._authProvider();
@@ -246,7 +256,6 @@ export class TandemClient {
     /**
      * Creates new stream using provided data
      * 
-     * @param {string} token - Authentication token
      * @param {string} urn - URN of the model
      * @param {string} name - Name of the stream
      * @param {string} uniformatClass 
@@ -385,7 +394,7 @@ export class TandemClient {
         }
         // if there are no input parameters, then delete all stream data
         if (!queryParams.has('substreams')) {
-            queryParams.append('allSubstreams', 1);
+            queryParams.append('allSubstreams', '1');
         }
         let url = `${this.basePath}/timeseries/models/${modelId}/deletestreamsdata`;
 
@@ -412,7 +421,7 @@ export class TandemClient {
      */
     async getClassifications() {
         const token = this._authProvider();
-        const response = await fetch(`${this.appPath}/classifications.json`, {
+        const response = await fetch(`${this.clientPath}/classifications.json`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -428,7 +437,7 @@ export class TandemClient {
      * 
      * @param {string} facilityId - URN of the facility.
      * @param {string} documentId - URN of the document.
-     * @returns {object}
+     * @returns {Promise<object>}
      */
     async getDocument(facilityId, documentId) {
         const token = this._authProvider();
@@ -473,7 +482,7 @@ export class TandemClient {
             includeHistory: includeHistory,
             skipArrays: true
         };
-        if (keys?.length > 0) {
+        if (keys && keys.length > 0) {
             inputs.keys = keys;
         }
         const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
@@ -561,7 +570,7 @@ export class TandemClient {
      */
     async getFacilityTemplates() {
         const token = this._authProvider();
-        const response = await fetch(`${this.appPath}/facilityTemplates.json`, {
+        const response = await fetch(`${this.clientPath}/facilityTemplates.json`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -712,7 +721,8 @@ export class TandemClient {
      * Returns model changes.
      * 
      * @param {string} modelId - URN of the model.
-     * @param {number[]} timestamps - array of timestamps.
+     * @param {number} from - timestamp of start date.
+     * @param {number} to - timestamp of end date.
      * @param {boolean} [includeChanges] - include change details.
      * @param {boolean} [useFullKeys] - include full keys. Used only if includeChanges = true.
      * @returns {Promise<object[]>}
@@ -742,7 +752,7 @@ export class TandemClient {
      * Returns model properties including status.
      * 
      * @param {string} modelId - URN of the model
-     * @returns {Promise<object}
+     * @returns {Promise<object>}
      */
     async getModelProps(modelId) {
         const token = this._authProvider();
@@ -780,11 +790,11 @@ export class TandemClient {
     /**
      * Returns stored parameters.
      * 
-     * @returns {Promise<object[]}
+     * @returns {Promise<object[]>}
      */
     async getParameters() {
         const token = this._authProvider();
-        const response = await fetch(`${this.appPath}/parameters.json`, {
+        const response = await fetch(`${this.clientPath}/parameters.json`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -835,7 +845,7 @@ export class TandemClient {
      * @param {number} [from] - lower time boundary (in Unix epoch).
      * @param {number} [to] - upper time boundary (in Unix epoch).
      * @param {number} [limit] - number of entries to return.
-     * @param {asc|desc} [sort] - sort order.
+     * @param {"asc"|"desc"} [sort] - sort order.
      * @returns {Promise<object>}
      */
     async getStreamData(urn, streamKey, from, to, limit, sort) {
@@ -1065,7 +1075,6 @@ export class TandemClient {
     /**
      * Resets secrets for given streams.
      * 
-     * @param {string} token
      * @param {string} urn 
      * @param {string[]} streamIds 
      * @param {boolean} [hardReset]
@@ -1113,8 +1122,9 @@ export class TandemClient {
     /**
      * Saves document content to file.
      * 
-     * @param {string} url 
-     * @param {string} fileName
+     * @param {string} urn
+     * @param {string} streamKey
+     * @param {any} data
      * @returns {Promise} 
      */
     async sendStreamData(urn, streamKey, data) {
@@ -1136,7 +1146,7 @@ export class TandemClient {
      * 
      * @param {string} facilityId - URN of the facility
      * @param {object} facilityData - facility data
-     * @param {number} etag - last modification time
+     * @param {string} etag - last modification time
      * @returns {Promise<object>}
      */
     async updateFacility(facilityId, facilityData, etag) {

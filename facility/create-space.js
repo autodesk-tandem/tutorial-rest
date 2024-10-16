@@ -8,8 +8,8 @@ import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies,
     ColumnNames,
     ElementFlags,
-    getDefaultModel,
-    MutateActions } from '../common/utils.js';
+    MutateActions } from '../common/constants.js';
+import { getDefaultModel } from '../common/utils.js';;
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';

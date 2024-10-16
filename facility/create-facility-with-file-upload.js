@@ -14,7 +14,8 @@ import path from 'path';
 
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ModelState, QC, readBinary, readJSON } from '../common/utils.js';
+import { ModelState, QC, } from '../common/constants.js';
+import { readBinary, readJSON } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
