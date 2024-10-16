@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { Readable } from 'stream';
+import { Readable, Transform } from 'stream';
 import { finished } from 'stream/promises';
 import StreamArray from 'stream-json/streamers/StreamArray.js';
 
@@ -1162,5 +1162,24 @@ export class TandemClient {
         const data = await response.json();
 
         return data;
+    }
+}
+
+class ElementFilter extends Transform {
+    constructor(elementFlags) {
+        super({ objectMode: true });
+        this._elementFlags = elementFlags;
+    }
+
+    _transform(chunk, encoding, callback) {
+        if (chunk.value?.[QC.Key]) {
+            if (this._elementFlags === undefined) {
+                this.push(chunk.value);
+            }
+            if ((this._elementFlags !== undefined) && (chunk.value[QC.ElementFlags] === this._elementFlags)) {
+                this.push(chunk.value);
+            }
+        }
+        callback();
     }
 }
