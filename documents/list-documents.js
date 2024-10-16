@@ -25,8 +25,10 @@ async function main() {
     const facility = await client.getFacility(facilityId);
 
     // STEP 3 - iterate through documents and print their name and id
-    for (const doc of facility.docs) {
-        console.log(`${doc.name}: ${doc.id}`);
+    if (facility.docs) {
+        for (const doc of facility.docs) {
+            console.log(`${doc.name}: ${doc.id}`);
+        }
     }
 }
 

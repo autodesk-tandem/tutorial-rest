@@ -26,10 +26,12 @@ async function main() {
     const facility = await client.getFacility(facilityId);
 
     // STEP 3 - iterate through linked documents
-    for (const doc of facility.docs) {
-        console.log(`${doc.name}: ${doc.id}`);
-        // STEP 4 - download document to local file
-        await client.saveDocumentContent(doc.signedLink, `${DOWNLOAD_PATH}/${doc.name}`);
+    if (facility.docs) {
+        for (const doc of facility.docs) {
+            console.log(`${doc.name}: ${doc.id}`);
+            // STEP 4 - download document to local file
+            await client.saveDocumentContent(doc.signedLink, `${DOWNLOAD_PATH}/${doc.name}`);
+        }
     }
 }
 
