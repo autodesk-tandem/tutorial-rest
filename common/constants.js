@@ -1,3 +1,11 @@
+/**
+ * @type { Production: "prod"; Staging: "stg" }
+ */
+export const Environment = {
+    Production: 'prod',
+    Staging: 'stg'
+};
+
 export const kModelIdSize = 16;
 export const kElementIdSize = 20;
 export const kElementFlagsSize = 4;

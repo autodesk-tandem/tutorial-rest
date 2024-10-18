@@ -3,7 +3,18 @@ import { Readable, Transform } from 'stream';
 import { finished } from 'stream/promises';
 import StreamArray from 'stream-json/streamers/StreamArray.js';
 
-import { ColumnFamilies, ColumnNames, ElementFlags, MutateActions, QC } from './constants.js';
+import { ColumnFamilies, ColumnNames, ElementFlags, Environment, MutateActions, QC } from './constants.js';
+
+const paths = {
+    'prod': {
+        app: 'https://tandem.autodesk.com',
+        base: 'https://developer.api.autodesk.com/tandem/v1'
+    },
+    'stg': {
+        app: 'https://tandem-stg.autodesk.com',
+        base: 'https://tandem-stg.autodesk.com/api/v1'
+    }
+};
 
 /**
  * Simple wrapper for Tandem REST API
@@ -20,12 +31,13 @@ export class TandemClient {
     /**
      * Class constructor. It accepts function which returns valid authentication token.
      * 
-     * @param {authCallback} authProvider 
+     * @param {authCallback} authProvider
+     * @param {"prod"|"stg"} [env="prod"] 
      */
-    constructor(authProvider) {
-        this._appBasePath = 'https://tandem.autodesk.com';
+    constructor(authProvider, env = Environment.Production) {
+        this._appBasePath = paths[env].app;
         this._appPath = `${this._appBasePath}/app`;
-        this._basePath = 'https://developer.api.autodesk.com/tandem/v1';
+        this._basePath = paths[env].base;
         this._clientPath = `${this._appBasePath}/client/viewer/1.0.567`;
         this._otgPath = `${this._appBasePath}/otg`;
         this._authProvider = authProvider;
