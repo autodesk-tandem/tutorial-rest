@@ -52,9 +52,7 @@ async function main() {
             const valueMap = new Map();
 
             if (propDef && propDef.dataType === AttributeType.String) {
-                for (const name in propDef.allowedValues.map) {
-                    const value = propDef.allowedValues.map[name];
-
+                for (const [ name, value ] of Object.entries(propDef.allowedValues.map)) {
                     valueMap.set(value, name);
                 }
             }
