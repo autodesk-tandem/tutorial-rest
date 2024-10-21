@@ -893,6 +893,30 @@ export class TandemClient {
     }
 
     /**
+     * Returns last stream readings.
+     * 
+     * @param {string} urn - URN of the model.
+     * @param {string[]} keys - list of stream kes. 
+     * @returns {Promise<object>}
+     */
+    async getStreamLastReading(urn, keys) {
+        const input = {
+            keys
+        };
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/timeseries/models/${urn}/streams`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(input)
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
      * Returns stream elements from given model.
      * 
      * @param {string} urn - URN of the model.
