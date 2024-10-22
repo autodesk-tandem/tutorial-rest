@@ -48,12 +48,14 @@ async function main() {
 
         for (const propId in item) {
             const propDef = schema.attributes.find(p => p.fam === ColumnFamilies.DtProperties && p.id === propId);
+
+            console.log(`  ${propDef?.name} (${propId})`);
             // STEP 8 - create map in case of discrete values. In this case the map of allowed strings
             // is stored in the property definition. The map is string to number. The stream data contains integer
             // values which needs to be mapped to strings. We create map for this purpose.
             const valueMap = new Map();
 
-            if (propDef && propDef.dataType === AttributeType.String) {
+            if (propDef?.dataType === AttributeType.String) {
                 for (const [ name, value ] of Object.entries(propDef.allowedValues.map)) {
                     valueMap.set(value, name);
                 }
