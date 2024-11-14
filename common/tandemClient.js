@@ -594,13 +594,14 @@ export class TandemClient {
     }
 
     /**
-     * Returns list of groups.
+     * Returns group details.
      * 
-     * @returns {Promise<object[]>}
+     * @param {string} groupId - URN of the group.
+     * @returns {Promise<object>}
      */
-    async getGroups() {
+    async getGroup(groupId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/groups`, {
+        const response = await fetch(`${this.basePath}/groups/${groupId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -612,14 +613,32 @@ export class TandemClient {
     }
 
     /**
-     * Returns group details.
+     * Returns list of facilities for given group.
      * 
      * @param {string} groupId - URN of the group.
      * @returns {Promise<object>}
      */
-    async getGroup(groupId) {
+    async getGroupFacilities(groupId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/groups/${groupId}`, {
+        const response = await fetch(`${this.basePath}/groups/${groupId}/twins`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
+     * Returns list of groups.
+     * 
+     * @returns {Promise<object[]>}
+     */
+    async getGroups() {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/groups`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
