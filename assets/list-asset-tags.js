@@ -47,9 +47,8 @@ async function main() {
                 continue;
             }
             // first check for name override, if empty then use default name
-            let name = asset[QC.OName];
+            const name = asset[QC.OName] ?? asset[QC.Name];
 
-            name ??= asset[QC.Name];
             console.log(`${name}: ${asset[QC.Key]}`);
             // STEP 5 - iterate through tag properties and print out property name & value
             for (const prop of props) {
