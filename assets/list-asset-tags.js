@@ -40,10 +40,13 @@ async function main() {
         for (const asset of assets) {
             // STEP 5 - get tag properties for each asset
             const props = propIds
-                .map(propId => ({ [propId]: asset[propId] }))
-                .filter(i => Object.values(i)[0] !== undefined);
+                .filter(propId => asset[propId] !== undefined) // remove properties without values
+                .reduce((acc, propId) => { // combine into single object
+                    acc[propId] = asset[propId];
+                    return acc;
+                }, {});
 
-            if (props.length === 0) {
+            if (Object.keys(props).length === 0) {
                 continue;
             }
             // first check for name override, if empty then use default name
@@ -51,8 +54,7 @@ async function main() {
 
             console.log(`${name}: ${asset[QC.Key]}`);
             // STEP 5 - iterate through tag properties and print out property name & value
-            for (const prop of props) {
-                const [ propId, values ] = Object.entries(prop)[0];
+            for (const [ propId, values ] of Object.entries(props)) {
                 const propDef = schema.attributes.find(p => p.id === propId);
 
                 if (!propDef) {
