@@ -1,5 +1,5 @@
 /*
-    This example demonstrates how to get tag properties for assets and print their values. Tage properties allow adding
+    This example demonstrates how to get tag properties for assets and print their values. Tag properties allow adding
     multiple values to the element.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
