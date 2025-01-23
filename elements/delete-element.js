@@ -35,9 +35,8 @@ async function main() {
         const elementsToDelete = [];
 
         for (const element of elements) {
-            let name = element[QC.OName];
+            const name = element[QC.OName] ?? element[QC.Name];
 
-            name ??= element[QC.Name];
             if (name == NAME) {
                 elementsToDelete.push(element[QC.Key]);
             }

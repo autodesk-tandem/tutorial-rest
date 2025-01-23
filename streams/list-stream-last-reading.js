@@ -39,9 +39,8 @@ async function main() {
     for (const key in data) {
         // STEP 6 - read stream name
         const stream = streams.find(s => Encoding.toFullKey(s[QC.Key], true) === key);
-        let name = stream[QC.OName];
+        const name = element[QC.OName] ?? element[QC.Name];
 
-        name ??= stream[QC.Name];
         console.log(`${name}`);
         // STEP 7 - print stream values
         const item = data[key];

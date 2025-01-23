@@ -47,9 +47,7 @@ async function main() {
     const muts = [];
 
     for (const stream of streams) {
-        let classificationId = stream[QC.OClassification];
-
-        classificationId ??= stream[QC.Classification];
+        const classificationId = stream[QC.OClassification] ?? stream[QC.Classification];
         const parameters = pset?.parameters.filter(p => p.applicationFilters.userClass.some(c => matchClassification(classificationId, c)));
         const parameter = parameters.find(p => p.name === PARAMETER_NAME);
 
