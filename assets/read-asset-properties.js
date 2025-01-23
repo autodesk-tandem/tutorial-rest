@@ -32,9 +32,8 @@ async function main() {
         for (const asset of assets) {
             // STEP 4 - map properties to schema and print out property name & value
             // first check for name override, if empty then use default name
-            let name = asset[QC.OName];
+            const name = asset[QC.OName] ?? asset[QC.Name];
 
-            name ??= asset[QC.Name];
             console.log(`${name}: ${asset[QC.Key]}`);
             for (const propId in asset) {
                 const prop = schema.attributes.find(p => p.id === propId);

@@ -42,9 +42,8 @@ async function main() {
             if (!prop) {
                 continue;
             }
-           let name = element[QC.OName];
+            const name = element[QC.OName] ?? element[QC.Name];
 
-            name ??= element[QC.Name];
             console.log(`${name}: ${element[QC.Key]}`);
             console.log(`  ${prop}`);
         }
