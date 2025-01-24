@@ -30,7 +30,7 @@ async function main() {
         const modelProps = await client.getModelProps(modelId);
         const itemId = urnToItemId(modelProps.dataSource.forgeUrn);
 
-        // check if itemId points to ACC/Dodcs storage
+        // check if itemId points to ACC/Docs storage - it starts with 'urn:adsk.wip' prefix
         if (!itemId || !itemId.startsWith('urn:adsk.wip')) {
             continue;
         }
