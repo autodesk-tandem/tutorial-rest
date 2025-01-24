@@ -1,5 +1,6 @@
 /*
     This example demonstrates how to list details of the facility. It prints original storage of model document in ACC/Docs.
+    The sample uses Data Management API to get project and item data.
     
     It uses 2-legged authentication - this requires that application is added to the account as service.
 */
@@ -78,6 +79,7 @@ async function getProject(token, accountId, projectId) {
  * @returns {object}
  */
 async function getItem(token, projectId, itemId) {
+    // use command to get location of item in project
     const input = {
         jsonapi: {
             version: '1.0'
