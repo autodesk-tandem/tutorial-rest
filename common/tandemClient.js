@@ -64,6 +64,34 @@ export class TandemClient {
     }
 
     /**
+     * Adds user to the facility.
+     * 
+     * @param {string} facilityId 
+     * @param {string} userEmail 
+     * @param {"None"|"Read"|"ReadWrite"|"Manage"} accessLevel 
+     * @returns {Promise<void>}
+     */
+    async addFacilityUser(facilityId, userEmail, accessLevel) {
+        const token = this._authProvider();
+        const input = {
+            accessLevel: accessLevel
+        };
+
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/users/${userEmail}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(input)
+        });
+        
+        if (response.status !== 204) {
+            throw new Error(`Failed to add user to the facility. Status: ${response.status}`);
+        }
+        return;
+    }
+
+    /**
      * Applies template to facility.
      * 
      * @param {string} facilityId - URN of the facility.

@@ -1,3 +1,10 @@
+export const AccessLevel = {
+    Manage: 'Manage',
+    None: 'None',
+    Read: 'Read',
+    ReadWrite: 'ReadWrite'
+};
+
 /**
  * @type { Production: "prod"; Staging: "stg" }
  */
