@@ -4,7 +4,7 @@
     It uses 2-legged authentication - this requires that application is added to the account as service. The application should have Manage permission.
 
     NOTE - the example uses API which is NOT DOCUMENTED at the moment:
-        POST https://developer.api.autodesk.com/tandem/v1/twins/:facilityId/users/:userEmail
+        PUT https://developer.api.autodesk.com/tandem/v1/twins/:facilityId/users/:userEmail
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
