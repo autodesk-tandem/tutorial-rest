@@ -24,7 +24,7 @@ async function main() {
         return token;
     });
     // STEP 2 - add user to the facility
-    await client.addFacilityUser(FACILITY_URN, USER_EMAIL, AccessLevel.Read);
+    await client.updateFacilityUser(FACILITY_URN, USER_EMAIL, AccessLevel.Read);
     console.log('done');
 }
 
