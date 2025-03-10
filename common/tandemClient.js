@@ -1220,7 +1220,7 @@ export class TandemClient {
     }
 
     /**
-     * Update facility user. It also adds new user to the facility.
+     * Update facility user. It can also add new user to the facility.
      * 
      * @param {string} facilityId 
      * @param {string} userId - can be either email, Autodesk ID or client ID of APS application
