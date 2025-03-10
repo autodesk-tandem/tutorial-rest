@@ -594,6 +594,25 @@ export class TandemClient {
     }
 
     /**
+     * Returns dictionary of facility users.
+     * 
+     * @param {string} facilityId 
+     * @returns {Promise<Object.<string, object>>}
+     */
+    async getFacilityUsers(facilityId) {
+        const token = this._authProvider();
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/users`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        
+        return data;
+    }
+
+    /**
      * Returns group details.
      * 
      * @param {string} groupId - URN of the group.
