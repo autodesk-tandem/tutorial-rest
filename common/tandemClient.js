@@ -1218,6 +1218,34 @@ export class TandemClient {
 
         return data;
     }
+
+    /**
+     * Update facility user. It can also add new user to the facility.
+     * 
+     * @param {string} facilityId 
+     * @param {string} userId - can be either email, Autodesk ID or client ID of APS application
+     * @param {"None"|"Read"|"ReadWrite"|"Manage"} accessLevel 
+     * @returns {Promise<void>}
+     */
+    async updateFacilityUser(facilityId, userId, accessLevel) {
+        const token = this._authProvider();
+        const input = {
+            accessLevel: accessLevel
+        };
+
+        const response = await fetch(`${this.basePath}/twins/${facilityId}/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(input)
+        });
+        
+        if (response.status !== 204) {
+            throw new Error(`Failed to add user to the facility. Status: ${response.status}`);
+        }
+        return;
+    }
 }
 
 class ElementFilter extends Transform {
