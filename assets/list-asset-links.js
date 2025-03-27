@@ -6,7 +6,7 @@
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { KeyFlags, QC } from '../common/constants.js';
-import { Encoding, getDefaultModel } from '../common/utils.js';
+import { Encoding } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -31,7 +31,7 @@ async function main() {
 
         for (const asset of assets) {
             // STEP 4 - get full key and generate URL to view asset in Tandem
-            const isLogical = (asset[QC.ElementFlags] & KeyFlags.Logical) !== 0;
+            const isLogical = Boolean(asset[QC.ElementFlags] & KeyFlags.Logical);
             const fullKey = Encoding.toFullKey(asset[QC.Key], isLogical);
             const xrefKey = Encoding.toXrefKey(link.modelId, fullKey);
             const url = `https://tandem.autodesk.com/pages/facilities/${facilityId}?selection=${xrefKey}`;
