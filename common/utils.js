@@ -46,13 +46,21 @@ export class Encoding {
     static decodeBBox(text, offset) {
         const buff = Buffer.from(text, 'base64');
         
-        const minx = buff.readFloatLE(0) + offset.x;
-        const miny = buff.readFloatLE(4) + offset.y;
-        const minz = buff.readFloatLE(8) + offset.z;
-        const maxx = buff.readFloatLE(12) + offset.x;
-        const maxy = buff.readFloatLE(16) + offset.y;
-        const maxz = buff.readFloatLE(20) + offset.z;
+        let minx = buff.readFloatLE(0) + offset.x;
+        let miny = buff.readFloatLE(4) + offset.y;
+        let minz = buff.readFloatLE(8) + offset.z;
+        let maxx = buff.readFloatLE(12) + offset.x;
+        let maxy = buff.readFloatLE(16) + offset.y;
+        let maxz = buff.readFloatLE(20) + offset.z;
 
+        for (let i = kRecordSize; i < buff.length; i += kRecordSize) {
+            minx = Math.min(minx, buff.readFloatLE(i) + offset.x);
+            miny = Math.min(miny, buff.readFloatLE(i + 4) + offset.y);
+            minz = Math.min(miny, buff.readFloatLE(i + 8) + offset.z);
+            maxx = Math.max(maxz, buff.readFloatLE(i + 12) + offset.x);
+            maxy = Math.max(maxy, buff.readFloatLE(i + 16) + offset.y);
+            maxz = Math.max(maxz, buff.readFloatLE(i + 20) + offset.z);
+        }
         return { minx, miny, minz, maxx, maxy, maxz };
     }
 
