@@ -42,7 +42,7 @@ async function main() {
         
         streamData.push({
             id: stream[QC.Key],
-            name: stream[QC.Name],
+            name: stream[QC.OName] ?? stream[QC.Name],
             parent: {
                 modelId: parentModelId,
                 key: parentKey
@@ -69,7 +69,7 @@ async function main() {
             const item = streamData.find(i => i.parent.modelId === modelId && i.parent.key === fullKey);
 
             if (item) {
-                item.parent.name = element[QC.Name];
+                item.parent.name = element[QC.OName] ?? element[QC.Name];
             }
         }
     }
