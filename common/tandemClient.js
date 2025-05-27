@@ -1152,7 +1152,7 @@ export class TandemClient {
      * @param {string} urn 
      * @param {string[]} streamIds 
      * @param {boolean} [hardReset]
-     * @returns {Promise}
+     * @returns {Promise<object}
      */
     async resetStreamsSecrets(urn, streamIds, hardReset) {
         const token = this._authProvider();
@@ -1167,6 +1167,10 @@ export class TandemClient {
             },
             body: JSON.stringify(inputs)
         });
+
+        const result = await response.json();
+
+        return result;
     }
 
     /**
