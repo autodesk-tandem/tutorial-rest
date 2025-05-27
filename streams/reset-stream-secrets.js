@@ -28,10 +28,9 @@ async function main() {
     const facility = await client.getFacility(facilityId);
     const defaultModel = getDefaultModel(facilityId, facility);
 
-    // STEP 3 - get streams
+    // STEP 3 - get streams and their keys
     const streams = await client.getStreams(defaultModel.modelId);
-    // we need to convert stream keys to fully qualified key
-    const keys = streams.map(s => Encoding.toFullKey(s[QC.Key], true));
+    const keys = streams.map(s => s[QC.Key]);
     // STEP 4 - reset stream secrets
     const data = await client.resetStreamsSecrets(defaultModel.modelId, keys, true);
 
