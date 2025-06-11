@@ -30,7 +30,7 @@ async function main() {
     // STEP 3 - get streams
     const streams = await client.getStreams(defaultModel.modelId);
     // we need to convert stream keys to fully qualified key
-    const keys = streams.map(s => Encoding.toFullKey(s[QC.Key], true));
+    const keys = streams.map(s => s[QC.Key]);
     // STEP 4 - get streams secrets
     const data = await client.getStreamsSecrets(defaultModel.modelId, keys);
 
@@ -40,8 +40,9 @@ async function main() {
         const streamKey = Encoding.toShortKey(key);
         const streamSecret = data[key];
         const streamData = streams.find(s => s[QC.Key] === streamKey);
+        const name = streamData[QC.OName] ?? streamData[QC.Name];
 
-        console.log(`${streamData[QC.Name]}: ${streamSecret}`);
+        console.log(`${name}: ${streamSecret}`);
     }
 }
 
