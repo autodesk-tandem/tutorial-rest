@@ -39,9 +39,10 @@ async function main() {
 
     for (const stream of streams) {
         // STEP 4 - get stream data for last NN days and print their values
-        const streamKey = Encoding.toFullKey(stream[QC.Key], true);
+        const streamKey = stream[QC.Key];
+        const name = stream[QC.OName] ?? stream[QC.Name];
 
-        console.log(`${stream[QC.Name]}`);
+        console.log(`${name}`);
         const data = await client.getStreamData(defaultModel.modelId, streamKey, from, to);
 
         for (const item in data) {
