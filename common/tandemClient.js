@@ -3,7 +3,15 @@ import { Readable, Transform } from 'stream';
 import { finished } from 'stream/promises';
 import StreamArray from 'stream-json/streamers/StreamArray.js';
 
-import { ColumnFamilies, ColumnNames, ElementFlags, Environment, MutateActions, QC } from './constants.js';
+import {
+    ColumnFamilies,
+    ColumnNames,
+    ElementFlags,
+    Environment,
+    MutateActions,
+    QC,
+    Region
+} from './constants.js';
 
 const paths = {
     'prod': {
@@ -32,15 +40,17 @@ export class TandemClient {
      * Class constructor. It accepts function which returns valid authentication token.
      * 
      * @param {authCallback} authProvider
+     * @param {Region} [region=Region.US] - data storage location
      * @param {"prod"|"stg"} [env="prod"] 
      */
-    constructor(authProvider, env = Environment.Production) {
+    constructor(authProvider, region = Region.US, env = Environment.Production) {
         this._appBasePath = paths[env].app;
         this._appPath = `${this._appBasePath}/app`;
         this._basePath = paths[env].base;
         this._clientPath = `${this._appBasePath}/client/viewer/1.0.567`;
         this._otgPath = `${this._appBasePath}/otg`;
         this._authProvider = authProvider;
+        this._region = region;
     }
 
     get appBasePath() {
@@ -71,14 +81,9 @@ export class TandemClient {
      */
     async applyFacilityTemplate(facilityId, template) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${facilityId}/template`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(template)
-        });
+        const url = `${this.basePath}/twins/${facilityId}/template`;
         
+        await this._post(token, url, JSON.stringify(template));
         return;
     }
 
@@ -113,14 +118,8 @@ export class TandemClient {
                 fromTwinUrn: facilityId
             }
         };
-        const response = await fetch(`${this.basePath}/groups/${groupId}/clonetwin`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(input)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/groups/${groupId}/clonetwin`;
+        const data = await this._post(token, url, JSON.stringify(input));
 
         return data;
     }
@@ -134,14 +133,9 @@ export class TandemClient {
      */
     async confirmUpload(facilityId, inputs) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${facilityId}/confirmupload`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-
+        const url = `${this.basePath}/twins/${facilityId}/confirmupload`;
+        
+        await this._post(token, url, JSON.stringify(inputs));
         return;
     }
 
@@ -154,14 +148,8 @@ export class TandemClient {
      */
     async createDefaultModel(facilityId, inputs) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${facilityId}/defaultmodel`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/twins/${facilityId}/defaultmodel`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
 
         return data;
     }
@@ -175,14 +163,8 @@ export class TandemClient {
      */
     async createDocuments(facilityId, inputs) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${facilityId}/documents`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/twins/${facilityId}/documents`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
 
         return data;
     }
@@ -196,14 +178,8 @@ export class TandemClient {
      */
     async createElement(modelId, inputs) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/modeldata/${modelId}/create`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/modeldata/${modelId}/create`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
 
         return data;
     }
@@ -232,14 +208,8 @@ export class TandemClient {
      */
     async createFacility(groupId, inputs) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/groups/${groupId}/twins`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/groups/${groupId}/twins`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
 
         return data;
     }
@@ -253,14 +223,8 @@ export class TandemClient {
      */
     async createModel(facilityId, inputs) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${facilityId}/model`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/twins/${facilityId}/model`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
 
         return data;
     }
@@ -303,15 +267,8 @@ export class TandemClient {
         if (levelKey) {
             inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Refs, ColumnNames.Level, levelKey ]);
         }
-        const response = await fetch(`${this.basePath}/modeldata/${urn}/create`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-
-        const data = await response.json();
+        const url = `${this.basePath}/modeldata/${urn}/create`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
 
         return data.key;
     }
@@ -328,14 +285,8 @@ export class TandemClient {
         const inputs = {
             realFileName: fileName
         };
-        const response = await fetch(`${this.basePath}/twins/${facilityId}/s3uploadlink`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/twins/${facilityId}/s3uploadlink`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
 
         return data;
     }
@@ -349,14 +300,8 @@ export class TandemClient {
      */
     async createView(facilityId, view) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${facilityId}/views`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(view)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/twins/${facilityId}/views`;
+        const data = await this._post(token, url, JSON.stringify(view));
 
         return data;
     }
@@ -413,17 +358,7 @@ export class TandemClient {
         if (queryParams.size > 0) {
             url += `?${queryParams}`;
         }
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        
-        const err = await response.text();
-
-        return;
+        await this._post(token, url, JSON.stringify(inputs));
     }
 
     /**
@@ -453,13 +388,8 @@ export class TandemClient {
      */
     async getDocument(facilityId, documentId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${facilityId}/documents/${documentId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/twins/${facilityId}/documents/${documentId}`;
+        const data = await this._get(token, url);
 
         return data;
     }
@@ -497,15 +427,8 @@ export class TandemClient {
         if (keys && keys.length > 0) {
             inputs.keys = keys;
         }
-        const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-    
-        const data = await response.json();
+        const url = `${this.basePath}/modeldata/${urn}/scan`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
     
         return data.slice(1);
     }
@@ -525,11 +448,17 @@ export class TandemClient {
             skipArrays: true
         };
 
-        const response = await fetch(`${this.basePath}/modeldata/${modelId}/scan`, {
+        const url = `${this.basePath}/modeldata/${modelId}/scan`;
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+
+        if (this._region) {
+            headers['Region'] = this._region;
+        }
+        const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
+            headers: headers,
             body: JSON.stringify(inputs)
         });
         const elementStream = Readable.fromWeb(response.body).pipe(StreamArray.withParser()).pipe(new ElementFilter());
@@ -545,13 +474,8 @@ export class TandemClient {
      */
     async getFacility(facilityId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${facilityId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/twins/${facilityId}`;
+        const data = await this._get(token, url);
 
         return data;
     }
@@ -564,13 +488,8 @@ export class TandemClient {
      */
     async getFacilityTemplate(facilityId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${facilityId}/inlinetemplate`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/twins/${facilityId}/inlinetemplate`;
+        const data = await this._get(token, url);
 
         return data;
     }
@@ -601,13 +520,8 @@ export class TandemClient {
      */
     async getFacilityUsers(facilityId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${facilityId}/users`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/twins/${facilityId}/users`;
+        const data = await this._get(token, url);
         
         return data;
     }
@@ -620,13 +534,8 @@ export class TandemClient {
      */
     async getGroup(groupId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/groups/${groupId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/groups/${groupId}`;
+        const data = await this._get(token, url);
 
         return data;
     }
@@ -639,13 +548,8 @@ export class TandemClient {
      */
     async getGroupFacilities(groupId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/groups/${groupId}/twins`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/groups/${groupId}/twins`;
+        const data = await this._get(token, url);
 
         return data;
     }
@@ -657,13 +561,8 @@ export class TandemClient {
      */
     async getGroups() {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/groups`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/groups`;
+        const data = await this._get(token, url);
 
         return data;
     }
@@ -682,14 +581,8 @@ export class TandemClient {
             includeHistory: false,
             skipArrays: true
         };
-        const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/modeldata/${urn}/scan`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
         const results = [];
 
         for (const item of data) {
@@ -727,13 +620,8 @@ export class TandemClient {
      */
     async getModel(modelId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/modeldata/${modelId}/model`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/modeldata/${modelId}/model`;
+        const data = await this._get(token, url);
 
         return data;
     }
@@ -755,14 +643,8 @@ export class TandemClient {
             useFullKeys: useFullKeys
         };
 
-        const response = await fetch(`${this.basePath}/modeldata/${modelId}/history`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/modeldata/${modelId}/history`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
 
         return data;
     }
@@ -785,15 +667,8 @@ export class TandemClient {
             includeChanges: includeChanges,
             useFullKeys: useFullKeys
         };
-
-        const response = await fetch(`${this.basePath}/modeldata/${modelId}/history`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/modeldata/${modelId}/history`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
 
         return data;
     }
@@ -806,14 +681,8 @@ export class TandemClient {
      */
     async getModelProps(modelId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/models/${modelId}/props`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        const data = await response.json();
+        const url = `${this.basePath}/models/${modelId}/props`;
+        const data = await this._get(token, url);
 
         return data;
     }
@@ -826,13 +695,8 @@ export class TandemClient {
      */
     async getModelSchema(modelId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/modeldata/${modelId}/schema`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/modeldata/${modelId}/schema`;
+        const data = await this._get(token, url);
 
         return data;
     }
@@ -869,14 +733,8 @@ export class TandemClient {
             includeHistory: false,
             skipArrays: true
         };
-        const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/modeldata/${urn}/scan`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
         const results = [];
 
         for (const item of data) {
@@ -919,13 +777,7 @@ export class TandemClient {
         if (queryParams.size > 0) {
             url += `?${queryParams}`;
         }
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
+        const data = await this._get(token, url);
 
         return data;
     }
@@ -938,18 +790,12 @@ export class TandemClient {
      * @returns {Promise<object>}
      */
     async getStreamLastReading(urn, keys) {
-        const input = {
+        const inputs = {
             keys
         };
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/timeseries/models/${urn}/streams`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(input)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/timeseries/models/${urn}/streams`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
 
         return data;
     }
@@ -968,14 +814,8 @@ export class TandemClient {
             includeHistory: false,
             skipArrays: true
         };
-        const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/modeldata/${urn}/scan`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
         const results = [];
 
         for (const item of data) {
@@ -998,14 +838,8 @@ export class TandemClient {
         const inputs = {
             keys: keys
         };
-        const response = await fetch(`${this.basePath}/models/${urn}/getstreamssecrets`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/models/${urn}/getstreamssecrets`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
         
         return data;
     }
@@ -1024,14 +858,8 @@ export class TandemClient {
             includeHistory: false,
             skipArrays: true
         };
-        const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/modeldata/${urn}/scan`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
         const results = [];
 
         for (const item of data) {
@@ -1057,14 +885,8 @@ export class TandemClient {
             includeHistory: includeHistory,
             skipArrays: true
         };
-        const response = await fetch(`${this.basePath}/modeldata/${urn}/scan`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/modeldata/${urn}/scan`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
         const results = [];
 
         for (const item of data) {
@@ -1086,13 +908,8 @@ export class TandemClient {
      */
     async getViews(urn) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${urn}/views`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
+        const url = `${this.basePath}/twins/${urn}/views`;
+        const data = await this._get(token, url);
         
         return data;
     }
@@ -1106,13 +923,9 @@ export class TandemClient {
      */
     async importModel(facilityId, inputs) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${facilityId}/import`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
+        const url = `${this.basePath}/twins/${facilityId}/import`;
+        
+        await this._post(token, url, JSON.stringify(inputs));
     }
 
     /**
@@ -1134,14 +947,8 @@ export class TandemClient {
         if (description) {
             inputs.desc = description;
         }
-        const response = await fetch(`${this.basePath}/modeldata/${urn}/mutate`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-        const result = await response.json();
+        const url = `${this.basePath}/modeldata/${urn}/mutate`;
+        const result = await this._post(token, url, JSON.stringify(inputs));
         
         return result;
     }
@@ -1160,15 +967,8 @@ export class TandemClient {
             keys: streamIds,
             hardReset: hardReset ? true : false
         };
-        const response = await fetch(`${this.basePath}/models/${urn}/resetstreamssecrets`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(inputs)
-        });
-
-        const result = await response.json();
+        const url = `${this.basePath}/models/${urn}/resetstreamssecrets`;
+        const result = await this._post(token, url, JSON.stringify(inputs));
 
         return result;
     }
@@ -1209,14 +1009,7 @@ export class TandemClient {
         const token = this._authProvider();
         const url = `${this.basePath}/timeseries/models/${urn}/streams/${streamKey}`;
         
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(data)
-        });
-        const result = await response.json();
+        await this._post(token, url, JSON.stringify(data));
     }
 
     /**
@@ -1237,6 +1030,52 @@ export class TandemClient {
             },
             body: JSON.stringify(facilityData)
         });
+        const data = await response.json();
+
+        return data;
+    }
+
+    async _get(token, url) {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+
+        if (this._region) {
+            headers['Region'] = this._region;
+        }
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: headers
+        });
+
+        if (response.status !== 200) {
+            throw new Error(`Error calling Tandem API: ${response.status}`);
+        }
+        const data = await response.json();
+
+        return data;
+    }
+
+    async _post(token, url, body) {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+
+        if (this._region) {
+            headers['Region'] = this._region;
+        }
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: body
+        });
+
+        if (response.status === 202 || response.status === 202) {
+            return;
+        }
+        if (response.status !== 200) {
+            throw new Error(`Error calling Tandem API: ${response.status}`);
+        }
         const data = await response.json();
 
         return data;
