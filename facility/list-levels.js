@@ -32,8 +32,9 @@ async function main() {
         for (const level of levels) {
             // STEP 4 - find elevation property
             const prop = schema.attributes.find(a => a.id === QC.Elevation);
+            const name = level[QC.OName] ?? level[QC.Name];
 
-            console.log(`${level[QC.Name]}:${level[prop.id]}`);
+            console.log(`${name}:${level[prop.id]}`);
         }
     }   
 }
