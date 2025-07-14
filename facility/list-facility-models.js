@@ -36,7 +36,7 @@ async function main() {
         if (urn === 'internal') {
             continue;
         }
-        const itemId = urnToItemId(modelProps.dataSource.forgeUrn);
+        const { itemId, versionId } = parseUrn(modelProps.dataSource.forgeUrn);
 
         // check if itemId points to ACC/Docs storage - it starts with 'urn:adsk.wip' prefix
         if (!itemId || !itemId.startsWith('urn:adsk.wip')) {
@@ -50,6 +50,7 @@ async function main() {
         console.log(`${link.label}`);
         console.log(`  ${project.attributes.name}`);
         console.log(`    ${item.meta.attributes.pathInProject}/${item.meta.attributes.displayName}`);
+        console.log(`  needs update: ${item.meta.relationships.tip.data.id !== versionId}`);
     }
 }
 
@@ -136,7 +137,7 @@ async function getItem(token, projectId, itemId) {
  * @param {string} urn 
  * @returns {string}
  */
-function urnToItemId(urn) {
+function parseUrn(urn) {
     const buff = Encoding.decode(urn);
     const items = buff.split(':');
 
@@ -153,7 +154,10 @@ function urnToItemId(urn) {
     }
     const result = `${bucketKey}:dm.lineage:${lineageId}`;
         
-    return result;
+    return {
+        itemId: result,
+        versionId: buff
+    };
 }
 
 main()
