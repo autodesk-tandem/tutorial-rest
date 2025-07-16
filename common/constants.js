@@ -8,8 +8,7 @@ export const Environment = {
 
 export const Region = {
     US: 'US',
-    EMEA: 'EMEA',
-    AUS: 'AUS'
+    EMEA: 'EMEA'
 };
 
 export const kModelIdSize = 16;
