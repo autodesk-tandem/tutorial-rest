@@ -6,6 +6,11 @@ export const Environment = {
     Staging: 'stg'
 };
 
+export const Region = {
+    US: 'US',
+    EMEA: 'EMEA'
+};
+
 export const kModelIdSize = 16;
 export const kElementIdSize = 20;
 export const kElementFlagsSize = 4;
