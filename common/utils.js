@@ -1,4 +1,5 @@
 import fs from 'fs';
+import {v4 as uuidv4} from 'uuid';
 
 import {
     kElementFlagsSize,
@@ -91,6 +92,20 @@ export class Encoding {
         const text = JSON.stringify(settings);
         
         return Encoding.encode(text);
+    }
+
+    /**
+     * Creates new element key.
+     * 
+     * @param {number} keyFlags 
+     * @returns {string}
+     */
+    static newElementKey(keyFlags) {
+        const buff = Buffer.alloc(kElementIdWithFlagsSize);
+
+        buff.writeInt32BE(keyFlags);
+        uuidv4({}, buff, 4);
+        return this.makeWebsafe(buff.toString('base64'));
     }
 
     /**
