@@ -26,7 +26,10 @@ export const ElementFlags = {
     Level:          0x01000001,
     Stream:         0x01000003,
     System:         0x01000004,
-    GenericAsset:   0x01000005
+    GenericAsset:   0x01000005,
+    Collection:     0x01000006,
+    Ticket:         0x01000007,
+    AllLogicalMask: 0xff000000
 };
 
 export const KeyFlags = {
@@ -57,6 +60,9 @@ export const ColumnNames = {
     Name:               'n',
     OName:              '!n',
     Parent:             'p',
+    Priority:           'pr',
+    OpenDate:           'od',
+    CloseDate:          'cd',
     Rooms:              'r',
     Settings:           's',
     UniformatClass:     'u'
