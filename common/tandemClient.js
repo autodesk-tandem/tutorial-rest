@@ -901,6 +901,32 @@ export class TandemClient {
     }
 
     /**
+     * Returns ticket elements from given model.
+     * 
+     * @param {string} urn - URN of the model.
+     * @param {string[]} [columnFamilies] - optional list of columns
+     * @returns {Promise<object[]>}
+     */
+    async getTickets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Xrefs ]) {
+        const token = this._authProvider();
+        const inputs = {
+            families: columnFamilies,
+            includeHistory: false,
+            skipArrays: true
+        };
+        const url = `${this.basePath}/modeldata/${urn}/scan`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
+        const results = [];
+
+        for (const item of data) {
+            if (item[QC.ElementFlags] === ElementFlags.Ticket) {
+                results.push(item);
+            }
+        }
+        return results;
+    }
+
+    /**
      * Returns saved facility views.
      * 
      * @param {string} urn - URN of the facility.
