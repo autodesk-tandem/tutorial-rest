@@ -80,6 +80,7 @@ export const QC = {
     OLevel:             `${ColumnFamilies.Refs}:${ColumnNames.OLevel}`,
     Name:               `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     OName:              `${ColumnFamilies.Standard}:${ColumnNames.OName}`,
+    Priority:           `${ColumnFamilies.Standard}:${ColumnNames.Priority}`,
     Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
     Settings:           `${ColumnFamilies.Standard}:${ColumnNames.Settings}`,
     XRooms:             `${ColumnFamilies.Xrefs}:${ColumnNames.Rooms}`,
