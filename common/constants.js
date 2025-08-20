@@ -59,7 +59,9 @@ export const ColumnNames = {
     Parent:             'p',
     Rooms:              'r',
     Settings:           's',
-    UniformatClass:     'u'
+    UniformatClass:     'u',
+    TandemCategory:     'z',
+    OTandemCategory:    '!z',
 };
 
 export const QC = {
@@ -67,6 +69,8 @@ export const QC = {
     CategoryId:         `${ColumnFamilies.Standard}:${ColumnNames.CategoryId}`,
     Classification:     `${ColumnFamilies.Standard}:${ColumnNames.Classification}`,
     OClassification:    `${ColumnFamilies.Standard}:${ColumnNames.OClassification}`,
+    TandemCategory:     `${ColumnFamilies.Standard}:${ColumnNames.TandemCategory}`,
+    OTandemCategory:    `${ColumnFamilies.Standard}:${ColumnNames.OTandemCategory}`,
     ElementFlags:       `${ColumnFamilies.Standard}:${ColumnNames.ElementFlags}`,
     Elevation:          `${ColumnFamilies.Standard}:${ColumnNames.Elevation}`,
     FamilyType:         `${ColumnFamilies.Refs}:${ColumnNames.FamilyType}`,
