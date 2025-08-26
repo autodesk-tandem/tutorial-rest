@@ -109,13 +109,15 @@ export class TandemClient {
      * 
      * @param {string} groupId 
      * @param {string} facilityId 
+     * @param {boolean} [skipStreamsData]
      * @returns {Promise<object>}
      */
-    async cloneFacility(groupId, facilityId) {
+    async cloneFacility(groupId, facilityId, skipStreamsData = false) {
         const token = this._authProvider();
         const input = {
             clone: {
-                fromTwinUrn: facilityId
+                fromTwinUrn: facilityId,
+                skipStreamsData: skipStreamsData
             }
         };
         const url = `${this.basePath}/groups/${groupId}/clonetwin`;
