@@ -109,13 +109,15 @@ export class TandemClient {
      * 
      * @param {string} groupId 
      * @param {string} facilityId 
+     * @param {boolean} [skipStreamsData]
      * @returns {Promise<object>}
      */
-    async cloneFacility(groupId, facilityId) {
+    async cloneFacility(groupId, facilityId, skipStreamsData = false) {
         const token = this._authProvider();
         const input = {
             clone: {
-                fromTwinUrn: facilityId
+                fromTwinUrn: facilityId,
+                skipStreamsData: skipStreamsData
             }
         };
         const url = `${this.basePath}/groups/${groupId}/clonetwin`;
@@ -1049,22 +1051,18 @@ export class TandemClient {
      */
     async updateFacility(facilityId, facilityData, etag) {
         const token = this._authProvider();
-        const response = await fetch(`${this.basePath}/twins/${facilityId}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Etag': etag
-            },
-            body: JSON.stringify(facilityData)
+        const url = `${this.basePath}/twins/${facilityId}`;
+        
+        const data = await this._put(token, url, facilityData, {
+            'Etag': etag
         });
-        const data = await response.json();
-
         return data;
     }
 
-    async _get(token, url) {
+    async _get(token, url, additionalHeaders = {}) {
         const headers = {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            ...additionalHeaders
         };
 
         if (this._region) {
@@ -1083,9 +1081,10 @@ export class TandemClient {
         return data;
     }
 
-    async _post(token, url, body) {
+    async _post(token, url, body, additionalHeaders = {}) {
         const headers = {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            ...additionalHeaders
         };
 
         if (this._region) {
@@ -1093,6 +1092,32 @@ export class TandemClient {
         }
         const response = await fetch(url, {
             method: 'POST',
+            headers: headers,
+            body: body
+        });
+
+        if (response.status === 202 || response.status === 202) {
+            return;
+        }
+        if (response.status !== 200) {
+            throw new Error(`Error calling Tandem API: ${response.status}`);
+        }
+        const data = await response.json();
+
+        return data;
+    }
+
+    async _put(token, url, body, additionalHeaders = {}) {
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            ...additionalHeaders
+        };
+
+        if (this._region) {
+            headers['Region'] = this._region;
+        }
+        const response = await fetch(url, {
+            method: 'PUT',
             headers: headers,
             body: body
         });
