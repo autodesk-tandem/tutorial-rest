@@ -47,7 +47,8 @@ export class TandemClient {
         this._appBasePath = paths[env].app;
         this._appPath = `${this._appBasePath}/app`;
         this._basePath = paths[env].base;
-        this._clientPath = `${this._appBasePath}/client/viewer/1.0.567`;
+        this._cdnPath = `${paths[env].cdn}/1.0.753`;
+        this._clientPath = `${this._appBasePath}/client/viewer/1.0.753`;
         this._otgPath = `${this._appBasePath}/otg`;
         this._authProvider = authProvider;
         this._region = region;
@@ -63,6 +64,10 @@ export class TandemClient {
 
     get basePath() {
         return this._basePath;
+    }
+
+    get cdnPath() {
+        return this._cdnPath;
     }
 
     get clientPath() {
