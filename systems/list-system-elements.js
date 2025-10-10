@@ -9,7 +9,12 @@ import {
     ColumnFamilies,
     ElementFlags,
     QC } from '../common/constants.js';
-import { Encoding, getDefaultModel, systemClassToList } from '../common/utils.js';
+import {
+    Encoding,
+    getDefaultModel,
+    isLogicalElement,
+    systemClassToList
+} from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -54,6 +59,7 @@ async function main() {
     }
     // STEP 4 - iterate through model elements and store their relationship to system
     const systemElementsMap = {};
+    const systemClassMap = {};
 
     for (const link of facility.links) {
         const elements = await client.getElements(link.modelId, undefined, [ ColumnFamilies.Standard, ColumnFamilies.Systems ]);
@@ -65,6 +71,15 @@ async function main() {
             if (elementFlags === ElementFlags.Deleted || elementFlags === ElementFlags.Systems) {
                 continue;
             }
+            const key = Encoding.toFullKey(element[QC.Key], isLogicalElement(elementFlags));
+            // check if element has system class assigned
+            const elementClass = element[QC.OSystemClass] ?? element[QC.SystemClass];
+
+            if (!elementClass) {
+                continue;
+            }
+            const elementClassNames = systemClassToList(elementClass);
+
             for (const item in element) {
                 // we need to handle both fam:col and fam:!col formats
                 const [, family, systemId] = item.match(/^([^:]+):!?(.+)$/) ?? [];
@@ -75,16 +90,19 @@ async function main() {
                     if (!system) {
                         continue;
                     }
-                    const classNames = systemClassToList(system.filter);
-                    const elementClass = element[QC.OSystemClass] ?? element[QC.SystemClass];
-                    const elementClassNames = systemClassToList(elementClass);
+                    let classNames = systemClassMap[system.filter];
+
+                    if (!classNames) {
+                        classNames = systemClassToList(system.filter);
+                        systemClassMap[system.filter] = classNames;
+                    }
                     const matches = elementClassNames.some(name => classNames.includes(name));
 
                     if (matches) {
                         // if system has filter, then check that element matches it
                         const elementList = systemElementsMap[systemId] || new Set();
 
-                        elementList.add(Encoding.toFullKey(element[QC.Key]));
+                        elementList.add(key);
                         systemElementsMap[systemId] = elementList;
                     }
                 }
