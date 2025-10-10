@@ -19,6 +19,9 @@ export const kElementIdWithFlagsSize = kElementIdSize + kElementFlagsSize;
 export const kRecordSize = 28;
 export const kSystemIdSize = 9;
 
+// current version of classification schema
+export const SchemaVersion = 2;
+
 export const ElementFlags = {
     SimpleElement:  0x00000000,
     Room:           0x00000005,
@@ -26,7 +29,8 @@ export const ElementFlags = {
     Level:          0x01000001,
     Stream:         0x01000003,
     System:         0x01000004,
-    GenericAsset:   0x01000005
+    GenericAsset:   0x01000005,
+    AllLogicalMask: 0xff000000
 };
 
 export const KeyFlags = {
@@ -58,6 +62,7 @@ export const ColumnNames = {
     OName:              '!n',
     Parent:             'p',
     Rooms:              'r',
+    ORooms:             '!r',
     Settings:           's',
     UniformatClass:     'u',
     TandemCategory:     'z',
@@ -78,9 +83,11 @@ export const QC = {
     OLevel:             `${ColumnFamilies.Refs}:${ColumnNames.OLevel}`,
     Name:               `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     OName:              `${ColumnFamilies.Standard}:${ColumnNames.OName}`,
+    Parent:             `${ColumnFamilies.Refs}:${ColumnNames.Parent}`,
     Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
     Settings:           `${ColumnFamilies.Standard}:${ColumnNames.Settings}`,
     XRooms:             `${ColumnFamilies.Xrefs}:${ColumnNames.Rooms}`,
+    OXRooms:            `${ColumnFamilies.Xrefs}:${ColumnNames.ORooms}`,
     XParent:            `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,
     Key:                `k`
 };
