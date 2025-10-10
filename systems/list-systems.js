@@ -37,6 +37,7 @@ async function main() {
     const subsystems = [];
 
     for (const item of items) {
+        const key = Encoding.toFullKey(item[QC.Key], true);
         const name = item[QC.OName] ?? item[QC.Name];
         const parent = item[QC.Parent];
 
@@ -55,7 +56,7 @@ async function main() {
             systems.push({
                 name,
                 key: item[QC.Key],
-                systemId: Encoding.toSystemId(Encoding.toFullKey(item[QC.Key], true)),
+                systemId: Encoding.toSystemId(key),
             });
         }
     }

@@ -31,6 +31,7 @@ async function main() {
     const systemMap = {};
 
     for (const system of systems) {
+        const key = Encoding.toFullKey(system[QC.Key], true);
         const name = system[QC.OName] ?? system[QC.Name];
         const parent = system[QC.Parent];
 
@@ -39,7 +40,6 @@ async function main() {
             continue;
         }
         // encode element key to system id
-        const key = system[QC.Key];
         const systemId = Encoding.toSystemId(key);
 
         systemMap[systemId] = {
