@@ -5,7 +5,8 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { QC } from '../common/utils.js';
+import { QC } from '../common/constants.js';
+import { Encoding, getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -23,21 +24,92 @@ async function main() {
     // STEP 2 - get facility
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
+    const facilityTemplate = await client.getFacilityTemplate(facilityId);
+    // STEP 3 - get default model
+    const defaultModel = getDefaultModel(facilityId, facility);
 
-    // STEP 3 - iterate through facility models and collect systems
-    for (const link of facility.links) {
-        const systems = await client.getSystems(link.modelId);
+    if (!defaultModel) {
+        throw new Error('Default model not found');
+    }
+    // STEP 4 - get systems and build hierarchy of systems and subsystems
+    const items = await client.getSystems(defaultModel.modelId);
+    const systems = [];
+    const subsystems = [];
 
-        // STEP 4 - iterate through systems and print their names
-        for (const system of systems) {
-            let name = system[QC.OName];
+    for (const item of items) {
+        const name = item[QC.OName] ?? item[QC.Name];
+        const parent = item[QC.Parent];
 
-            if (!name) {
-               name = system[QC.Name];
-            }
-            console.log(`${name}`);
+        if (parent) {
+            // STEP 5 - if item has parent then it is subsystem - decode its parameters
+            // using facility template to get parameter names
+            const parameters = getSubsystemParameters(item[QC.Settings], facilityTemplate);
+
+            subsystems.push({
+                name: name,
+                key: item[QC.Key],
+                parent: parent,
+                parameters
+            });
+        } else {
+            systems.push({
+                name,
+                key: item[QC.Key],
+                systemId: Encoding.toSystemId(Encoding.toFullKey(item[QC.Key], true)),
+            });
         }
-    }   
+    }
+    // STEP 6 - print systems and their subsystems
+    systems.sort((a, b) => a.name.localeCompare(b.name));
+    for (const system of systems) {
+        console.log(`System: ${system.name} (${system.systemId})`);
+        const items = subsystems.filter(s => s.parent === system.key);
+
+        for (const item of items) {
+            console.log(`  Subsystem: ${item.name}`);
+            for (const param of item.parameters) {
+                console.log(`    ${param.name}: ${param.value}`);
+            }
+        }
+    }
+}
+
+/**
+ * Helper function to decode subsystem parameters
+ * 
+ * @param {string} encodedSettings 
+ * @param {any} facilityTemplate 
+ * @returns {Array<{name: string, uuid: string, value: any}>}
+ */
+function getSubsystemParameters(encodedSettings, facilityTemplate) {
+    const parameters = [];
+
+    try {
+        const config = Encoding.decode(encodedSettings);
+        const configObj = JSON.parse(config);
+
+        for (const [key, value] of Object.entries(configObj)) {
+            const match = key.match(/^\[(.+?)\]\[(.+?)\]$/);
+
+            if (!match) {
+                continue;
+            }
+            const [, uuid] = match;
+            const params = facilityTemplate.psets.flatMap(pset =>
+                pset.parameters.find(p => p.uuid === uuid));
+                    
+            if (params.length > 0) {
+                parameters.push({
+                    name: params[0].name,
+                    uuid,
+                    value
+                });
+            }
+        }
+    } catch (err) {
+        console.error('Error decoding parameters', err);
+    }
+    return parameters;
 }
 
 main()
