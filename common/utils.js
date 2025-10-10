@@ -1,4 +1,5 @@
 import fs from 'fs';
+import {v4 as uuidv4} from 'uuid';
 
 import {
     kElementFlagsSize,
@@ -7,6 +8,7 @@ import {
     kModelIdSize,
     kRecordSize,
     kSystemIdSize,
+    ElementFlags,
     KeyFlags
  } from './constants.js';
 
@@ -91,6 +93,44 @@ export class Encoding {
         const text = JSON.stringify(settings);
         
         return Encoding.encode(text);
+    }
+
+    /**
+     * Checks if given key is a full element key.
+     * 
+     * @param {string} key
+     * @returns {boolean}
+     */
+    static isFullKey(key) {
+        const binData = Buffer.from(key, 'base64');
+
+        return binData.length === kElementIdWithFlagsSize;
+    }
+
+    /**
+     * Checks if given key is a xref key.
+     * 
+     * @param {string} key
+     * @returns {boolean}
+     */
+    static isXrefKey(key) {
+        const binData = Buffer.from(key, 'base64');
+
+        return binData.length === (kModelIdSize + kElementIdWithFlagsSize);
+    }
+
+    /**
+     * Creates new element key.
+     * 
+     * @param {number} keyFlags 
+     * @returns {string}
+     */
+    static newElementKey(keyFlags) {
+        const buff = Buffer.alloc(kElementIdWithFlagsSize);
+
+        buff.writeInt32BE(keyFlags);
+        uuidv4({}, buff, 4);
+        return this.makeWebsafe(buff.toString('base64'));
     }
 
     /**
@@ -226,7 +266,7 @@ export class Encoding {
         binData.copy(keyBuff, 0, kModelIdSize);
         const key = Encoding.makeWebsafe(keyBuff.toString('base64'));
 
-        return [ modelId, key ];
+        return [ `urn:adsk.dtm:${modelId}`, key ];
     }
 
     /**
@@ -311,6 +351,19 @@ export function getDefaultModel(facilityId, facilityData) {
     });
 
     return defaultModel;
+}
+
+/**
+ * Returns true if the element is a logical element.
+ * 
+ * @param {number} elementFlags 
+ * @returns {boolean}
+ */
+export function isLogicalElement(elementFlags) {
+    return (elementFlags === ElementFlags.Stream ||
+        elementFlags === ElementFlags.Level ||
+        elementFlags === ElementFlags.GenericAsset ||
+        elementFlags === ElementFlags.System);
 }
 
 /**
