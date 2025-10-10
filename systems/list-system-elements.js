@@ -82,9 +82,9 @@ async function main() {
 
                     if (matches) {
                         // if system has filter, then check that element matches it
-                        const elementList = systemElementsMap[systemId] || [];
+                        const elementList = systemElementsMap[systemId] || new Set();
 
-                        elementList.push(element[QC.Key]);
+                        elementList.add(Encoding.toFullKey(element[QC.Key]));
                         systemElementsMap[systemId] = elementList;
                     }
                 }
@@ -95,9 +95,9 @@ async function main() {
     for (const [systemId, system] of Object.entries(systemMap)) {
         const systemElements = systemElementsMap[systemId];
 
-        if (systemElements?.length > 0) {
+        if (systemElements?.size > 0) {
             console.log(`${system.name} (${systemId})`);
-            console.log(`  Element count: ${systemElements.length}`);
+            console.log(`  Element count: ${systemElements.size}`);
         }
     }
 }
