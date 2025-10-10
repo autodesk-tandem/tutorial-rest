@@ -30,6 +30,7 @@ export const ElementFlags = {
     Stream:         0x01000003,
     System:         0x01000004,
     GenericAsset:   0x01000005,
+    Deleted:        0xfffffffe,
     AllLogicalMask: 0xff000000
 };
 
@@ -64,6 +65,8 @@ export const ColumnNames = {
     Rooms:              'r',
     ORooms:             '!r',
     Settings:           's',
+    SystemClass:        'b',
+    OSystemClass:       '!b',
     UniformatClass:     'u',
     TandemCategory:     'z',
     OTandemCategory:    '!z',
@@ -86,6 +89,8 @@ export const QC = {
     Parent:             `${ColumnFamilies.Refs}:${ColumnNames.Parent}`,
     Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
     Settings:           `${ColumnFamilies.Standard}:${ColumnNames.Settings}`,
+    SystemClass:        `${ColumnFamilies.Standard}:${ColumnNames.SystemClass}`,
+    OSystemClass:       `${ColumnFamilies.Standard}:${ColumnNames.OSystemClass}`,
     XRooms:             `${ColumnFamilies.Xrefs}:${ColumnNames.Rooms}`,
     OXRooms:            `${ColumnFamilies.Xrefs}:${ColumnNames.ORooms}`,
     XParent:            `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,

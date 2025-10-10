@@ -5,8 +5,11 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ColumnFamilies, QC } from '../common/constants.js';
-import { Encoding, getDefaultModel } from '../common/utils.js';
+import {
+    ColumnFamilies,
+    ElementFlags,
+    QC } from '../common/constants.js';
+import { Encoding, getDefaultModel, systemClassToList } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -41,10 +44,12 @@ async function main() {
         }
         // encode element key to system id
         const systemId = Encoding.toSystemId(key);
+        const filter = system[QC.OSystemClass] ?? system[QC.SystemClass];
 
         systemMap[systemId] = {
             name,
-            key
+            key,
+            filter
         };
     }
     // STEP 4 - iterate through model elements and store their relationship to system
@@ -54,15 +59,34 @@ async function main() {
         const elements = await client.getElements(link.modelId, undefined, [ ColumnFamilies.Standard, ColumnFamilies.Systems ]);
     
         for (const element of elements) {
+            const elementFlags = element[QC.ElementFlags];
+
+             // skip deleted elements and systems
+            if (elementFlags === ElementFlags.Deleted || elementFlags === ElementFlags.Systems) {
+                continue;
+            }
             for (const item in element) {
                 // we need to handle both fam:col and fam:!col formats
                 const [, family, systemId] = item.match(/^([^:]+):!?(.+)$/) ?? [];
 
                 if (family === ColumnFamilies.Systems) {
-                    const elementList = systemElementsMap[systemId] || [];
+                    const system = systemMap[systemId];
 
-                    elementList.push(element[QC.Key]);
-                    systemElementsMap[systemId] = elementList;
+                    if (!system) {
+                        continue;
+                    }
+                    const classNames = systemClassToList(system.filter);
+                    const elementClass = element[QC.OSystemClass] ?? element[QC.SystemClass];
+                    const elementClassNames = systemClassToList(elementClass);
+                    const matches = elementClassNames.some(name => classNames.includes(name));
+
+                    if (matches) {
+                        // if system has filter, then check that element matches it
+                        const elementList = systemElementsMap[systemId] || [];
+
+                        elementList.push(element[QC.Key]);
+                        systemElementsMap[systemId] = elementList;
+                    }
                 }
             }
         }
