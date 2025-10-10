@@ -31,10 +31,12 @@ async function main() {
     const systemMap = {};
 
     for (const system of systems) {
-        let name = system[QC.OName];
+        const name = system[QC.OName] ?? system[QC.Name];
+        const parent = system[QC.Parent];
 
-        if (!name) {
-            name = system[QC.Name];
+        // skip subsystems
+        if (parent) {
+            continue;
         }
         // encode element key to system id
         const key = system[QC.Key];
@@ -46,7 +48,6 @@ async function main() {
         };
     }
     // STEP 4 - iterate through model elements and store their relationship to system
-    // in dictionary (id => { model, key, name })
     const systemElementsMap = {};
 
     for (const link of facility.links) {
@@ -54,34 +55,25 @@ async function main() {
     
         for (const element of elements) {
             for (const item in element) {
-                if (item.startsWith(`${ColumnFamilies.Systems}:`)) {
-                    const systemId = item.replace(`${ColumnFamilies.Systems}:`, '');
-                    let elementList = systemElementsMap[systemId];
+                // we need to handle both fam:col and fam:!col formats
+                const [, family, systemId] = item.match(/^([^:]+):!?(.+)$/) ?? [];
 
-                    if (!elementList) {
-                        elementList = [];
-                        systemElementsMap[systemId] = elementList;
-                    }
-                    elementList.push({
-                        model: link.modelId,
-                        key: element[QC.Key],
-                        name: element[QC.Name]
-                    });
+                if (family === ColumnFamilies.Systems) {
+                    const elementList = systemElementsMap[systemId] || [];
+
+                    elementList.push(element[QC.Key]);
+                    systemElementsMap[systemId] = elementList;
                 }
             }
         }
     }
-    // STEP 5 - print out system names and associated elements
-    for (const systemId in systemMap) {
-        const system = systemMap[systemId];
+    // STEP 5 - print out system names and number of associated elements
+    for (const [systemId, system] of Object.entries(systemMap)) {
         const systemElements = systemElementsMap[systemId];
 
-        if (!systemElements) {
-            continue;
-        }
-        console.log(`${system.name} (${systemElements.length})`);
-        for (const element of systemElements) {
-            console.log(`  ${element.name}`);
+        if (systemElements?.length > 0) {
+            console.log(`${system.name} (${systemId})`);
+            console.log(`  Element count: ${systemElements.length}`);
         }
     }
 }
