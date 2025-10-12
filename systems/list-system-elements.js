@@ -68,7 +68,7 @@ async function main() {
             const elementFlags = element[QC.ElementFlags];
 
              // skip deleted elements and systems
-            if (elementFlags === ElementFlags.Deleted || elementFlags === ElementFlags.Systems) {
+            if (elementFlags === ElementFlags.Deleted || elementFlags === ElementFlags.System) {
                 continue;
             }
             const key = Encoding.toFullKey(element[QC.Key], isLogicalElement(elementFlags));
