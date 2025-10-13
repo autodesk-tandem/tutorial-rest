@@ -12,7 +12,6 @@ import {
 import {
     Encoding,
     getDefaultModel,
-    isLogicalElement,
     systemClassToList
 } from '../common/utils.js';
 
@@ -71,7 +70,7 @@ async function main() {
             if (elementFlags === ElementFlags.Deleted || elementFlags === ElementFlags.System) {
                 continue;
             }
-            const key = Encoding.toFullKey(element[QC.Key], isLogicalElement(elementFlags));
+            const key = element[QC.Key];
             // check if element has system class assigned
             const elementClass = element[QC.OSystemClass] ?? element[QC.SystemClass];
 
