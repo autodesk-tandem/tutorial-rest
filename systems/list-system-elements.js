@@ -80,7 +80,7 @@ async function main() {
             const elementClassNames = systemClassToList(elementClass);
 
             for (const item in element) {
-                // we need to handle both fam:col and fam:!col formats
+                // need to handle both fam:col and fam:!col formats
                 const [, family, systemId] = item.match(/^([^:]+):!?(.+)$/) ?? [];
 
                 if (family === ColumnFamilies.Systems) {
@@ -89,16 +89,18 @@ async function main() {
                     if (!system) {
                         continue;
                     }
-                    let classNames = systemClassMap[system.filter];
+                    const filter = system.filter;
+                    let classNames = systemClassMap[filter];
 
                     if (!classNames) {
-                        classNames = systemClassToList(system.filter);
-                        systemClassMap[system.filter] = classNames;
+                        classNames = systemClassToList(filter);
+                        systemClassMap[filter] = classNames;
                     }
+                    // if system has filter, then check that element matches it
                     const matches = elementClassNames.some(name => classNames.includes(name));
 
                     if (matches) {
-                        // if system has filter, then check that element matches it
+                        // use set to handle possible duplicates
                         const elementList = systemElementsMap[systemId] || new Set();
 
                         elementList.add(key);
