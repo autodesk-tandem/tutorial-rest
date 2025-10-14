@@ -59,7 +59,7 @@ async function main() {
     for (const modelId in modelStreamMap) {
         const items = modelStreamMap[modelId];
         const keys = items.map(n => n.key);
-        const elementData = await client.getElements(`urn:adsk.dtm:${modelId}`, keys);
+        const elementData = await client.getElements(modelId, keys);
         
         for (const item of items) {
             const stream = streams[item.streamIndex];

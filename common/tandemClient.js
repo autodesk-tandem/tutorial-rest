@@ -16,11 +16,13 @@ import {
 const paths = {
     'prod': {
         app: 'https://tandem.autodesk.com',
-        base: 'https://developer.api.autodesk.com/tandem/v1'
+        base: 'https://developer.api.autodesk.com/tandem/v1',
+        cdn: 'https://static.tandem.autodesk.com'
     },
     'stg': {
         app: 'https://tandem-stg.autodesk.com',
-        base: 'https://tandem-stg.autodesk.com/api/v1'
+        base: 'https://tandem-stg.autodesk.com/api/v1',
+        cdn: 'https://static.tandem.autodesk.com'
     }
 };
 
@@ -44,11 +46,12 @@ export class TandemClient {
      * @param {"prod"|"stg"} [env="prod"] 
      */
     constructor(authProvider, region = Region.US, env = Environment.Production) {
+        this._version = '1.0.773';
         this._appBasePath = paths[env].app;
         this._appPath = `${this._appBasePath}/app`;
         this._basePath = paths[env].base;
-        this._cdnPath = `${paths[env].cdn}/1.0.753`;
-        this._clientPath = `${this._appBasePath}/client/viewer/1.0.753`;
+        this._cdnPath = `${paths[env].cdn}/${this._version}`;
+        this._clientPath = `${this._appBasePath}/client/viewer/${this._version}`;
         this._otgPath = `${this._appBasePath}/otg`;
         this._authProvider = authProvider;
         this._region = region;
@@ -489,6 +492,20 @@ export class TandemClient {
     }
 
     /**
+     * Returns model attributes.
+     * 
+     * @param {string} modelId 
+     * @returns {any}
+     */
+    async getModelAttributes(modelId) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/modeldata/${modelId}/attrs`;
+        const data = await this._get(token, url);
+
+        return data;
+    }
+
+    /**
      * Returns facility template based on facility URN.
      * 
      * @param {string} facilityId - URN of the facility
@@ -538,7 +555,7 @@ export class TandemClient {
      * Returns group details.
      * 
      * @param {string} groupId - URN of the group.
-     * @returns {Promise<object>}
+     * @returns {Promise<Object.<string, object>>}
      */
     async getGroup(groupId) {
         const token = this._authProvider();
@@ -795,7 +812,7 @@ export class TandemClient {
      * 
      * @param {string} urn - URN of the model.
      * @param {string[]} keys - list of stream kes. 
-     * @returns {Promise<object>}
+     * @returns {Promise<{Object.<string, any>}>}
      */
     async getStreamLastReading(urn, keys) {
         const inputs = {
@@ -859,7 +876,7 @@ export class TandemClient {
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<object[]>}
      */
-    async getSystems(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+    async getSystems(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Systems ]) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
@@ -909,6 +926,37 @@ export class TandemClient {
     }
 
     /**
+     * Returns the list of Tandem categories.
+     * 
+     * @returns {Promise<any>}
+     */
+    async getTandemCategories() {
+        const url = `${this.cdnPath}/tandem_categories.json`;
+        const response = await fetch(url, {
+            method: 'GET'
+        });
+
+        if (response.status !== 200) {
+            throw new Error(`Error calling Tandem API: ${response.status}`);
+        }
+        return await response.json();
+    }
+
+    /**
+     * Returns map of user facilities.
+     * 
+     * @param {string} userId 
+     * @returns {Promise<Object.<string, object>>}
+     */
+    async getUserFacilities(userId) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/users/${userId}/twins`;
+        const data = await this._get(token, url);
+
+        return data;
+    }
+
+    /**
      * Returns saved facility views.
      * 
      * @param {string} urn - URN of the facility.
@@ -943,9 +991,10 @@ export class TandemClient {
      * @param {string[]} keys - array of keys to modify.
      * @param {any[][]} mutations - arry of mutations.
      * @param {string} [description] - optional description.
-     * @returns {Promise<object>}
+     * @param {string} [correlationId] - optional correlation ID. Useful for cases when a change spans across multiple mutation calls (e.g. multi-model operations).
+     * @returns {Promise<any>}
      */
-    async mutateElements(urn, keys, mutations, description = undefined) {
+    async mutateElements(urn, keys, mutations, description = undefined, correlationId = undefined) {
         const token = this._authProvider();
         const inputs = {
             keys,
@@ -954,6 +1003,9 @@ export class TandemClient {
 
         if (description) {
             inputs.desc = description;
+        }
+        if (correlationId) {
+            inputs.correlationId = correlationId;
         }
         const url = `${this.basePath}/modeldata/${urn}/mutate`;
         const result = await this._post(token, url, JSON.stringify(inputs));
@@ -1075,7 +1127,7 @@ export class TandemClient {
             body: body
         });
 
-        if (response.status === 202 || response.status === 202) {
+        if (response.status === 202 || response.status === 204) {
             return;
         }
         if (response.status !== 200) {
