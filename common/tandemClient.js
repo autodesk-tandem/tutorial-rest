@@ -247,12 +247,13 @@ export class TandemClient {
      * @param {string} uniformatClass 
      * @param {number} categoryId 
      * @param {string} [classification]
+     * @param {string} [tandemCategory]
      * @param {string} [parentXref]
      * @param {string} [roomXref]
      * @param {string} [levelKey]
      * @returns {Promise}
      */
-    async createStream(urn, name, uniformatClass, categoryId, classification = undefined, parentXref = undefined, roomXref = undefined, levelKey = undefined) {
+    async createStream(urn, name, uniformatClass, categoryId, classification = undefined, tandemCategory = undefined, parentXref = undefined, roomXref = undefined, levelKey = undefined) {
         const token = this._authProvider();
         const inputs = {
             muts: [
@@ -267,6 +268,9 @@ export class TandemClient {
 
         if (classification) {
             inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.Classification, classification ]);
+        }
+        if (tandemCategory) {
+            inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.TandemCategory, tandemCategory ]);
         }
         if (parentXref) {
             inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Xrefs, ColumnNames.Parent, parentXref ]);
