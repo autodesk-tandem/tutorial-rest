@@ -418,7 +418,7 @@ export class TandemClient {
      * @returns {Promise<object[]>}
      */
     async getElement(urn, key, columnFamilies = [ ColumnFamilies.Standard ], includeHistory = false) {
-        const data = await this.getElements(urn, [ key ] , columnFamilies, includeHistory);
+        const data = await this.getElements(urn, [ key ] , columnFamilies, undefined, includeHistory);
     
         return data[0];
     }
@@ -429,16 +429,23 @@ export class TandemClient {
      * @param {string} urn - URN of the model.
      * @param {string[]} [keys] - optional array of keys. 
      * @param {string[]} [columnFamilies] - optional array of column families.
+     * @param {string[]} [columns] - optional array of qualified columns.
      * @param {boolean} [includeHistory] - controls if history is included.
      * @returns {Promise<object[]>}
      */
-    async getElements(urn, keys = undefined, columnFamilies = [ ColumnFamilies.Standard ], includeHistory = false) {
+    async getElements(urn, keys = undefined, columnFamilies = [ ColumnFamilies.Standard ], columns = undefined, includeHistory = false) {
         const token = this._authProvider();
         const inputs = {
-            families: columnFamilies,
             includeHistory: includeHistory,
             skipArrays: true
         };
+
+        if (columnFamilies && columnFamilies.length > 0) {
+            inputs.families = columnFamilies;
+        }
+        if (columns && columns.length > 0) {
+            inputs.qualifiedColumns = columns;
+        }
         if (keys && keys.length > 0) {
             inputs.keys = keys;
         }
@@ -833,16 +840,23 @@ export class TandemClient {
      * Returns stream elements from given model.
      * 
      * @param {string} urn - URN of the model.
-     * @param {string[]} [columnFamilies] - optional list of columns
-     * @returns {Promise<object[]>}
+     * @param {string[]} [columnFamilies] - optional list of column families
+     * @param {string[]} [columns] - optional list of columns
+     * @returns {Promise<any[]>}
      */
-    async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+    async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard ], columns = undefined) {
         const token = this._authProvider();
         const inputs = {
-            families: columnFamilies,
             includeHistory: false,
             skipArrays: true
         };
+
+        if (columnFamilies && columnFamilies.length > 0) {
+            inputs.families = columnFamilies;
+        }
+        if (columns && columns.length > 0) {
+            inputs.qualifiedColumns = columns;
+        }
         const url = `${this.basePath}/modeldata/${urn}/scan`;
         const data = await this._post(token, url, JSON.stringify(inputs));
         const results = [];
