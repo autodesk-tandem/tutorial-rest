@@ -29,7 +29,7 @@ async function main() {
 
     // STEP 3 - get streams and their parents
     const streams = await client.getStreams(defaultModel.modelId, [ ColumnFamilies.Standard, ColumnFamilies.Xrefs ]);
-    const modelStreamMap = {};
+    const modelStreamMap = new Map();
 
     for (let i = 0; i < streams.length; i++) {
         const stream = streams[i];
@@ -41,13 +41,11 @@ async function main() {
         }
         // decode xref key of the host
         const [ modelId, key ] = Encoding.fromXrefKey(parentXref);
+        const items = modelStreamMap.get(modelId) || [];
 
-        let items = modelStreamMap[modelId];
-
-        if (!items) {
-            items = [];
-            modelStreamMap[modelId] = items;
-        };
+        if (!modelStreamMap.has(modelId)) {
+            modelStreamMap.set(modelId, items);
+        }
         items.push({
             key: Encoding.toShortKey(key),
             streamIndex: i
@@ -56,19 +54,21 @@ async function main() {
     // STEP 5 - print name of stream + name of parent
     // note we use batch query to get properties of multiple elements
     // in one call rather than query server for each element
-    for (const modelId in modelStreamMap) {
-        const items = modelStreamMap[modelId];
+    for (const [ modelId, items] of modelStreamMap.entries()) {
         const keys = items.map(n => n.key);
         const elementData = await client.getElements(modelId, keys);
         
         for (const item of items) {
             const stream = streams[item.streamIndex];
+            const name = stream[QC.OName] ?? stream[QC.Name];
             const parentData = elementData.find(i => i[QC.Key] === item.key);
 
             if (!parentData) {
                 continue;
             }
-            console.log(`${stream[QC.Name]}:${parentData[QC.Name]}`);
+            const parentName = parentData[QC.OName] ?? parentData[QC.Name];
+
+            console.log(`${name}:${parentName}`);
         }
     }
 }
