@@ -503,20 +503,6 @@ export class TandemClient {
     }
 
     /**
-     * Returns model attributes.
-     * 
-     * @param {string} modelId 
-     * @returns {any}
-     */
-    async getModelAttributes(modelId) {
-        const token = this._authProvider();
-        const url = `${this.basePath}/modeldata/${modelId}/attrs`;
-        const data = await this._get(token, url);
-
-        return data;
-    }
-
-    /**
      * Returns facility template based on facility URN.
      * 
      * @param {string} facilityId - URN of the facility
@@ -657,6 +643,20 @@ export class TandemClient {
     async getModel(modelId) {
         const token = this._authProvider();
         const url = `${this.basePath}/modeldata/${modelId}/model`;
+        const data = await this._get(token, url);
+
+        return data;
+    }
+
+    /**
+     * Returns model attributes.
+     * 
+     * @param {string} modelId 
+     * @returns {any}
+     */
+    async getModelAttributes(modelId) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/modeldata/${modelId}/attrs`;
         const data = await this._get(token, url);
 
         return data;
