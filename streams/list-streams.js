@@ -41,9 +41,10 @@ async function main() {
         }
         // decode xref key of the host
         const [ modelId, key ] = Encoding.fromXrefKey(parentXref);
-        const items = modelStreamMap.get(modelId) || [];
+        let items = modelStreamMap.get(modelId)
 
-        if (!modelStreamMap.has(modelId)) {
+        if (!items) {
+            items = [];
             modelStreamMap.set(modelId, items);
         }
         items.push({
