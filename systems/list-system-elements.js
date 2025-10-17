@@ -35,7 +35,7 @@ async function main() {
     // STEP 3 - iterate through systems and collect their data (id => { name, key })
     const defaultModel = getDefaultModel(facilityId, facility);
     const systems = await client.getSystems(defaultModel.modelId);
-    const systemMap = {};
+    const systemMap = new Map();
 
     for (const system of systems) {
         const key = Encoding.toFullKey(system[QC.Key], true);
@@ -50,15 +50,15 @@ async function main() {
         const systemId = Encoding.toSystemId(key);
         const filter = system[QC.OSystemClass] ?? system[QC.SystemClass];
 
-        systemMap[systemId] = {
+        systemMap.set(systemId, {
             name,
             key,
             filter
-        };
+        });
     }
     // STEP 4 - iterate through model elements and store their relationship to system
-    const systemElementsMap = {};
-    const systemClassMap = {};
+    const systemElementsMap = new Map();
+    const systemClassMap = new Map();
 
     for (const link of facility.links) {
         const elements = await client.getElements(link.modelId, undefined, [ ColumnFamilies.Standard, ColumnFamilies.Systems ]);
@@ -84,35 +84,38 @@ async function main() {
                 const [, family, systemId] = item.match(/^([^:]+):!?(.+)$/) ?? [];
 
                 if (family === ColumnFamilies.Systems) {
-                    const system = systemMap[systemId];
+                    const system = systemMap.get(systemId);
 
                     if (!system) {
                         continue;
                     }
                     const filter = system.filter;
-                    let classNames = systemClassMap[filter];
+                    let classNames = systemClassMap.get(filter);
 
                     if (!classNames) {
                         classNames = systemClassToList(filter);
-                        systemClassMap[filter] = classNames;
+                        systemClassMap.set(filter, classNames);
                     }
                     // if system has filter, then check that element matches it
                     const matches = elementClassNames.some(name => classNames.includes(name));
 
                     if (matches) {
                         // use set to handle possible duplicates
-                        const elementList = systemElementsMap[systemId] || new Set();
+                        let elementList = systemElementsMap.get(systemId);
 
+                        if (!elementList) {
+                            elementList = new Set();
+                            systemElementsMap.set(systemId, elementList);
+                        }
                         elementList.add(key);
-                        systemElementsMap[systemId] = elementList;
                     }
                 }
             }
         }
     }
     // STEP 5 - print out system names and number of associated elements
-    for (const [systemId, system] of Object.entries(systemMap)) {
-        const systemElements = systemElementsMap[systemId];
+    for (const [systemId, system] of systemMap.entries()) {
+        const systemElements = systemElementsMap.get(systemId);
 
         if (systemElements?.size > 0) {
             console.log(`${system.name} (${systemId})`);
