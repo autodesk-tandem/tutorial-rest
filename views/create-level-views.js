@@ -3,6 +3,9 @@
     In this case it uses properties of given BASE_VIEW as template.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
+
+    NOTE - the example uses API which is NOT SUPPORTED at the moment:
+        POST https://developer.api.autodesk.com/tandem/v1//twins/:facilityId/views
 */
 import { createToken } from '../common/auth.js';
 import { QC } from '../common/constants.js';
