@@ -42,8 +42,8 @@ export class TandemClient {
      * Class constructor. It accepts function which returns valid authentication token.
      * 
      * @param {authCallback} authProvider
-     * @param {Region} [region=Region.US] - data storage location
-     * @param {"prod"|"stg"} [env="prod"] 
+     * @param {"US"|"EMEA"|"AUS"} [region=Region.US] - data storage location. Must be one of {@link Region} values.
+     * @param {"prod"|"stg"} [env=Environment.Production] - environment. Must be one of {@link Environment} values.
      */
     constructor(authProvider, region = Region.US, env = Environment.Production) {
         this._version = '1.0.773';
@@ -79,6 +79,14 @@ export class TandemClient {
 
     get otgPath() {
         return this._otgPath;
+    }
+
+    get region() {
+        return this._region;
+    }
+
+    set region(value) {
+        this._region = value;
     }
 
     /**
@@ -966,9 +974,23 @@ export class TandemClient {
      * @param {string} userId 
      * @returns {Promise<Object.<string, object>>}
      */
-    async getUserFacilities(userId) {
+    async getUserFacilities(userId = '@me') {
         const token = this._authProvider();
         const url = `${this.basePath}/users/${userId}/twins`;
+        const data = await this._get(token, url);
+
+        return data;
+    }
+
+    /**
+     * Returns list of user resources (groups and facilities).
+     * 
+     * @param {"@me"} userId 
+     * @returns {Promise<object>}
+     */
+    async getUserResources(userId = '@me') {
+        const token = this._authProvider();
+        const url = `${this.basePath}/users/${userId}/resources`;
         const data = await this._get(token, url);
 
         return data;
