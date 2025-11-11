@@ -6,10 +6,19 @@ export const Environment = {
     Staging: 'stg'
 };
 
+/**
+ * @type { US: "US"; EMEA: "EMEA"; AUS: "AUS" }
+ */
 export const Region = {
     US: 'US',
     EMEA: 'EMEA',
     AUS: 'AUS'
+};
+
+export const RegionLabelMap = {
+    'us': Region.US,
+    'eu': Region.EMEA,
+    'aus': Region.AUS
 };
 
 export const kModelIdSize = 16;
@@ -30,8 +39,10 @@ export const ElementFlags = {
     Stream:         0x01000003,
     System:         0x01000004,
     GenericAsset:   0x01000005,
-    Deleted:        0xfffffffe,
-    AllLogicalMask: 0xff000000
+    Collection:     0x01000006,
+    Ticket:         0x01000007,
+    AllLogicalMask: 0xff000000,
+    Deleted:        0xfffffffe
 };
 
 export const KeyFlags = {
@@ -62,6 +73,9 @@ export const ColumnNames = {
     Name:               'n',
     OName:              '!n',
     Parent:             'p',
+    Priority:           'pr',
+    OpenDate:           'od',
+    CloseDate:          'cd',
     Rooms:              'r',
     ORooms:             '!r',
     Settings:           's',
@@ -87,6 +101,7 @@ export const QC = {
     Name:               `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     OName:              `${ColumnFamilies.Standard}:${ColumnNames.OName}`,
     Parent:             `${ColumnFamilies.Refs}:${ColumnNames.Parent}`,
+    Priority:           `${ColumnFamilies.Standard}:${ColumnNames.Priority}`,
     Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
     Settings:           `${ColumnFamilies.Standard}:${ColumnNames.Settings}`,
     SystemClass:        `${ColumnFamilies.Standard}:${ColumnNames.SystemClass}`,
