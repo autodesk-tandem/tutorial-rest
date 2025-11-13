@@ -16,11 +16,13 @@ import {
 const paths = {
     'prod': {
         app: 'https://tandem.autodesk.com',
-        base: 'https://developer.api.autodesk.com/tandem/v1'
+        base: 'https://developer.api.autodesk.com/tandem/v1',
+        cdn: 'https://static.tandem.autodesk.com'
     },
     'stg': {
         app: 'https://tandem-stg.autodesk.com',
-        base: 'https://tandem-stg.autodesk.com/api/v1'
+        base: 'https://tandem-stg.autodesk.com/api/v1',
+        cdn: 'https://static.tandem.autodesk.com'
     }
 };
 
@@ -40,15 +42,16 @@ export class TandemClient {
      * Class constructor. It accepts function which returns valid authentication token.
      * 
      * @param {authCallback} authProvider
-     * @param {Region} [region=Region.US] - data storage location
-     * @param {"prod"|"stg"} [env="prod"] 
+     * @param {"US"|"EMEA"|"AUS"} [region=Region.US] - data storage location. Must be one of {@link Region} values.
+     * @param {"prod"|"stg"} [env=Environment.Production] - environment. Must be one of {@link Environment} values.
      */
     constructor(authProvider, region = Region.US, env = Environment.Production) {
+        this._version = '1.0.773';
         this._appBasePath = paths[env].app;
         this._appPath = `${this._appBasePath}/app`;
         this._basePath = paths[env].base;
-        this._cdnPath = `${paths[env].cdn}/1.0.753`;
-        this._clientPath = `${this._appBasePath}/client/viewer/1.0.753`;
+        this._cdnPath = `${paths[env].cdn}/${this._version}`;
+        this._clientPath = `${this._appBasePath}/client/viewer/${this._version}`;
         this._otgPath = `${this._appBasePath}/otg`;
         this._authProvider = authProvider;
         this._region = region;
@@ -76,6 +79,14 @@ export class TandemClient {
 
     get otgPath() {
         return this._otgPath;
+    }
+
+    get region() {
+        return this._region;
+    }
+
+    set region(value) {
+        this._region = value;
     }
 
     /**
@@ -244,12 +255,13 @@ export class TandemClient {
      * @param {string} uniformatClass 
      * @param {number} categoryId 
      * @param {string} [classification]
+     * @param {string} [tandemCategory]
      * @param {string} [parentXref]
      * @param {string} [roomXref]
      * @param {string} [levelKey]
      * @returns {Promise}
      */
-    async createStream(urn, name, uniformatClass, categoryId, classification = undefined, parentXref = undefined, roomXref = undefined, levelKey = undefined) {
+    async createStream(urn, name, uniformatClass, categoryId, classification = undefined, tandemCategory = undefined, parentXref = undefined, roomXref = undefined, levelKey = undefined) {
         const token = this._authProvider();
         const inputs = {
             muts: [
@@ -264,6 +276,9 @@ export class TandemClient {
 
         if (classification) {
             inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.Classification, classification ]);
+        }
+        if (tandemCategory) {
+            inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.TandemCategory, tandemCategory ]);
         }
         if (parentXref) {
             inputs.muts.push([ MutateActions.Insert, ColumnFamilies.Xrefs, ColumnNames.Parent, parentXref ]);
@@ -411,7 +426,7 @@ export class TandemClient {
      * @returns {Promise<object[]>}
      */
     async getElement(urn, key, columnFamilies = [ ColumnFamilies.Standard ], includeHistory = false) {
-        const data = await this.getElements(urn, [ key ] , columnFamilies, includeHistory);
+        const data = await this.getElements(urn, [ key ] , columnFamilies, undefined, includeHistory);
     
         return data[0];
     }
@@ -422,16 +437,23 @@ export class TandemClient {
      * @param {string} urn - URN of the model.
      * @param {string[]} [keys] - optional array of keys. 
      * @param {string[]} [columnFamilies] - optional array of column families.
+     * @param {string[]} [columns] - optional array of qualified columns.
      * @param {boolean} [includeHistory] - controls if history is included.
      * @returns {Promise<object[]>}
      */
-    async getElements(urn, keys = undefined, columnFamilies = [ ColumnFamilies.Standard ], includeHistory = false) {
+    async getElements(urn, keys = undefined, columnFamilies = [ ColumnFamilies.Standard ], columns = undefined, includeHistory = false) {
         const token = this._authProvider();
         const inputs = {
-            families: columnFamilies,
             includeHistory: includeHistory,
             skipArrays: true
         };
+
+        if (columnFamilies && columnFamilies.length > 0) {
+            inputs.families = columnFamilies;
+        }
+        if (columns && columns.length > 0) {
+            inputs.qualifiedColumns = columns;
+        }
         if (keys && keys.length > 0) {
             inputs.keys = keys;
         }
@@ -538,7 +560,7 @@ export class TandemClient {
      * Returns group details.
      * 
      * @param {string} groupId - URN of the group.
-     * @returns {Promise<object>}
+     * @returns {Promise<Object.<string, object>>}
      */
     async getGroup(groupId) {
         const token = this._authProvider();
@@ -629,6 +651,20 @@ export class TandemClient {
     async getModel(modelId) {
         const token = this._authProvider();
         const url = `${this.basePath}/modeldata/${modelId}/model`;
+        const data = await this._get(token, url);
+
+        return data;
+    }
+
+    /**
+     * Returns model attributes.
+     * 
+     * @param {string} modelId 
+     * @returns {any}
+     */
+    async getModelAttributes(modelId) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/modeldata/${modelId}/attrs`;
         const data = await this._get(token, url);
 
         return data;
@@ -795,7 +831,7 @@ export class TandemClient {
      * 
      * @param {string} urn - URN of the model.
      * @param {string[]} keys - list of stream kes. 
-     * @returns {Promise<object>}
+     * @returns {Promise<{Object.<string, any>}>}
      */
     async getStreamLastReading(urn, keys) {
         const inputs = {
@@ -812,16 +848,23 @@ export class TandemClient {
      * Returns stream elements from given model.
      * 
      * @param {string} urn - URN of the model.
-     * @param {string[]} [columnFamilies] - optional list of columns
-     * @returns {Promise<object[]>}
+     * @param {string[]} [columnFamilies] - optional list of column families
+     * @param {string[]} [columns] - optional list of columns
+     * @returns {Promise<any[]>}
      */
-    async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+    async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard ], columns = undefined) {
         const token = this._authProvider();
         const inputs = {
-            families: columnFamilies,
             includeHistory: false,
             skipArrays: true
         };
+
+        if (columnFamilies && columnFamilies.length > 0) {
+            inputs.families = columnFamilies;
+        }
+        if (columns && columns.length > 0) {
+            inputs.qualifiedColumns = columns;
+        }
         const url = `${this.basePath}/modeldata/${urn}/scan`;
         const data = await this._post(token, url, JSON.stringify(inputs));
         const results = [];
@@ -859,7 +902,7 @@ export class TandemClient {
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<object[]>}
      */
-    async getSystems(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+    async getSystems(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Systems ]) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
@@ -909,29 +952,48 @@ export class TandemClient {
     }
 
     /**
-     * Returns ticket elements from given model.
+     * Returns the list of Tandem categories.
      * 
-     * @param {string} urn - URN of the model.
-     * @param {string[]} [columnFamilies] - optional list of columns
-     * @returns {Promise<object[]>}
+     * @returns {Promise<any>}
      */
-    async getTickets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Xrefs ]) {
-        const token = this._authProvider();
-        const inputs = {
-            families: columnFamilies,
-            includeHistory: false,
-            skipArrays: true
-        };
-        const url = `${this.basePath}/modeldata/${urn}/scan`;
-        const data = await this._post(token, url, JSON.stringify(inputs));
-        const results = [];
+    async getTandemCategories() {
+        const url = `${this.cdnPath}/tandem_categories.json`;
+        const response = await fetch(url, {
+            method: 'GET'
+        });
 
-        for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Ticket) {
-                results.push(item);
-            }
+        if (response.status !== 200) {
+            throw new Error(`Error calling Tandem API: ${response.status}`);
         }
-        return results;
+        return await response.json();
+    }
+
+    /**
+     * Returns map of user facilities.
+     * 
+     * @param {string} userId 
+     * @returns {Promise<Object.<string, object>>}
+     */
+    async getUserFacilities(userId = '@me') {
+        const token = this._authProvider();
+        const url = `${this.basePath}/users/${userId}/twins`;
+        const data = await this._get(token, url);
+
+        return data;
+    }
+
+    /**
+     * Returns list of user resources (groups and facilities).
+     * 
+     * @param {"@me"} userId 
+     * @returns {Promise<object>}
+     */
+    async getUserResources(userId = '@me') {
+        const token = this._authProvider();
+        const url = `${this.basePath}/users/${userId}/resources`;
+        const data = await this._get(token, url);
+
+        return data;
     }
 
     /**
@@ -969,9 +1031,10 @@ export class TandemClient {
      * @param {string[]} keys - array of keys to modify.
      * @param {any[][]} mutations - arry of mutations.
      * @param {string} [description] - optional description.
-     * @returns {Promise<object>}
+     * @param {string} [correlationId] - optional correlation ID. Useful for cases when a change spans across multiple mutation calls (e.g. multi-model operations).
+     * @returns {Promise<any>}
      */
-    async mutateElements(urn, keys, mutations, description = undefined) {
+    async mutateElements(urn, keys, mutations, description = undefined, correlationId = undefined) {
         const token = this._authProvider();
         const inputs = {
             keys,
@@ -980,6 +1043,9 @@ export class TandemClient {
 
         if (description) {
             inputs.desc = description;
+        }
+        if (correlationId) {
+            inputs.correlationId = correlationId;
         }
         const url = `${this.basePath}/modeldata/${urn}/mutate`;
         const result = await this._post(token, url, JSON.stringify(inputs));
@@ -1101,7 +1167,7 @@ export class TandemClient {
             body: body
         });
 
-        if (response.status === 202 || response.status === 202) {
+        if (response.status === 202 || response.status === 204) {
             return;
         }
         if (response.status !== 200) {

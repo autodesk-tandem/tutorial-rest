@@ -8,9 +8,10 @@ import {
     kModelIdSize,
     kRecordSize,
     kSystemIdSize,
-    KeyFlags
- } from './constants.js';
-
+    ElementFlags,
+    KeyFlags,
+    SystemClassNames
+} from './constants.js';
 
 export class Encoding {
     /**
@@ -92,6 +93,30 @@ export class Encoding {
         const text = JSON.stringify(settings);
         
         return Encoding.encode(text);
+    }
+
+    /**
+     * Checks if given key is a full element key.
+     * 
+     * @param {string} key
+     * @returns {boolean}
+     */
+    static isFullKey(key) {
+        const binData = Buffer.from(key, 'base64');
+
+        return binData.length === kElementIdWithFlagsSize;
+    }
+
+    /**
+     * Checks if given key is a xref key.
+     * 
+     * @param {string} key
+     * @returns {boolean}
+     */
+    static isXrefKey(key) {
+        const binData = Buffer.from(key, 'base64');
+
+        return binData.length === (kModelIdSize + kElementIdWithFlagsSize);
     }
 
     /**
@@ -241,7 +266,7 @@ export class Encoding {
         binData.copy(keyBuff, 0, kModelIdSize);
         const key = Encoding.makeWebsafe(keyBuff.toString('base64'));
 
-        return [ modelId, key ];
+        return [ `urn:adsk.dtm:${modelId}`, key ];
     }
 
     /**
@@ -326,6 +351,19 @@ export function getDefaultModel(facilityId, facilityData) {
     });
 
     return defaultModel;
+}
+
+/**
+ * Returns true if the element is a logical element.
+ * 
+ * @param {number} elementFlags 
+ * @returns {boolean}
+ */
+export function isLogicalElement(elementFlags) {
+    return (elementFlags === ElementFlags.Stream ||
+        elementFlags === ElementFlags.Level ||
+        elementFlags === ElementFlags.GenericAsset ||
+        elementFlags === ElementFlags.System);
 }
 
 /**
@@ -439,4 +477,23 @@ function writeVarint(buff, offset, value) {
         buff[offset[0]++] = byte;
     } while (value);
     return offset[0] - startOffset;
+}
+/**
+ * Converts endcoded system class flags to array class names.
+ *
+ * @param {number} flags
+ * @returns {Array<string>}
+ */
+export function systemClassToList(flags) {
+    if (!flags) {
+        return [];
+    }
+    const result = [];
+
+	for (let i = 0; i < SystemClassNames.length; i++) {
+		if (flags & (1 << i)) {
+			result.push(SystemClassNames[i]);
+		}
+	}
+	return result;
 }

@@ -15,6 +15,7 @@ const FACILITY_URN = 'YOUR_FACILITY_URN';
 
 const ROOM_NAME = 'UNIT E-110'; // Use room name based on your facility
 const CLASSIFICATION_ID = '3d';  // Use classification id based on your facility template
+const TANDEM_CATEGORY = 'Q.Se';  // ID of Tandem category for sensors
 
 async function main() {
     // STEP 1 - obtain token. The sample uses 2-legged token but it would also work with 3-legged token
@@ -73,6 +74,7 @@ async function main() {
         uniformatClassId,
         categoryId,
         classification,
+        TANDEM_CATEGORY,
         parentXref, // because stream is assigned to room we use same key for host & room
         parentXref, 
         targetLevel?.[QC.Key]);

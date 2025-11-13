@@ -5,8 +5,15 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ColumnFamilies, QC } from '../common/constants.js';
-import { Encoding, getDefaultModel } from '../common/utils.js';
+import {
+    ColumnFamilies,
+    ElementFlags,
+    QC } from '../common/constants.js';
+import {
+    Encoding,
+    getDefaultModel,
+    systemClassToList
+} from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -28,60 +35,91 @@ async function main() {
     // STEP 3 - iterate through systems and collect their data (id => { name, key })
     const defaultModel = getDefaultModel(facilityId, facility);
     const systems = await client.getSystems(defaultModel.modelId);
-    const systemMap = {};
+    const systemMap = new Map();
 
     for (const system of systems) {
-        let name = system[QC.OName];
+        const key = Encoding.toFullKey(system[QC.Key], true);
+        const name = system[QC.OName] ?? system[QC.Name];
+        const parent = system[QC.Parent];
 
-        if (!name) {
-            name = system[QC.Name];
+        // skip subsystems
+        if (parent) {
+            continue;
         }
         // encode element key to system id
-        const key = system[QC.Key];
         const systemId = Encoding.toSystemId(key);
+        const filter = system[QC.OSystemClass] ?? system[QC.SystemClass];
 
-        systemMap[systemId] = {
+        systemMap.set(systemId, {
             name,
-            key
-        };
+            key,
+            filter
+        });
     }
     // STEP 4 - iterate through model elements and store their relationship to system
-    // in dictionary (id => { model, key, name })
-    const systemElementsMap = {};
+    const systemElementsMap = new Map();
+    const systemClassMap = new Map();
 
     for (const link of facility.links) {
         const elements = await client.getElements(link.modelId, undefined, [ ColumnFamilies.Standard, ColumnFamilies.Systems ]);
     
         for (const element of elements) {
-            for (const item in element) {
-                if (item.startsWith(`${ColumnFamilies.Systems}:`)) {
-                    const systemId = item.replace(`${ColumnFamilies.Systems}:`, '');
-                    let elementList = systemElementsMap[systemId];
+            const elementFlags = element[QC.ElementFlags];
 
-                    if (!elementList) {
-                        elementList = [];
-                        systemElementsMap[systemId] = elementList;
+             // skip deleted elements and systems
+            if (elementFlags === ElementFlags.Deleted || elementFlags === ElementFlags.System) {
+                continue;
+            }
+            const key = element[QC.Key];
+            // check if element has system class assigned
+            const elementClass = element[QC.OSystemClass] ?? element[QC.SystemClass];
+
+            if (!elementClass) {
+                continue;
+            }
+            const elementClassNames = systemClassToList(elementClass);
+
+            for (const item in element) {
+                // need to handle both fam:col and fam:!col formats
+                const [, family, systemId] = item.match(/^([^:]+):!?(.+)$/) ?? [];
+
+                if (family === ColumnFamilies.Systems) {
+                    const system = systemMap.get(systemId);
+
+                    if (!system) {
+                        continue;
                     }
-                    elementList.push({
-                        model: link.modelId,
-                        key: element[QC.Key],
-                        name: element[QC.Name]
-                    });
+                    const filter = system.filter;
+                    let classNames = systemClassMap.get(filter);
+
+                    if (!classNames) {
+                        classNames = systemClassToList(filter);
+                        systemClassMap.set(filter, classNames);
+                    }
+                    // if system has filter, then check that element matches it
+                    const matches = elementClassNames.some(name => classNames.includes(name));
+
+                    if (matches) {
+                        // use set to handle possible duplicates
+                        let elementList = systemElementsMap.get(systemId);
+
+                        if (!elementList) {
+                            elementList = new Set();
+                            systemElementsMap.set(systemId, elementList);
+                        }
+                        elementList.add(key);
+                    }
                 }
             }
         }
     }
-    // STEP 5 - print out system names and associated elements
-    for (const systemId in systemMap) {
-        const system = systemMap[systemId];
-        const systemElements = systemElementsMap[systemId];
+    // STEP 5 - print out system names and number of associated elements
+    for (const [systemId, system] of systemMap.entries()) {
+        const systemElements = systemElementsMap.get(systemId);
 
-        if (!systemElements) {
-            continue;
-        }
-        console.log(`${system.name} (${systemElements.length})`);
-        for (const element of systemElements) {
-            console.log(`  ${element.name}`);
+        if (systemElements?.size > 0) {
+            console.log(`${system.name} (${systemId})`);
+            console.log(`  Element count: ${systemElements.size}`);
         }
     }
 }
