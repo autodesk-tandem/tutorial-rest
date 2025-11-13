@@ -89,7 +89,8 @@ async function main() {
                 ColumnNames.Priority,
                 'Medium'
             ],
-        ]
+        ],
+        desc: `Create ticket`
     };
 
     // repeat keys based on number of mutations
