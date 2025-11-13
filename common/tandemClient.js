@@ -191,7 +191,7 @@ export class TandemClient {
      * Adds new element to the model.
      * 
      * @param {string} modelId - URN of the model.
-     * @param {object} inputs 
+     * @param {object} inputs
      * @returns {Promise}
      */
     async createElement(modelId, inputs) {
