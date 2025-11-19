@@ -9,8 +9,12 @@ import { ColumnFamilies,
     ColumnNames,
     ElementFlags,
     MutateActions,
-    QC } from './../common/constants.js';
-import { Encoding, getDefaultModel } from './../common/utils.js';
+    QC
+} from './../common/constants.js';
+import {
+    Encoding,
+    getDefaultModel
+} from './../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -59,43 +63,82 @@ async function main() {
     if (!xref) {
         throw new Error(`Unable to locate asset: ${ASSET_NAME}`);
     }
-    // STEP 4 - create ticket connected to asset
+    // STEP 4 - get rooms and levels from parent asset
+    const [ modelId, elementKey ] = Encoding.fromXrefKey(xref);
+    let roomsIds;
+    let levelId;
+
+    if (modelId && elementKey) {
+        const parentElement = await client.getElement(modelId, elementKey, [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Xrefs ]);
+
+        roomsIds = parentElement[QC.OXRooms] ?? parentElement[QC.XRooms];
+        // STEP 5 - find level by name in default model
+        const parentLevelId = parentElement[QC.OLevel] ?? parentElement[QC.Level];
+
+        if (parentLevelId) {
+            const parentLevel = await client.getElement(modelId, parentLevelId, [ ColumnFamilies.Standard ]);
+            const levelName = parentLevel[QC.OName] ?? parentLevel[QC.Name];
+            const levels = await client.getLevels(defaultModel.modelId);
+            const level = levels.find(l => l[QC.OName] === levelName || l[QC.Name] === levelName);
+
+            if (level) {
+                levelId = level[QC.Key];
+            }
+        }
+    }
+    // STEP 6 - payload for ticket connected to asset
     const flags = ElementFlags.Ticket;
-    const newKey = Encoding.newElementKey(flags & ElementFlags.AllLogicalMask);
-    const inputs = {
-        keys: [],
-        muts: [
-            [
-                MutateActions.Insert,
-                ColumnFamilies.Standard,
-                ColumnNames.Name,
-                TICKET_NAME
-            ],
-            [
-                MutateActions.Insert,
-                ColumnFamilies.Standard,
-                ColumnNames.ElementFlags,
-                flags
-            ],
-            [
-                MutateActions.Insert,
-                ColumnFamilies.Xrefs,
-                ColumnNames.Parent,
-                xref
-            ],
-            [
-                MutateActions.Insert,
-                ColumnFamilies.Standard,
-                ColumnNames.Priority,
-                'Medium'
-            ],
+    const mutations = [
+        [
+            MutateActions.Insert,
+            ColumnFamilies.Standard,
+            ColumnNames.Name,
+            TICKET_NAME
         ],
+        [
+            MutateActions.Insert,
+            ColumnFamilies.Standard,
+            ColumnNames.ElementFlags,
+            flags
+        ],
+        [
+            MutateActions.Insert,
+            ColumnFamilies.Xrefs,
+            ColumnNames.Parent,
+            xref
+        ],
+        [
+            MutateActions.Insert,
+            ColumnFamilies.Standard,
+            ColumnNames.Priority,
+            'Medium'
+        ],
+    ];
+
+    if (roomsIds && roomsIds.length > 0) {
+        mutations.push([
+            MutateActions.Insert,
+            ColumnFamilies.Xrefs,
+            ColumnNames.Rooms,
+            roomsIds
+        ]);
+    }
+
+    if (levelId) {
+        mutations.push([
+            MutateActions.Insert,
+            ColumnFamilies.Refs,
+            ColumnNames.Level,
+            levelId
+        ]);
+    }
+    const inputs = {
+        muts: mutations,
         desc: `Create ticket`
     };
+    const ticketResult = await client.createElement(defaultModel.modelId, inputs);
 
-    // repeat keys based on number of mutations
-    inputs.keys = Array(inputs.muts.length).fill(newKey);
-    await client.createElement(defaultModel.modelId, inputs);
+    console.log(`Created new ticket: ${TICKET_NAME} (${ticketResult.key})`);
 }
 
 main()
