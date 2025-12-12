@@ -46,7 +46,7 @@ export class TandemClient {
      * @param {"prod"|"stg"} [env=Environment.Production] - environment. Must be one of {@link Environment} values.
      */
     constructor(authProvider, region = Region.US, env = Environment.Production) {
-        this._version = '1.0.773';
+        this._version = '1.0.818';
         this._appBasePath = paths[env].app;
         this._appPath = `${this._appBasePath}/app`;
         this._basePath = paths[env].base;
