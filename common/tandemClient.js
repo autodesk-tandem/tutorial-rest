@@ -46,7 +46,7 @@ export class TandemClient {
      * @param {"prod"|"stg"} [env=Environment.Production] - environment. Must be one of {@link Environment} values.
      */
     constructor(authProvider, region = Region.US, env = Environment.Production) {
-        this._version = '1.0.773';
+        this._version = '1.0.824';
         this._appBasePath = paths[env].app;
         this._appPath = `${this._appBasePath}/app`;
         this._basePath = paths[env].base;
@@ -219,13 +219,9 @@ export class TandemClient {
     }
 
     /**
-     * @typedef {Object} TwinSettingsProps
-     * @property {{ key: string, value: Object }} props
-     */
-
-    /**
      * @typedef {Object} TwinSettings
-     * @property {TwinSettingsProps} props
+     * @property {{ [key: string]: any; }} props
+     * @property {number} schemaVersion
      */
 
     /**
@@ -400,20 +396,21 @@ export class TandemClient {
     }
 
     /**
-     * Returns stored classifications.
+     * Returns stored classifications for given group.
      * 
+     * @param {string} groupId - URN of the group.
      * @returns {Promise<object[]>}
      */
-    async getClassifications() {
+    async getClassifications(groupId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.clientPath}/classifications.json`, {
+        const response = await fetch(`${this.appPath}/groups/${groupId}/classifications`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
         const data = await response.json();
-
+        
         return data;
     }
 
@@ -541,13 +538,14 @@ export class TandemClient {
     }
 
     /**
-     * Returns stored facility templates.
+     * Returns stored facility templates for given group.
      * 
+     * @param {string} groupId - URN of the group.
      * @returns {Promise<object[]>}
      */
-    async getFacilityTemplates() {
+    async getFacilityTemplates(groupId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.clientPath}/facilityTemplates.json`, {
+        const response = await fetch(`${this.appPath}/groups/${groupId}/facility-templates`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -637,6 +635,60 @@ export class TandemClient {
             }
         }
         return results;
+    }
+
+    /**
+     * Returns stored libraryclassifications.
+     * 
+     * @returns {Promise<object[]>}
+     */
+    async getLibraryClassifications() {
+        const token = this._authProvider();
+        const response = await fetch(`${this.clientPath}/classifications.json`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+
+        return data;
+    }
+
+    /**
+     * Returns stored library parameters.
+     * 
+     * @returns {Promise<object[]>}
+     */
+    async getLibraryParameters() {
+        const token = this._authProvider();
+        const response = await fetch(`${this.clientPath}/parameters.json`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        
+        return data;
+    }
+
+    /**
+     * Returns stored library templates.
+     * 
+     * @returns {Promise<object[]>}
+     */
+    async getLibraryTemplates() {
+        const token = this._authProvider();
+        const response = await fetch(`${this.clientPath}/facilityTemplates.json`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        
+        return data;
     }
 
     /**
@@ -764,11 +816,12 @@ export class TandemClient {
     /**
      * Returns stored parameters.
      * 
+     * @param {string} groupId - URN of the group.
      * @returns {Promise<object[]>}
      */
-    async getParameters() {
+    async getParameters(groupId) {
         const token = this._authProvider();
-        const response = await fetch(`${this.clientPath}/parameters.json`, {
+        const response = await fetch(`${this.appPath}/groups/${groupId}/params`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
