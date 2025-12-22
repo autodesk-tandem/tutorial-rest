@@ -113,6 +113,14 @@ export const QC = {
     Key:                `k`
 };
 
+// Tandem Categories
+export const TC = {
+    Levels: 'L.Lv',
+    Rooms: 'L.Rm',
+    Sensors: 'Q.Se',
+    Ticket: 'I.Ti'
+};
+
 export const ModelState = {
     Ready:          'r',
     Created:        'c',
