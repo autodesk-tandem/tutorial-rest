@@ -9,7 +9,8 @@ import { ColumnFamilies,
     ColumnNames,
     ElementFlags,
     MutateActions,
-    QC
+    QC,
+    TC
 } from './../common/constants.js';
 import {
     Encoding,
@@ -103,9 +104,9 @@ async function main() {
         ],
         [
             MutateActions.Insert,
-            ColumnFamilies.Xrefs,
-            ColumnNames.Parent,
-            xref
+            ColumnFamilies.Standard,
+            ColumnNames.TandemCategory,
+            TC.Ticket
         ],
         [
             MutateActions.Insert,
@@ -113,6 +114,12 @@ async function main() {
             ColumnNames.Priority,
             'Medium'
         ],
+        [
+            MutateActions.Insert,
+            ColumnFamilies.Xrefs,
+            ColumnNames.Parent,
+            xref
+        ]
     ];
 
     if (roomsIds && roomsIds.length > 0) {
