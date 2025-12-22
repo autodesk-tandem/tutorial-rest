@@ -181,3 +181,14 @@ export const SystemClassNames = [
     "Cable Tray Conduit",           //24
     "Storm",                        //25
 ];
+
+// history related constants
+export const HC = {
+   ClientID: 'c',
+   CorrelationID: 'i',
+   Description: 'd',
+   Keys: 'k',
+   Operation: 'o',
+   Timestamp: 't',
+   Username: 'n'
+};

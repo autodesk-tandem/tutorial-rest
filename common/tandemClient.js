@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from 'node:fs';
 import { Readable, Transform } from 'stream';
 import { finished } from 'stream/promises';
 import StreamArray from 'stream-json/streamers/StreamArray.js';
@@ -140,6 +140,22 @@ export class TandemClient {
         const data = await this._post(token, url, JSON.stringify(input));
 
         return data;
+    }
+
+    /**
+     * Completes document upload. The file should be already uploaded to S3 using link provided
+     * by (@link uploadDocument} method.
+     * 
+     * @param {string} facilityId 
+     * @param {object} inputs 
+     * @returns {Promise}
+     */
+    async confirmDocumentUpload(facilityId, inputs) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/twins/${facilityId}/documents/confirmupload`;
+        
+        await this._post(token, url, JSON.stringify(inputs));
+        return;
     }
 
     /**
@@ -1163,6 +1179,21 @@ export class TandemClient {
         return data;
     }
 
+    /**
+     * Starts document upload process.
+     * 
+     * @param {string} facilityId 
+     * @param {object} fileInput 
+     * @returns {Promise<object>}
+     */
+    async uploadDocument(facilityId, fileInput) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/twins/${facilityId}/documents/upload`;
+        const data = await this._post(token, url, JSON.stringify(fileInput));
+
+        return data;
+    }
+
     async _get(token, url, additionalHeaders = {}) {
         const headers = {
             'Authorization': `Bearer ${token}`,
@@ -1204,7 +1235,9 @@ export class TandemClient {
             return;
         }
         if (response.status !== 200) {
-            throw new Error(`Error calling Tandem API: ${response.status}`);
+            const details = await response.text();
+
+            throw new Error(`Error calling Tandem API: ${response.status} (${details})`);
         }
         const data = await response.json();
 
