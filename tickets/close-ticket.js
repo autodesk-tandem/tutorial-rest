@@ -1,5 +1,5 @@
 /*
-    This example demonstrates how to close a ticketusing REST API.
+    This example demonstrates how to close a ticket using REST API.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
