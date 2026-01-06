@@ -116,6 +116,12 @@ async function main() {
         ],
         [
             MutateActions.Insert,
+            ColumnFamilies.Standard,
+            ColumnNames.OpenDate,
+            new Date().toISOString().slice(0, 10) // format as 'YYYY-MM-DD';
+        ],
+        [
+            MutateActions.Insert,
             ColumnFamilies.Xrefs,
             ColumnNames.Parent,
             xref
