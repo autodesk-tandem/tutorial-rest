@@ -28,7 +28,7 @@ async function main() {
     const defaultModel = getDefaultModel(facilityId, facility);
 
     // STEP 3 - get streams
-    const streams = await client.getStreams(defaultModel.modelId, [ ColumnFamilies.Standard, ColumnFamilies.Xrefs ]);
+    const streams = await client.getStreams(defaultModel.modelId);
     const streamData = [];
 
     // STEP 4 - get parent data

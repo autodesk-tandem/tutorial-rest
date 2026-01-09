@@ -921,7 +921,7 @@ export class TandemClient {
          * @param {string[]} [columns] - optional list of columns
          * @returns {Promise<any[]>}
          */
-        async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard ], columns = undefined) {
+        async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Xrefs ], columns = undefined) {
             const token = this._authProvider();
             const inputs = {
                 includeHistory: false,
