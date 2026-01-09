@@ -207,7 +207,7 @@ export class TandemClient {
      * Adds new element to the model.
      * 
      * @param {string} modelId - URN of the model.
-     * @param {object} inputs 
+     * @param {object} inputs
      * @returns {Promise}
      */
     async createElement(modelId, inputs) {
@@ -913,38 +913,38 @@ export class TandemClient {
         return data;
     }
 
-    /**
-     * Returns stream elements from given model.
-     * 
-     * @param {string} urn - URN of the model.
-     * @param {string[]} [columnFamilies] - optional list of column families
-     * @param {string[]} [columns] - optional list of columns
-     * @returns {Promise<any[]>}
-     */
-    async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard ], columns = undefined) {
-        const token = this._authProvider();
-        const inputs = {
-            includeHistory: false,
-            skipArrays: true
-        };
+        /**
+         * Returns stream elements from given model.
+         * 
+         * @param {string} urn - URN of the model.
+         * @param {string[]} [columnFamilies] - optional list of column families
+         * @param {string[]} [columns] - optional list of columns
+         * @returns {Promise<any[]>}
+         */
+        async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Xrefs ], columns = undefined) {
+            const token = this._authProvider();
+            const inputs = {
+                includeHistory: false,
+                skipArrays: true
+            };
 
-        if (columnFamilies && columnFamilies.length > 0) {
-            inputs.families = columnFamilies;
-        }
-        if (columns && columns.length > 0) {
-            inputs.qualifiedColumns = columns;
-        }
-        const url = `${this.basePath}/modeldata/${urn}/scan`;
-        const data = await this._post(token, url, JSON.stringify(inputs));
-        const results = [];
-
-        for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Stream) {
-                results.push(item);
+            if (columnFamilies && columnFamilies.length > 0) {
+                inputs.families = columnFamilies;
             }
+            if (columns && columns.length > 0) {
+                inputs.qualifiedColumns = columns;
+            }
+            const url = `${this.basePath}/modeldata/${urn}/scan`;
+            const data = await this._post(token, url, JSON.stringify(inputs));
+            const results = [];
+
+            for (const item of data) {
+                if (item[QC.ElementFlags] === ElementFlags.Stream) {
+                    results.push(item);
+                }
+            }
+            return results;
         }
-        return results;
-    }
 
     /**
      * Returns secrets for streams.
@@ -1035,6 +1035,39 @@ export class TandemClient {
             throw new Error(`Error calling Tandem API: ${response.status}`);
         }
         return await response.json();
+    }
+
+    /**
+     * Returns ticket elements from given model.
+     * 
+     * @param {string} urn - URN of the model.
+     * @param {string[]} [columnFamilies] - optional list of column families
+     * @param {string[]} [columns] - optional list of columns
+     * @returns {Promise<any[]>}
+     */
+    async getTickets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Xrefs ], columns = undefined) {
+        const token = this._authProvider();
+        const inputs = {
+            includeHistory: false,
+            skipArrays: true
+        };
+
+        if (columnFamilies && columnFamilies.length > 0) {
+            inputs.families = columnFamilies;
+        }
+        if (columns && columns.length > 0) {
+            inputs.qualifiedColumns = columns;
+        }
+        const url = `${this.basePath}/modeldata/${urn}/scan`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
+        const results = [];
+
+        for (const item of data) {
+            if (item[QC.ElementFlags] === ElementFlags.Ticket) {
+                results.push(item);
+            }
+        }
+        return results;
     }
 
     /**

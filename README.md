@@ -48,4 +48,5 @@ The examples are organized into multiple folders based on topic:
 * **history** - history related examples
 * **streams** - streams related examples
 * **systems** - system related examples
+* **tickets** - ticket related examples
 * **views** - view related examples

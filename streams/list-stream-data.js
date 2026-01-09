@@ -6,7 +6,7 @@
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { AttributeType, ColumnFamilies, QC } from '../common/constants.js';
-import { Encoding, getDefaultModel } from '../common/utils.js';
+import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -54,7 +54,7 @@ async function main() {
             const valueMap = new Map();
 
             if (propDef && propDef.dataType === AttributeType.String) {
-                for (const [ name, value] of Object.entries(propDef.allowedValues.map)) {
+                for (const [name, value] of Object.entries(propDef.allowedValues.map)) {
                     valueMap.set(value, name);
                 }
             }

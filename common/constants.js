@@ -100,8 +100,9 @@ export const QC = {
     OLevel:             `${ColumnFamilies.Refs}:${ColumnNames.OLevel}`,
     Name:               `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     OName:              `${ColumnFamilies.Standard}:${ColumnNames.OName}`,
-    Parent:             `${ColumnFamilies.Refs}:${ColumnNames.Parent}`,
     Priority:           `${ColumnFamilies.Standard}:${ColumnNames.Priority}`,
+    OpenDate:           `${ColumnFamilies.Standard}:${ColumnNames.OpenDate}`,
+    CloseDate:          `${ColumnFamilies.Standard}:${ColumnNames.CloseDate}`,
     Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
     Settings:           `${ColumnFamilies.Standard}:${ColumnNames.Settings}`,
     SystemClass:        `${ColumnFamilies.Standard}:${ColumnNames.SystemClass}`,
@@ -110,6 +111,14 @@ export const QC = {
     OXRooms:            `${ColumnFamilies.Xrefs}:${ColumnNames.ORooms}`,
     XParent:            `${ColumnFamilies.Xrefs}:${ColumnNames.Parent}`,
     Key:                `k`
+};
+
+// Tandem Categories
+export const TC = {
+    Levels: 'L.Lv',
+    Rooms: 'L.Rm',
+    Sensors: 'Q.Se',
+    Ticket: 'I.Ti'
 };
 
 export const ModelState = {

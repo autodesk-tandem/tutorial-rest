@@ -478,7 +478,6 @@ function writeVarint(buff, offset, value) {
     } while (value);
     return offset[0] - startOffset;
 }
-
 /**
  * Converts endcoded system class flags to array class names.
  *
