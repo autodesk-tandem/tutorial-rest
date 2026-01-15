@@ -387,7 +387,8 @@ export function isLogicalElement(elementFlags) {
     return (elementFlags === ElementFlags.Stream ||
         elementFlags === ElementFlags.Level ||
         elementFlags === ElementFlags.GenericAsset ||
-        elementFlags === ElementFlags.System);
+        elementFlags === ElementFlags.System ||
+        elementFlags === ElementFlags.Ticket);
 }
 
 /**
