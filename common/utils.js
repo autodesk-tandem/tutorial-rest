@@ -340,12 +340,13 @@ export class Encoding {
 
 /**
  * Returns default model of the facility. Default model has same id as facility but different prefix.
+ * 
  * @param {string} facilityId 
  * @param {object} facilityData 
  * @returns {object}
  */
 export function getDefaultModel(facilityId, facilityData) {
-    const defaultModelId = facilityId.replace('urn:adsk.dtt:', 'urn:adsk.dtm:');
+    const defaultModelId = getDefaultModelId(facilityId);
     const defaultModel = facilityData.links.find((m) => {
         return  m.modelId === defaultModelId;
     });
@@ -354,16 +355,13 @@ export function getDefaultModel(facilityId, facilityData) {
 }
 
 /**
- * Returns true if the element is a logical element.
+ * Returns id of default model.
  * 
- * @param {number} elementFlags 
- * @returns {boolean}
+ * @param {string} facilityId 
+ * @returns {string}
  */
-export function isLogicalElement(elementFlags) {
-    return (elementFlags === ElementFlags.Stream ||
-        elementFlags === ElementFlags.Level ||
-        elementFlags === ElementFlags.GenericAsset ||
-        elementFlags === ElementFlags.System);
+export function getDefaultModelId(facilityId) {
+    return facilityId.replace('urn:adsk.dtt:', 'urn:adsk.dtm:');
 }
 
 /**
@@ -377,6 +375,19 @@ export function getMainModel(facilityData) {
     });
 
     return mainModel;
+}
+
+/**
+ * Returns true if the element is a logical element.
+ * 
+ * @param {number} elementFlags 
+ * @returns {boolean}
+ */
+export function isLogicalElement(elementFlags) {
+    return (elementFlags === ElementFlags.Stream ||
+        elementFlags === ElementFlags.Level ||
+        elementFlags === ElementFlags.GenericAsset ||
+        elementFlags === ElementFlags.System);
 }
 
 /**
@@ -478,6 +489,7 @@ function writeVarint(buff, offset, value) {
     } while (value);
     return offset[0] - startOffset;
 }
+
 /**
  * Converts endcoded system class flags to array class names.
  *
