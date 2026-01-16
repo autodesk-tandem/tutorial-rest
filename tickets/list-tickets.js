@@ -49,12 +49,29 @@ async function main() {
         const xref = ticket[QC.XParent];
 
         if (xref) {
-            const [ modelId, elementId ] = Encoding.fromXrefKey(xref);
+            const [ modelIds, elementIds ] = Encoding.fromXrefKeyArray(xref);
+            const modelElementMap = new Map();
 
-            const element = await client.getElement(modelId, elementId);
-            const elementName = element[QC.OName] ?? element[QC.Name];
+            for (let i = 0; i < modelIds.length; i++) {
+                const modelId = modelIds[i];
+                const elementId = elementIds[i];
+                const modelElements = modelElementMap.get(modelId);
 
-            console.log(`  Element: ${elementName}`);
+                if (modelElements) {
+                    modelElements.push(elementId);
+                } else {
+                    modelElementMap.set(modelId, [elementId]);
+                }
+            }
+            for (const [ modelId, elementIds ] of modelElementMap.entries()) {
+                const elements = await client.getElements(modelId, elementIds);
+
+                for (const element of elements) {
+                    const elementName = element[QC.OName] ?? element[QC.Name];
+                    
+                    console.log(`  Element: ${elementName}`);
+                }
+            }
         }
     }
 }
