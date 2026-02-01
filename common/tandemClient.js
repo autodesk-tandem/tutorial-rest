@@ -911,38 +911,38 @@ export class TandemClient {
         return data;
     }
 
-        /**
-         * Returns stream elements from given model.
-         * 
-         * @param {string} urn - URN of the model.
-         * @param {string[]} [columnFamilies] - optional list of column families
-         * @param {string[]} [columns] - optional list of columns
-         * @returns {Promise<any[]>}
-         */
-        async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Xrefs ], columns = undefined) {
-            const token = this._authProvider();
-            const inputs = {
-                includeHistory: false,
-                skipArrays: true
-            };
+    /**
+     * Returns stream elements from given model.
+     * 
+     * @param {string} urn - URN of the model.
+     * @param {string[]} [columnFamilies] - optional list of column families
+     * @param {string[]} [columns] - optional list of columns
+     * @returns {Promise<any[]>}
+     */
+    async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Xrefs ], columns = undefined) {
+        const token = this._authProvider();
+        const inputs = {
+            includeHistory: false,
+            skipArrays: true
+        };
 
-            if (columnFamilies && columnFamilies.length > 0) {
-                inputs.families = columnFamilies;
-            }
-            if (columns && columns.length > 0) {
-                inputs.qualifiedColumns = columns;
-            }
-            const url = `${this.basePath}/modeldata/${urn}/scan`;
-            const data = await this._post(token, url, JSON.stringify(inputs));
-            const results = [];
-
-            for (const item of data) {
-                if (item[QC.ElementFlags] === ElementFlags.Stream) {
-                    results.push(item);
-                }
-            }
-            return results;
+        if (columnFamilies && columnFamilies.length > 0) {
+            inputs.families = columnFamilies;
         }
+        if (columns && columns.length > 0) {
+            inputs.qualifiedColumns = columns;
+        }
+        const url = `${this.basePath}/modeldata/${urn}/scan`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
+        const results = [];
+
+        for (const item of data) {
+            if (item[QC.ElementFlags] === ElementFlags.Stream) {
+                results.push(item);
+            }
+        }
+        return results;
+    }
 
     /**
      * Returns secrets for streams.
