@@ -41,7 +41,7 @@ async function main() {
     if (!propDef) {
         throw new Error(`Property not found in schema: ${PARAMETER_NAME}`);
     }
-    // STEP 6 - prepare configurations for all streams
+    // STEP 6 - prepare configurations for all streams. This will overwrite existing configurations
     const configs = [];
 
     for (const key of keys) {
