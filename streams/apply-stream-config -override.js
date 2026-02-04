@@ -1,5 +1,5 @@
 /*
-    This example demonstrates how to update stream configuration.
+    This example demonstrates how to apply override to stream configuration.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
@@ -13,7 +13,9 @@ const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
 const APS_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
 const FACILITY_URN = 'YOUR_FACILITY_URN';
 
+const STREAM_NAME = 'Test Stream'; // name of the stream to apply override
 const PARAMETER_NAME = 'Temperature'; // parameter to map in all streams
+const INPUT_PATH = 'temp'; // mapping path in the source data
 
 async function main() {
     // STEP 1 - obtain token. The sample uses 2-legged token but it would also work with 3-legged token
@@ -33,7 +35,12 @@ async function main() {
     }
     // STEP 3 - get streams
     const streams = await client.getStreams(defaultModel.modelId);
-    const keys = streams.map(s => s[QC.Key]);
+    // STEP 4 - find stream by name. Check both name and name override
+    const stream = streams.find(s => (s[QC.OName] ?? s[QC.Name])?.toLowerCase() === STREAM_NAME.toLowerCase());
+
+    if (!stream) {
+        throw new Error(`Stream not found: ${STREAM_NAME}`);
+    }
     // STEP 5 - get model schema to find property id by its name
     const schema = await client.getModelSchema(defaultModel.modelId);
     const propDef = schema.attributes.find(a => a.name === PARAMETER_NAME);
@@ -41,31 +48,27 @@ async function main() {
     if (!propDef) {
         throw new Error(`Property not found in schema: ${PARAMETER_NAME}`);
     }
-    // STEP 6 - prepare configurations for all streams. This will overwrite existing configurations
-    const configs = [];
+    // STEP 6 - read existing stream configuration
+    const config = await client.getStreamConfig(defaultModel.modelId, stream[QC.Key]);
+    // STEP 7 - update stream configuration to add override for given parameter
+    const settings = config.streamSettings || {};
+    let mapping = settings.sourceMapping;
 
-    for (const key of keys) {
-        const config = {
-            elementId: Encoding.toFullKey(key, true),
-            streamSettings: {
-                sourceMapping: {
-                    [propDef.id]: {
-                        path: PARAMETER_NAME.toLowerCase(), // mapping path in the source data - it's same as parameter name in lowercase
-                        isShared: true
-                    }
-                },
-                // no thresholds in this example
-                thresholds: {}
-            }
-        };
-
-        configs.push(config);
+    if (!mapping) {
+        mapping = {};
+        settings.sourceMapping = mapping;
     }
-    await client.updateStreamConfigs(defaultModel.modelId, {
-        description: 'Update configuration',
-        streamConfigs: configs
-    });
+    mapping[propDef.id] = {
+        path: INPUT_PATH, // mapping path in the source data
+        isShared: false // indicate it's override for this stream only
+    };
 
+    await client.saveStreamConfig(defaultModel.modelId, stream[QC.Key], {
+        description: 'Apply configuration override',
+        streamConfig: {
+            streamSettings: settings
+        }
+    });
     console.log(`Done`);
 }
 
