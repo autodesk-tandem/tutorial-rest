@@ -1,12 +1,12 @@
 /*
-    This example demonstrates how to update stream configuration.
+    This example demonstrates how to update stream thresholds.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { QC } from '../common/constants.js';
-import { Encoding, getDefaultModel } from '../common/utils.js';
+import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -34,33 +34,37 @@ async function main() {
     // STEP 3 - get streams
     const streams = await client.getStreams(defaultModel.modelId);
     const keys = streams.map(s => s[QC.Key]);
-    // STEP 5 - get model schema to find property id by its name
+    // STEP 4 - get model schema to find property id by its name
     const schema = await client.getModelSchema(defaultModel.modelId);
     const propDef = schema.attributes.find(a => a.name === PARAMETER_NAME);
 
     if (!propDef) {
         throw new Error(`Property not found in schema: ${PARAMETER_NAME}`);
     }
-    // STEP 6 - prepare configurations for all streams. This will overwrite existing configurations
-    const configs = [];
+    // STEP 5 - update configurations for all streams. Add threshold to temperature parameter.
+    const configs = await client.getStreamConfigs(defaultModel.modelId, keys);
 
-    for (const key of keys) {
-        const config = {
-            elementId: Encoding.toFullKey(key, true),
-            streamSettings: {
-                sourceMapping: {
-                    [propDef.id]: {
-                        path: PARAMETER_NAME.toLowerCase(), // mapping path in the source data - it's same as parameter name in lowercase
-                        isShared: true
-                    }
-                },
-                // no thresholds in this example
-                thresholds: {}
+    for (const config of configs) {
+        const settings = config.streamSettings || {};
+        let thresholds = settings.thresholds;
+
+        if (!thresholds) {
+            thresholds = {};
+            settings.thresholds = thresholds;
+        }
+        thresholds[propDef.id] = {
+            name: 'Temperature',
+            lower: {
+                warn: 18,
+                alert: 15
+            },
+            upper: {
+                warn: 23,
+                alert: 25
             }
         };
-
-        configs.push(config);
     }
+    // STEP 6 - update stream configurations in batch
     await client.updateStreamConfigs(defaultModel.modelId, {
         description: 'Update configuration',
         streamConfigs: configs
