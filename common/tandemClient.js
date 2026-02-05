@@ -1278,7 +1278,7 @@ export class TandemClient {
      * Updates configuration for provided streams.
      * 
      * @param {string} urn - URN of the model.
-     * @param {object} inputs - payload with stream configurations.
+     * @param {object} inputs - payload with stream configurations. Note that stream configuration must be complete configuration, partial configuration is not supported.
      * @returns {Promise<object>}
      */
     async updateStreamConfigs(urn, inputs) {
