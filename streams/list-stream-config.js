@@ -9,7 +9,7 @@ import { QC } from '../common/constants.js';
 import { Encoding, getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
-const APS_CLIENT_ID = 'YOUR_CLIENT_UD';
+const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
 const APS_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
 const FACILITY_URN = 'YOUR_FACILITY_URN';
 
@@ -48,7 +48,7 @@ async function main() {
         const name = stream[QC.OName] ?? stream[QC.Name];
 
         console.log(`Stream: ${name}`);
-        // STEP 7 - iterate through stream parameters and print details including thresholds
+        // STEP 7 - iterate through stream parameters
         const thresholds = settings.thresholds;
 
         for (const [propId, mapping] of Object.entries(settings.sourceMapping)) {
@@ -60,6 +60,7 @@ async function main() {
             }
             const path = mapping.path;
             console.log(`  Property: ${propDef.name} (${propId}) -> ${path}`);
+            // STEP 8 - print threshold details if defined
             const threshold = thresholds[propId];
             
             if (!threshold) {
@@ -73,6 +74,12 @@ async function main() {
             if (threshold.upper) {
                 console.log(`    upper:`);
                 printThreshold(threshold.upper, 6);
+            }
+            // STEP 9 - print alert interval if defined
+            const alertDefinition = threshold.alertDefinition;
+
+            if (alertDefinition) {
+                console.log(`    alert interval (s): ${alertDefinition.evaluationPeriodSec}`);
             }
         }
     }
