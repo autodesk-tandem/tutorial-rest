@@ -59,8 +59,7 @@ async function main() {
         settings.sourceMapping = mapping;
     }
     mapping[propDef.id] = {
-        path: INPUT_PATH, // mapping path in the source data
-        isShared: false // indicate it's override for this stream only
+        path: INPUT_PATH // mapping path in the source data
     };
 
     await client.saveStreamConfig(defaultModel.modelId, stream[QC.Key], {
