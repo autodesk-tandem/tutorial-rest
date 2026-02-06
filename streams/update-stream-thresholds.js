@@ -5,7 +5,6 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { QC } from '../common/constants.js';
 import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
@@ -31,21 +30,22 @@ async function main() {
     if (!defaultModel) {
         throw new Error('Default model not found');
     }
-    // STEP 3 - get streams
-    const streams = await client.getStreams(defaultModel.modelId);
-    const keys = streams.map(s => s[QC.Key]);
-    // STEP 4 - get model schema to find property id by its name
+    // STEP 3 - get model schema to find property id by its name
     const schema = await client.getModelSchema(defaultModel.modelId);
     const propDef = schema.attributes.find(a => a.name === PARAMETER_NAME);
 
     if (!propDef) {
         throw new Error(`Property not found in schema: ${PARAMETER_NAME}`);
     }
-    // STEP 5 - update configurations for all streams. Add threshold to temperature parameter.
-    const configs = await client.getStreamConfigs(defaultModel.modelId, keys);
+    // STEP 4 - update configurations for all streams. Add threshold to temperature parameter.
+    const configs = await client.getStreamConfigs(defaultModel.modelId);
 
     for (const config of configs) {
         const settings = config.streamSettings || {};
+
+        if (!settings?.sourceMapping?.[propDef.id]) {
+            continue;
+        }
         let thresholds = settings.thresholds;
 
         if (!thresholds) {
@@ -64,7 +64,7 @@ async function main() {
             }
         };
     }
-    // STEP 6 - update stream configurations in batch
+    // STEP 5 - update stream configurations in batch
     await client.updateStreamConfigs(defaultModel.modelId, {
         description: 'Update configuration',
         streamConfigs: configs
