@@ -39,6 +39,7 @@ async function main() {
     }
     // STEP 4 - update configurations for all streams. Add threshold to temperature parameter.
     const configs = await client.getStreamConfigs(defaultModel.modelId);
+    const newConfigs = [];
 
     for (const config of configs) {
         const settings = config.streamSettings || {};
@@ -63,11 +64,16 @@ async function main() {
                 alert: 25
             }
         };
+        newConfigs.push(config);
+    }
+    if (newConfigs.length === 0) {
+        console.log('No stream configuration to update');
+        return;
     }
     // STEP 5 - update stream configurations in batch
     await client.updateStreamConfigs(defaultModel.modelId, {
         description: 'Update configuration',
-        streamConfigs: configs
+        streamConfigs: newConfigs
     });
 
     console.log(`Done`);
