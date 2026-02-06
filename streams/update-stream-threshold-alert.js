@@ -31,18 +31,16 @@ async function main() {
     if (!defaultModel) {
         throw new Error('Default model not found');
     }
-    // STEP 3 - get streams
-    const streams = await client.getStreams(defaultModel.modelId);
-    // STEP 4 - get model schema to find property id by its name
+    // STEP 3 - get model schema to find property id by its name
     const schema = await client.getModelSchema(defaultModel.modelId);
     const propDef = schema.attributes.find(a => a.name === PARAMETER_NAME);
 
     if (!propDef) {
         throw new Error(`Property not found in schema: ${PARAMETER_NAME}`);
     }
-    // STEP 5 - read existing stream configuration
+    // STEP 4 - read existing stream configuration
     const configs = await client.getStreamConfigs(defaultModel.modelId);
-    // STEP 6 - iterate through stream configurations and update threshold alert for given parameter.
+    // STEP 5 - iterate through stream configurations and update threshold alert for given parameter.
     // Note that we need to update whole configuration, partial update is not supported.
     // We will only update configuration which has threshold for given parameter.
     const newConfigs = [];
@@ -58,13 +56,17 @@ async function main() {
         if (!threshold) {
             continue;
         }
-        // STEP 7 - update alert settings for given  parameter
+        // STEP 6 - update alert settings for given  parameter
         const alertDefinition = threshold.alertDefinition || {};
 
         alertDefinition.evaluationPeriodSec = ALERT_INTERVAL; // set alert evaluation period to 300 seconds
         newConfigs.push(config);
     }
-    // STEP 7 - save changes
+    if (newConfigs.length === 0) {
+        console.log('No stream configuration to update');
+        return;
+    }
+    // STEP 6 - save changes
     await client.updateStreamConfigs(defaultModel.modelId, {
         description: 'Update stream configuration',
         streamConfigs: newConfigs
