@@ -32,19 +32,22 @@ async function main() {
     }
     // STEP 3 - get model schema to find property id by its name
     const schema = await client.getModelSchema(defaultModel.modelId);
-    const propDef = schema.attributes.find(a => a.name === PARAMETER_NAME);
+    const propDef = schema?.attributes?.find(a => a.name === PARAMETER_NAME);
 
     if (!propDef) {
         throw new Error(`Property not found in schema: ${PARAMETER_NAME}`);
     }
     // STEP 4 - update configurations for all streams. Add threshold to temperature parameter.
     const configs = await client.getStreamConfigs(defaultModel.modelId);
+    // this is used to store configurations to update.
+    // We will update only configurations which have mapping for given parameter.
+    // In real application you might want to add additional checks to limit number of updated configurations.
     const newConfigs = [];
 
     for (const config of configs) {
         const settings = config.streamSettings || {};
 
-        if (!settings?.sourceMapping?.[propDef.id]) {
+        if (!settings.sourceMapping?.[propDef.id]) {
             continue;
         }
         let thresholds = settings.thresholds;
@@ -54,7 +57,7 @@ async function main() {
             settings.thresholds = thresholds;
         }
         thresholds[propDef.id] = {
-            name: 'Temperature',
+            name: PARAMETER_NAME,
             lower: {
                 warn: 18,
                 alert: 15
@@ -75,8 +78,6 @@ async function main() {
         description: 'Update configuration',
         streamConfigs: newConfigs
     });
-
-    console.log(`Done`);
 }
 
 main()

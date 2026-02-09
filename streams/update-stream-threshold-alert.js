@@ -33,7 +33,7 @@ async function main() {
     }
     // STEP 3 - get model schema to find property id by its name
     const schema = await client.getModelSchema(defaultModel.modelId);
-    const propDef = schema.attributes.find(a => a.name === PARAMETER_NAME);
+    const propDef = schema?.attributes?.find(a => a.name === PARAMETER_NAME);
 
     if (!propDef) {
         throw new Error(`Property not found in schema: ${PARAMETER_NAME}`);
@@ -59,19 +59,19 @@ async function main() {
         // STEP 6 - update alert settings for given  parameter
         const alertDefinition = threshold.alertDefinition || {};
 
-        alertDefinition.evaluationPeriodSec = ALERT_INTERVAL; // set alert evaluation period to 300 seconds
+        threshold.alertDefinition = alertDefinition;
+        alertDefinition.evaluationPeriodSec = ALERT_INTERVAL; // set alert evaluation period to ALERT_INTERVAL seconds.
         newConfigs.push(config);
     }
     if (newConfigs.length === 0) {
         console.log('No stream configuration to update');
         return;
     }
-    // STEP 6 - save changes
+    // STEP 7 - save changes
     await client.updateStreamConfigs(defaultModel.modelId, {
         description: 'Update stream configuration',
         streamConfigs: newConfigs
     });
-    console.log(`Done`);
 }
 
 main()

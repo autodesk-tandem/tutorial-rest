@@ -43,7 +43,7 @@ async function main() {
     }
     // STEP 5 - get model schema to find property id by its name
     const schema = await client.getModelSchema(defaultModel.modelId);
-    const propDef = schema.attributes.find(a => a.name === PARAMETER_NAME);
+    const propDef = schema?.attributes?.find(a => a.name === PARAMETER_NAME);
 
     if (!propDef) {
         throw new Error(`Property not found in schema: ${PARAMETER_NAME}`);
@@ -68,7 +68,6 @@ async function main() {
             streamSettings: settings
         }
     });
-    console.log(`Done`);
 }
 
 main()
