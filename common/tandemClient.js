@@ -329,8 +329,8 @@ export class TandemClient {
      * Creates saved view based on provided input.
      * 
      * @param {string} facilityId 
-     * @param {any} view 
-     * @returns {Promise<any>}
+     * @param {object} view 
+     * @returns {Promise<object>}
      */
     async createView(facilityId, view) {
         const token = this._authProvider();
@@ -349,9 +349,7 @@ export class TandemClient {
      * @returns {Promise<object>}
      */
     async deleteElements(modelId, keys, desc) {
-        const mutations = [];
-
-        Array(keys.length).fill([ MutateActions.DeleteRow, '', '', '']);
+        const mutations = Array(keys.length).fill([ MutateActions.DeleteRow, '', '', '']);
         const result = await this.mutateElements(modelId, keys, mutations, desc);
 
         return result;
@@ -728,7 +726,7 @@ export class TandemClient {
      * Returns model attributes.
      * 
      * @param {string} modelId 
-     * @returns {any}
+     * @returns {Promise<object>}
      */
     async getModelAttributes(modelId) {
         const token = this._authProvider();
@@ -859,6 +857,35 @@ export class TandemClient {
     }
 
     /**
+     * Returns stream configuration for given stream.
+     * 
+     * @param {string} urn - URN of the model.
+     * @param {string} streamKey - key of the stream.
+     * @returns {Promise<object>}
+     */
+    async getStreamConfig(urn, streamKey) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/models/${urn}/stream-configs/${streamKey}`;
+        const data = await this._get(token, url);
+        
+        return data;
+    }
+
+    /**
+     * Returns stream configurations for all streams.
+     * 
+     * @param {string} urn - URN of the model.
+     * @returns {Promise<object>}
+     */
+    async getStreamConfigs(urn) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/models/${urn}/stream-configs`;
+        const data = await this._get(token, url);
+        
+        return data;
+    }
+
+    /**
      * Returns stream data.
      * 
      * @param {string} urn - URN of the model.
@@ -900,7 +927,7 @@ export class TandemClient {
      * 
      * @param {string} urn - URN of the model.
      * @param {string[]} keys - list of stream kes. 
-     * @returns {Promise<{Object.<string, any>}>}
+     * @returns {Promise<{Object.<string, object>}>}
      */
     async getStreamLastReading(urn, keys) {
         const inputs = {
@@ -913,38 +940,38 @@ export class TandemClient {
         return data;
     }
 
-        /**
-         * Returns stream elements from given model.
-         * 
-         * @param {string} urn - URN of the model.
-         * @param {string[]} [columnFamilies] - optional list of column families
-         * @param {string[]} [columns] - optional list of columns
-         * @returns {Promise<any[]>}
-         */
-        async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Xrefs ], columns = undefined) {
-            const token = this._authProvider();
-            const inputs = {
-                includeHistory: false,
-                skipArrays: true
-            };
+    /**
+     * Returns stream elements from given model.
+     * 
+     * @param {string} urn - URN of the model.
+     * @param {string[]} [columnFamilies] - optional list of column families
+     * @param {string[]} [columns] - optional list of columns
+     * @returns {Promise<object[]>}
+     */
+    async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Xrefs ], columns = undefined) {
+        const token = this._authProvider();
+        const inputs = {
+            includeHistory: false,
+            skipArrays: true
+        };
 
-            if (columnFamilies && columnFamilies.length > 0) {
-                inputs.families = columnFamilies;
-            }
-            if (columns && columns.length > 0) {
-                inputs.qualifiedColumns = columns;
-            }
-            const url = `${this.basePath}/modeldata/${urn}/scan`;
-            const data = await this._post(token, url, JSON.stringify(inputs));
-            const results = [];
-
-            for (const item of data) {
-                if (item[QC.ElementFlags] === ElementFlags.Stream) {
-                    results.push(item);
-                }
-            }
-            return results;
+        if (columnFamilies && columnFamilies.length > 0) {
+            inputs.families = columnFamilies;
         }
+        if (columns && columns.length > 0) {
+            inputs.qualifiedColumns = columns;
+        }
+        const url = `${this.basePath}/modeldata/${urn}/scan`;
+        const data = await this._post(token, url, JSON.stringify(inputs));
+        const results = [];
+
+        for (const item of data) {
+            if (item[QC.ElementFlags] === ElementFlags.Stream) {
+                results.push(item);
+            }
+        }
+        return results;
+    }
 
     /**
      * Returns secrets for streams.
@@ -1023,7 +1050,7 @@ export class TandemClient {
     /**
      * Returns the list of Tandem categories.
      * 
-     * @returns {Promise<any>}
+     * @returns {Promise<object>}
      */
     async getTandemCategories() {
         const url = `${this.cdnPath}/tandem_categories.json`;
@@ -1200,6 +1227,21 @@ export class TandemClient {
     }
 
     /**
+     * Saves stream configuration for given stream.
+     * 
+     * @param {string} urn - URN of the model.
+     * @param {string} streamKey - key of the stream.
+     * @returns {Promise<any[]>}
+     */
+    async saveStreamConfig(urn, streamKey, inputs) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/models/${urn}/stream-configs/${streamKey}`;
+        const data = await this._put(token, url, JSON.stringify(inputs));
+        
+        return data;
+    }
+
+    /**
      * Saves document content to file.
      * 
      * @param {string} urn
@@ -1229,6 +1271,21 @@ export class TandemClient {
         const data = await this._put(token, url, facilityData, {
             'Etag': etag
         });
+        return data;
+    }
+
+    /**
+     * Updates configuration for provided streams.
+     * 
+     * @param {string} urn - URN of the model.
+     * @param {object} inputs - payload with stream configurations. Note that stream configuration must be complete configuration, partial configuration is not supported.
+     * @returns {Promise<object>}
+     */
+    async updateStreamConfigs(urn, inputs) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/models/${urn}/stream-configs`;
+        const data = await this._patch(token, url, JSON.stringify(inputs));
+        
         return data;
     }
 
@@ -1263,6 +1320,34 @@ export class TandemClient {
 
         if (response.status !== 200) {
             throw new Error(`Error calling Tandem API: ${response.status}`);
+        }
+        const data = await response.json();
+
+        return data;
+    }
+
+    async _patch(token, url, body, additionalHeaders = {}) {
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            ...additionalHeaders
+        };
+
+        if (this._region) {
+            headers['Region'] = this._region;
+        }
+        const response = await fetch(url, {
+            method: 'PATCH',
+            headers: headers,
+            body: body
+        });
+
+        if (response.status === 202 || response.status === 204) {
+            return;
+        }
+        if (response.status !== 200) {
+            const details = await response.text();
+
+            throw new Error(`Error calling Tandem API: ${response.status} (${details})`);
         }
         const data = await response.json();
 
