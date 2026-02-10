@@ -1037,10 +1037,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            const keys = Object.keys(item);
-            const userProps = keys.filter(k => k.startsWith(`${ColumnFamilies.DtProperties}:`));
+            const isAsset = item[QC.IsAsset];
 
-            if (userProps.length > 0) {
+            if (isAsset) {
                 results.push(item);
             }
         }
