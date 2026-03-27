@@ -21,7 +21,7 @@ const paths = {
     },
     'stg': {
         app: 'https://tandem-stg.autodesk.com',
-        base: 'https://tandem-stg.autodesk.com/api/v1',
+        base: 'https://developer-stg.api.autodesk.com/tandem/v1',
         cdn: 'https://static.tandem.autodesk.com'
     }
 };
@@ -46,7 +46,7 @@ export class TandemClient {
      * @param {"prod"|"stg"} [env=Environment.Production] - environment. Must be one of {@link Environment} values.
      */
     constructor(authProvider, region = Region.US, env = Environment.Production) {
-        this._version = '1.0.824';
+        this._version = '1.0.879';
         this._appBasePath = paths[env].app;
         this._appPath = `${this._appBasePath}/app`;
         this._basePath = paths[env].base;
@@ -434,7 +434,7 @@ export class TandemClient {
      * @param {string} key - key of the element. 
      * @param {string[]} [columnFamilies] - optional array of column families.
      * @param {boolean} [includeHistory] - controls if history is included.
-     * @returns {Promise<object[]>}
+     * @returns {Promise<any>}
      */
     async getElement(urn, key, columnFamilies = [ ColumnFamilies.Standard ], includeHistory = false) {
         const data = await this.getElements(urn, [ key ] , columnFamilies, undefined, includeHistory);
@@ -450,7 +450,7 @@ export class TandemClient {
      * @param {string[]} [columnFamilies] - optional array of column families.
      * @param {string[]} [columns] - optional array of qualified columns.
      * @param {boolean} [includeHistory] - controls if history is included.
-     * @returns {Promise<object[]>}
+     * @returns {Promise<any[]>}
      */
     async getElements(urn, keys = undefined, columnFamilies = [ ColumnFamilies.Standard ], columns = undefined, includeHistory = false) {
         const token = this._authProvider();
@@ -511,7 +511,7 @@ export class TandemClient {
      * Returns facility based on given URN.
      * 
      * @param {string} facilityId - URN of the facility
-     * @returns {Promise<object>}
+     * @returns {Promise<any>}
      */
     async getFacility(facilityId) {
         const token = this._authProvider();
@@ -525,7 +525,7 @@ export class TandemClient {
      * Returns facility template based on facility URN.
      * 
      * @param {string} facilityId - URN of the facility
-     * @returns {Promise<object>}
+     * @returns {Promise<any>}
      */
     async getFacilityTemplate(facilityId) {
         const token = this._authProvider();
@@ -614,7 +614,7 @@ export class TandemClient {
      * 
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of columns
-     * @returns {Promise<object[]>}
+     * @returns {Promise<any[]>}
      */
     async getLevels(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
         const token = this._authProvider();
@@ -726,7 +726,7 @@ export class TandemClient {
      * Returns model attributes.
      * 
      * @param {string} modelId 
-     * @returns {Promise<object>}
+     * @returns {Promise<any[]>}
      */
     async getModelAttributes(modelId) {
         const token = this._authProvider();
@@ -801,7 +801,7 @@ export class TandemClient {
      * Returns schema of the model.
      * 
      * @param {string} modelId - URN of the model
-     * @returns {Promise<object>}
+     * @returns {Promise<any>}
      */
     async getModelSchema(modelId) {
         const token = this._authProvider();
@@ -861,7 +861,7 @@ export class TandemClient {
      * 
      * @param {string} urn - URN of the model.
      * @param {string} streamKey - key of the stream.
-     * @returns {Promise<object>}
+     * @returns {Promise<any>}
      */
     async getStreamConfig(urn, streamKey) {
         const token = this._authProvider();
@@ -946,7 +946,7 @@ export class TandemClient {
      * @param {string} urn - URN of the model.
      * @param {string[]} [columnFamilies] - optional list of column families
      * @param {string[]} [columns] - optional list of columns
-     * @returns {Promise<object[]>}
+     * @returns {Promise<any[]>}
      */
     async getStreams(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Xrefs ], columns = undefined) {
         const token = this._authProvider();
@@ -1049,7 +1049,7 @@ export class TandemClient {
     /**
      * Returns the list of Tandem categories.
      * 
-     * @returns {Promise<object>}
+     * @returns {Promise<any>}
      */
     async getTandemCategories() {
         const url = `${this.cdnPath}/tandem_categories.json`;
@@ -1114,7 +1114,7 @@ export class TandemClient {
      * Returns list of user resources (groups and facilities).
      * 
      * @param {"@me"} userId 
-     * @returns {Promise<object>}
+     * @returns {Promise<any>}
      */
     async getUserResources(userId = '@me') {
         const token = this._authProvider();
@@ -1317,10 +1317,11 @@ export class TandemClient {
             headers: headers
         });
 
-        if (response.status !== 200) {
+        if (!response.ok) {
             throw new Error(`Error calling Tandem API: ${response.status}`);
         }
-        const data = await response.json();
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : {};
 
         return data;
     }
@@ -1340,15 +1341,13 @@ export class TandemClient {
             body: body
         });
 
-        if (response.status === 202 || response.status === 204) {
-            return;
-        }
-        if (response.status !== 200) {
+        if (!response.ok) {
             const details = await response.text();
 
             throw new Error(`Error calling Tandem API: ${response.status} (${details})`);
         }
-        const data = await response.json();
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : {};
 
         return data;
     }
@@ -1368,15 +1367,13 @@ export class TandemClient {
             body: body
         });
 
-        if (response.status === 202 || response.status === 204) {
-            return;
-        }
-        if (response.status !== 200) {
+        if (!response.ok) {
             const details = await response.text();
 
             throw new Error(`Error calling Tandem API: ${response.status} (${details})`);
         }
-        const data = await response.json();
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : {}
 
         return data;
     }
@@ -1396,13 +1393,11 @@ export class TandemClient {
             body: body
         });
 
-        if (response.status === 202 || response.status === 202) {
-            return;
-        }
-        if (response.status !== 200) {
+        if (!response.ok) {
             throw new Error(`Error calling Tandem API: ${response.status}`);
         }
-        const data = await response.json();
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : {}
 
         return data;
     }

@@ -343,7 +343,7 @@ export class Encoding {
  * 
  * @param {string} facilityId 
  * @param {object} facilityData 
- * @returns {object}
+ * @returns {any}
  */
 export function getDefaultModel(facilityId, facilityData) {
     const defaultModelId = getDefaultModelId(facilityId);
