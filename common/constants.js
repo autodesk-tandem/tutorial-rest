@@ -214,3 +214,7 @@ export const HC = {
    Timestamp: 't',
    Username: 'n'
 };
+
+export const RC = {
+  Levels: 240
+};
