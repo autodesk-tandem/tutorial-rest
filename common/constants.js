@@ -127,7 +127,7 @@ export const QC = {
 
 // Tandem Categories
 export const TC = {
-    Facility: 'I.Fa',
+    Facility: 'L.Fa',
     Levels: 'L.Lv',
     Rooms: 'L.Rm',
     Sensors: 'Q.Se',
