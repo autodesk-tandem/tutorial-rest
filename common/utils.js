@@ -366,6 +366,7 @@ export function getDefaultModelId(facilityId) {
 
 /**
  * Returns main model of the facility. Main model is the one marked with star in the UI.
+ * 
  * @param {object} facilityData 
  * @returns {object}
  */
@@ -375,6 +376,18 @@ export function getMainModel(facilityData) {
     });
 
     return mainModel;
+}
+
+/**
+ * Return ID of the root element. Root element represents facility itself.
+ * 
+ * @returns {string}
+ */
+
+export function getRootId() {
+    const buff = Buffer.alloc(kElementIdSize);
+
+    return Encoding.makeWebsafe(buff.toString('base64'));
 }
 
 /**
@@ -388,7 +401,8 @@ export function isLogicalElement(elementFlags) {
         elementFlags === ElementFlags.Level ||
         elementFlags === ElementFlags.GenericAsset ||
         elementFlags === ElementFlags.System ||
-        elementFlags === ElementFlags.Ticket);
+        elementFlags === ElementFlags.Ticket ||
+        elementFlags === ElementFlags.DocumentRoot);
 }
 
 /**
