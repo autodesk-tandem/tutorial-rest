@@ -115,7 +115,7 @@ export const QC = {
     OpenDate:           `${ColumnFamilies.Standard}:${ColumnNames.OpenDate}`,
     CloseDate:          `${ColumnFamilies.Standard}:${ColumnNames.CloseDate}`,
     Rooms:              `${ColumnFamilies.Refs}:${ColumnNames.Rooms}`,
-    State:             `${ColumnFamilies.Status}:${ColumnNames.State}`,
+    State:              `${ColumnFamilies.Status}:${ColumnNames.State}`,
     Settings:           `${ColumnFamilies.Standard}:${ColumnNames.Settings}`,
     SystemClass:        `${ColumnFamilies.Standard}:${ColumnNames.SystemClass}`,
     OSystemClass:       `${ColumnFamilies.Standard}:${ColumnNames.OSystemClass}`,
