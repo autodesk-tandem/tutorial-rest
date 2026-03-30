@@ -1,8 +1,7 @@
 /*
     This example demonstrates how to list properties of the facility.
     
-    It uses 2-legged authentication - this requires that application is added to the account as service. The application also
-    needs to be whitelisted in ACC/Docs.
+    It uses 2-legged authentication - this requires that application is added to the account as service.
 */
 import { createToken } from '../common/auth.js';
 import { ColumnFamilies, ElementFlags, QC } from '../common/constants.js';
@@ -26,7 +25,7 @@ async function main() {
     const defaultModel = getDefaultModel(FACILITY_URN, facility);
 
     if (!defaultModel) {
-        throw new Error('Default model is not found');
+        throw new Error('Default model not found');
     }
     // STEP 3 - get model schema
     const schema = await client.getModelSchema(defaultModel.modelId);
@@ -36,9 +35,9 @@ async function main() {
     const rootElement = elements.find(e => e[QC.ElementFlags] === ElementFlags.DocumentRoot);
 
     if (!rootElement) {
-        throw new Error('Root element is not found');
+        throw new Error('Root element not found');
     }
-    // STEP 5 - print properties of the root elemen
+    // STEP 5 - print properties of the facility
     console.log(`Facility properties: ${count}`);
     let count = 0;
 
