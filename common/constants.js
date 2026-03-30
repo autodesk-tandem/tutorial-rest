@@ -36,6 +36,7 @@ export const ElementFlags = {
     Room:           0x00000005,
     FamilyType:     0x01000000,
     Level:          0x01000001,
+    DocumentRoot:   0x01000002,
     Stream:         0x01000003,
     System:         0x01000004,
     GenericAsset:   0x01000005,
@@ -126,6 +127,7 @@ export const QC = {
 
 // Tandem Categories
 export const TC = {
+    Facility: 'I.Fa',
     Levels: 'L.Lv',
     Rooms: 'L.Rm',
     Sensors: 'Q.Se',
