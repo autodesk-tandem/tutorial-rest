@@ -38,7 +38,7 @@ async function main() {
         throw new Error('Root element not found');
     }
     // STEP 5 - print properties of the facility
-    console.log(`Facility properties: ${count}`);
+    console.log(`Facility properties:`);
     let count = 0;
 
     for (const [id, value] of Object.entries(rootElement)) {

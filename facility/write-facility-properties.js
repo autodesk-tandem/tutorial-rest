@@ -40,7 +40,7 @@ async function main() {
     if (!rootElement) {
         throw new Error('Root element is not found');
     }
-    // STEP 5 - add predefined property to the root elemen
+    // STEP 5 - add predefined property to the root element
     const propDef = schema.attributes.find(a => a.name === PROPERTY_NAME);
 
     if (!propDef) {
