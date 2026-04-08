@@ -401,6 +401,7 @@ export function isLogicalElement(elementFlags) {
         elementFlags === ElementFlags.Level ||
         elementFlags === ElementFlags.GenericAsset ||
         elementFlags === ElementFlags.System ||
+        elementFlags === ElementFlags.FamilyType ||
         elementFlags === ElementFlags.Ticket ||
         elementFlags === ElementFlags.DocumentRoot);
 }
