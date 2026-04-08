@@ -46,9 +46,11 @@ async function main() {
     if (!propDef) {
         throw new Error(`Property "${PROPERTY_NAME}" not found in schema`);
     }
+    // Note: MutateActions.Insert always updates the value of the property even if the value is same
+    // If you want to check against existing value use MutateActions.InsertIfDifferent which is less efficient
     const muts = [
         [
-            MutateActions.InsertIfDifferent,
+            MutateActions.Insert,
             propDef.fam,
             propDef.col,
             PROPERTY_VALUE
