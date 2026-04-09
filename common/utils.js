@@ -397,13 +397,7 @@ export function getRootId() {
  * @returns {boolean}
  */
 export function isLogicalElement(elementFlags) {
-    return (elementFlags === ElementFlags.Stream ||
-        elementFlags === ElementFlags.Level ||
-        elementFlags === ElementFlags.GenericAsset ||
-        elementFlags === ElementFlags.System ||
-        elementFlags === ElementFlags.FamilyType ||
-        elementFlags === ElementFlags.Ticket ||
-        elementFlags === ElementFlags.DocumentRoot);
+    return (elementFlags & ElementFlags.AllLogicalMask) !== 0;
 }
 
 /**
