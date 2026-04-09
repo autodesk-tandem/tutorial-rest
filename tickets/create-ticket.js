@@ -14,7 +14,8 @@ import { ColumnFamilies,
 } from './../common/constants.js';
 import {
     Encoding,
-    getDefaultModel
+    getDefaultModel,
+    isLogicalElement
 } from './../common/utils.js';
 
 // update values below according to your environment
@@ -53,7 +54,7 @@ async function main() {
 
             if (name === ASSET_NAME) {
                 // create xref key of an asset
-                xref = Encoding.toXrefKey(l.modelId, Encoding.toFullKey(element[QC.Key], false));
+                xref = Encoding.toXrefKey(l.modelId, Encoding.toFullKey(element[QC.Key], isLogicalElement(element[QC.ElementFlags])));
                 break;
             }
         }

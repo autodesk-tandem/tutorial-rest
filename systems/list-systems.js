@@ -6,7 +6,7 @@
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { QC } from '../common/constants.js';
-import { Encoding, getDefaultModel } from '../common/utils.js';
+import { Encoding, getDefaultModel, isLogicalElement } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -37,7 +37,7 @@ async function main() {
     const subsystems = [];
 
     for (const item of items) {
-        const key = Encoding.toFullKey(item[QC.Key], true);
+        const key = Encoding.toFullKey(item[QC.Key], isLogicalElement(item[QC.ElementFlags]));
         const name = item[QC.OName] ?? item[QC.Name];
         const parent = item[QC.Parent];
 

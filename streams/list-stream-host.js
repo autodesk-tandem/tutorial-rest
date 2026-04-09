@@ -5,8 +5,8 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ColumnFamilies, QC } from '../common/constants.js';
-import { Encoding, getDefaultModel } from '../common/utils.js';
+import { QC } from '../common/constants.js';
+import { Encoding, getDefaultModel, isLogicalElement } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -65,7 +65,7 @@ async function main() {
         const elements = await client.getElements(modelId, elementKeys);
 
         for (const element of elements) {
-            const fullKey = Encoding.toFullKey(element[QC.Key], false);
+            const fullKey = Encoding.toFullKey(element[QC.Key], isLogicalElement(element[QC.ElementFlags]));
             const item = streamData.find(i => i.parent.modelId === modelId && i.parent.key === fullKey);
 
             if (item) {

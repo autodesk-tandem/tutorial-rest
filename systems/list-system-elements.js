@@ -12,6 +12,7 @@ import {
 import {
     Encoding,
     getDefaultModel,
+    isLogicalElement,
     systemClassToList
 } from '../common/utils.js';
 
@@ -38,7 +39,7 @@ async function main() {
     const systemMap = new Map();
 
     for (const system of systems) {
-        const key = Encoding.toFullKey(system[QC.Key], true);
+        const key = Encoding.toFullKey(system[QC.Key], isLogicalElement(system[QC.ElementFlags]));
         const name = system[QC.OName] ?? system[QC.Name];
         const parent = system[QC.Parent];
 

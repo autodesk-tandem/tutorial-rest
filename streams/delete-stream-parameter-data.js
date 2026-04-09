@@ -6,7 +6,7 @@
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies, QC } from '../common/constants.js';
-import { Encoding, getDefaultModel } from '../common/utils.js';
+import { Encoding, getDefaultModel, isLogicalElement } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -38,7 +38,7 @@ async function main() {
         throw new Error(`Stream ${STREAM_NAME} not found`);
     }
     // STEP 5 - get stream data - we use full key because getStreamData expects full key
-    const streamKey = Encoding.toFullKey(stream[QC.Key], true);
+    const streamKey = Encoding.toFullKey(stream[QC.Key], isLogicalElement(stream[QC.ElementFlags]));
     const streamData = await client.getStreamData(defaultModel.modelId, streamKey);
     // STEP 6 - find substream by parameter name
     let propDef;
