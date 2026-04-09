@@ -6,7 +6,7 @@
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies, QC } from './../common/constants.js';
-import { Encoding, getDefaultModel } from './../common/utils.js';
+import { Encoding, getDefaultModel, isLogicalElement } from './../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -66,7 +66,7 @@ async function main() {
         console.warn(`Level ${levelDetails[QC.Name]} doesn't exist`);
     }
     // STEP 5 - create new stream. First step is to encode keys for references. In our case host element and room are same.
-    const targetRoomKey = Encoding.toFullKey(targetRoom[QC.Key], false);
+    const targetRoomKey = Encoding.toFullKey(targetRoom[QC.Key], isLogicalElement(targetRoom[QC.ElementFlags]));
     const parentXref = Encoding.toXrefKey(targetRoomModelId, targetRoomKey);
     // create new stream
     const streamId = await client.createStream(defaultModel.modelId,

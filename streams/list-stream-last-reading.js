@@ -7,7 +7,7 @@
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { AttributeType, ColumnFamilies, QC } from '../common/constants.js';
-import { Encoding, getDefaultModel } from '../common/utils.js';
+import { Encoding, getDefaultModel, isLogicalElement } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -38,7 +38,7 @@ async function main() {
 
     for (const key in data) {
         // STEP 6 - read stream name
-        const stream = streams.find(s => Encoding.toFullKey(s[QC.Key], true) === key);
+        const stream = streams.find(s => Encoding.toFullKey(s[QC.Key], isLogicalElement(s[QC.ElementFlags])) === key);
         const name = stream[QC.OName] ?? stream[QC.Name];
 
         console.log(`${name}`);
