@@ -6,7 +6,7 @@
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { QC } from '../common/constants.js';
-import { Encoding, getDefaultModel } from '../common/utils.js';
+import { Encoding, getDefaultModel, isLogicalElement } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -38,7 +38,7 @@ async function main() {
     
     for (const stream of streams) {
         // STEP 6 - find settings for stream by its key. Note that configuration uses full key
-        const key = Encoding.toFullKey(stream[QC.Key], true);
+        const key = Encoding.toFullKey(stream[QC.Key], isLogicalElement(stream[QC.ElementFlags]));
         const config = streamConfigs.find(s => s.elementId === key);
         const settings = config ? config.streamSettings : null;
         

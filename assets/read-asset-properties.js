@@ -23,12 +23,14 @@ async function main() {
     // STEP 2 - get facility
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
+    let count = 0;
 
     // STEP 3 - iterate through facility models and collect tagged assets
     for (const link of facility.links) {
         const schema = await client.getModelSchema(link.modelId);
         const assets = await client.getTaggedAssets(link.modelId);
 
+        count += assets.length;
         for (const asset of assets) {
             // STEP 4 - map properties to schema and print out property name & value
             // first check for name override, if empty then use default name
@@ -44,7 +46,8 @@ async function main() {
                 console.log(`  ${prop.category}.${prop.name}: ${asset[propId]}`);
             }
         }
-    }   
+    }
+    console.log(`Total assets: ${count}`);
 }
 
 main()
