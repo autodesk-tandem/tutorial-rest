@@ -998,7 +998,7 @@ export class TandemClient {
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<object[]>}
      */
-    async getSystems(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Systems ]) {
+    async getSystems(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Systems, ColumnFamilies.Status ]) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,

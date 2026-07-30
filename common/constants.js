@@ -223,3 +223,8 @@ export const HC = {
 export const RC = {
   Levels: 240
 };
+
+export const SystemState = {
+    Dirty: 'd',
+    Ready: 'r'
+};
