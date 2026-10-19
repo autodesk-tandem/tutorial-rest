@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import { Readable, Transform } from 'stream';
 import { finished } from 'stream/promises';
-import StreamArray from 'stream-json/streamers/StreamArray.js';
+import { streamArray } from 'stream-json/streamers/stream-array.js';
 
 import {
     ColumnFamilies,
@@ -502,7 +502,7 @@ export class TandemClient {
             headers: headers,
             body: JSON.stringify(inputs)
         });
-        const elementStream = Readable.fromWeb(response.body).pipe(StreamArray.withParser()).pipe(new ElementFilter());
+        const elementStream = Readable.fromWeb(response.body).pipe(streamArray.withParserAsStream()).pipe(new ElementFilter());
 
         yield* elementStream;
     }
