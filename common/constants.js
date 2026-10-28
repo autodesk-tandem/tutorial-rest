@@ -63,6 +63,7 @@ export const ColumnFamilies = {
 };
 
 export const ColumnNames = {
+    BimElmOfAsset:      'be',
     BoundingBox:        '0',
     CategoryId:         'c',
     Classification:     'v',
@@ -74,6 +75,7 @@ export const ColumnNames = {
     Elevation:          'el',
     OElevation:         '!el',
     FamilyType:         't',
+    HostOfAsset:        'ha',
     IsAsset:            'ia',
     Level:              'l',
     OLevel:             '!l',
@@ -95,6 +97,7 @@ export const ColumnNames = {
 };
 
 export const QC = {
+    BimElmOfAsset:      `${ColumnFamilies.Xrefs}:${ColumnNames.BimElmOfAsset}`,
     BoundingBox:        `${ColumnFamilies.LMV}:${ColumnNames.BoundingBox}`,
     CategoryId:         `${ColumnFamilies.Standard}:${ColumnNames.CategoryId}`,
     Classification:     `${ColumnFamilies.Standard}:${ColumnNames.Classification}`,
@@ -108,6 +111,7 @@ export const QC = {
     Elevation:          `${ColumnFamilies.Standard}:${ColumnNames.Elevation}`,
     OElevation:         `${ColumnFamilies.Standard}:${ColumnNames.OElevation}`,
     FamilyType:         `${ColumnFamilies.Refs}:${ColumnNames.FamilyType}`,
+    HostOfAsset:        `${ColumnFamilies.Xrefs}:${ColumnNames.HostOfAsset}`,
     IsAsset:            `${ColumnFamilies.Standard}:${ColumnNames.IsAsset}`,
     Level:              `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
     OLevel:             `${ColumnFamilies.Refs}:${ColumnNames.OLevel}`,
