@@ -34,10 +34,12 @@ export const SchemaVersion = 2;
 export const ElementFlags = {
     SimpleElement:  0x00000000,
     Room:           0x00000005,
-    FamilyType:     0x01000000,
+    FamilyTypeV2:   0x01000000,
+    FamilyTypeV3:   0x01000008,
     Level:          0x01000001,
     DocumentRoot:   0x01000002,
-    Stream:         0x01000003,
+    StreamV2:       0x01000003,
+    StreamV3:       0x01000000,
     System:         0x01000004,
     GenericAsset:   0x01000005,
     Collection:     0x01000006,
@@ -227,3 +229,21 @@ export const HC = {
 export const RC = {
   Levels: 240
 };
+
+const ModelSchemaVersionV3 = 3;
+
+function familyTypeFlag(schemaVersion) {
+    return schemaVersion >= ModelSchemaVersionV3 ? ElementFlags.FamilyTypeV3 : ElementFlags.FamilyTypeV2;
+}
+
+function streamFlag(schemaVersion) {
+    return schemaVersion >= ModelSchemaVersionV3 ? ElementFlags.StreamV3 : ElementFlags.StreamV2;
+}
+
+export function isFamilyType(schemaVersion, flag) {
+    return flag === familyTypeFlagFlag(schemaVersion);
+}
+
+export function isStream(schemaVersion, flag) {
+    return flag === streamFlag(schemaVersion);
+}
