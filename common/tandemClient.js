@@ -1037,9 +1037,7 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            const isAsset = item[QC.IsAsset];
-
-            if (isAsset) {
+            if (item[QC.ElementFlags] === ElementFlags.GenericAsset) {
                 results.push(item);
             }
         }
