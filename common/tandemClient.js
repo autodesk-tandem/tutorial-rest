@@ -10,7 +10,8 @@ import {
     Environment,
     MutateActions,
     QC,
-    Region
+    Region,
+    TC
 } from './constants.js';
 
 const paths = {
@@ -628,7 +629,7 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Level) {
+            if (item[QC.ElementFlags] === ElementFlags.Location && item[QC.TandemCategory] === TC.Levels) {
                 results.push(item);
             }
         }
