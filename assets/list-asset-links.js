@@ -4,9 +4,9 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { QC } from '../common/constants.js';
-import { Encoding, isLogicalElement } from '../common/utils.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { getDefaultModel, Encoding } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -24,23 +24,24 @@ async function main() {
     // STEP 2 - get facility
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
+    // STEP 3 - get default model
+    const defaultModel = getDefaultModel(facilityId, facility);
 
-    // STEP 3 - iterate through facility models and their assets
-    for (const link of facility.links) {
-        const assets = await client.getTaggedAssets(link.modelId);
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
+    // STEP 4 - iterate through assets
+    const assets = await client.getTaggedAssets(defaultModel.modelId);
 
-        for (const asset of assets) {
-            // STEP 4 - get full key and generate URL to view asset in Tandem
-            const fullKey = Encoding.toFullKey(asset[QC.Key], isLogicalElement(asset[QC.ElementFlags]));
-            const xrefKey = Encoding.toXrefKey(link.modelId, fullKey);
-            const url = `https://tandem.autodesk.com/pages/facilities/${facilityId}?selection=${xrefKey}`;
-            // STEP 5 - print out asset name and URL
-            const name = asset[QC.OName] ?? asset[QC.Name];
+    for (const asset of assets) {
+        // STEP 5 - get xref key and generate URL to view asset in Tandem
+        const xrefKey = Encoding.toXrefKey(defaultModel.modelId, asset[QC.Key]);
+        const url = `https://tandem.autodesk.com/pages/facilities/${facilityId}?selection=${xrefKey}`;
+        // STEP 6 - print out asset name and URL
+        const name = asset[QC.OName] ?? asset[QC.Name];
 
-            console.log(`${name}: ${url}`);
-        }
-        
-    }   
+        console.log(`${name}: ${url}`);
+    }
 }
 
 main()
