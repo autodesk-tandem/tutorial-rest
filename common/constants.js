@@ -34,6 +34,7 @@ export const SchemaVersion = 2;
 export const ElementFlags = {
     SimpleElement:  0x00000000,
     Room:           0x00000005,
+    Location:       0x00000006,
     FamilyTypeV2:   0x01000000,
     FamilyTypeV3:   0x01000008,
     Level:          0x01000001,
