@@ -4,8 +4,9 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { QC } from '../common/constants.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -23,16 +24,20 @@ async function main() {
     // STEP 2 - get facility
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
+    // STEP 3 - get default model
+    const defaultModel = getDefaultModel(facilityId, facility);
 
-    // STEP 3 - iterate through facility models and get room elements from the model
-    for (const link of facility.links) {
-        const rooms = await client.getRooms(link.modelId);
-        
-        // STEP 4 - iterate through rooms and print their names.
-        for (const room of rooms) {
-            console.log(`${room[QC.Name]}`);
-       }
-    }   
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
+    // STEP 4 - iterate through room elements of the facility and print their names.
+    const rooms = await client.getRooms(defaultModel.modelId);
+
+    for (const room of rooms) {
+        const name = room[QC.OName] ?? room[QC.Name];
+
+        console.log(`${name}`);
+    }
 }
 
 main()
