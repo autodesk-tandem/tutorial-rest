@@ -10,7 +10,9 @@ import {
     kSystemIdSize,
     ElementFlags,
     KeyFlags,
-    SystemClassNames
+    QC,
+    SystemClassNames,
+    TC
 } from './constants.js';
 
 export class Encoding {
@@ -518,4 +520,24 @@ export function systemClassToList(flags) {
 		}
 	}
 	return result;
+}
+
+/**
+ * Checks if element is of type level.
+ * 
+ * @param {object} element 
+ * @returns {boolean}
+ */
+export function isLevel(element) {
+    return element[QC.ElementFlags] === ElementFlags.Location && element[QC.TandemCategory] === TC.Levels;
+}
+
+/**
+ * Checks if element is of type room.
+ * 
+ * @param {object} element 
+ * @returns {boolean}
+ */
+export function isRoom(element) {
+    return element[QC.ElementFlags] === ElementFlags.Location && element[QC.TandemCategory] === TC.Rooms;
 }

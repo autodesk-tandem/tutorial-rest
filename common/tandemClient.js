@@ -13,6 +13,7 @@ import {
     Region,
     TC
 } from './constants.js';
+import { isLevel, isRoom } from './utils.js';
 
 const paths = {
     'prod': {
@@ -617,7 +618,7 @@ export class TandemClient {
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<any[]>}
      */
-    async getLevels(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+    async getLevels(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs ]) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
@@ -629,7 +630,7 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Location && item[QC.TandemCategory] === TC.Levels) {
+            if (isLevel(item)) {
                 results.push(item);
             }
         }
@@ -838,7 +839,7 @@ export class TandemClient {
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<object[]>}
      */
-    async getRooms(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+    async getRooms(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs ]) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
@@ -850,7 +851,7 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Room) {
+            if (isRoom(item)) {
                 results.push(item);
             }
         }
