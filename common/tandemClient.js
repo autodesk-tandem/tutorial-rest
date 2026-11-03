@@ -11,9 +11,9 @@ import {
     MutateActions,
     QC,
     Region,
-    TC
+    SchemaVersion
 } from './constants.js';
-import { isLevel, isRoom } from './utils.js';
+import { isLevel, isRoom, isStream } from './utils.js';
 
 const paths = {
     'prod': {
@@ -968,7 +968,7 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Stream) {
+            if (isStream(SchemaVersion, item[QC.ElementFlags])) {
                 results.push(item);
             }
         }
