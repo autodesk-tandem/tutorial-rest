@@ -230,33 +230,3 @@ export const HC = {
 export const RC = {
   Levels: 240
 };
-
-const ModelSchemaVersionV3 = 3;
-
-function familyTypeFlag(schemaVersion) {
-    return schemaVersion >= ModelSchemaVersionV3 ? ElementFlags.FamilyTypeV3 : ElementFlags.FamilyTypeV2;
-}
-
-function streamFlag(schemaVersion) {
-    return schemaVersion >= ModelSchemaVersionV3 ? ElementFlags.StreamV3 : ElementFlags.StreamV2;
-}
-
-/**
- * 
- * @param {number} schemaVersion  The schema version of the model.
- * @param {number} flag  The flag to check.
- * @returns {boolean} True if the flag represents a family type, false otherwise.
- */
-export function isFamilyType(schemaVersion, flag) {
-    return flag === familyTypeFlag(schemaVersion);
-}
-
-/**
- * 
- * @param {number} schemaVersion  The schema version of the model.
- * @param {number} flag  The flag to check.
- * @returns {boolean} True if the flag represents a stream, false otherwise.
- */
-export function isStream(schemaVersion, flag) {
-    return flag === streamFlag(schemaVersion);
-}
