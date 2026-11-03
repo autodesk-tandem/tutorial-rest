@@ -28,8 +28,8 @@ export const kElementIdWithFlagsSize = kElementIdSize + kElementFlagsSize;
 export const kRecordSize = 28;
 export const kSystemIdSize = 9;
 
-// current version of classification schema
-export const SchemaVersion = 2;
+// current version of database schema
+export const SchemaVersion = 3;
 
 export const ElementFlags = {
     SimpleElement:  0x00000000,
@@ -82,6 +82,8 @@ export const ColumnNames = {
     IsAsset:            'ia',
     Level:              'l',
     OLevel:             '!l',
+    Location:           'loc',
+    OLocation:          '!loc',
     Name:               'n',
     OName:              '!n',
     Parent:             'p',
@@ -118,6 +120,8 @@ export const QC = {
     IsAsset:            `${ColumnFamilies.Standard}:${ColumnNames.IsAsset}`,
     Level:              `${ColumnFamilies.Refs}:${ColumnNames.Level}`,
     OLevel:             `${ColumnFamilies.Refs}:${ColumnNames.OLevel}`,
+    Location:           `${ColumnFamilies.Xrefs}:${ColumnNames.Location}`,
+    OLocation:          `${ColumnFamilies.Xrefs}:${ColumnNames.OLocation}`,
     Name:               `${ColumnFamilies.Standard}:${ColumnNames.Name}`,
     OName:              `${ColumnFamilies.Standard}:${ColumnNames.OName}`,
     Parent:             `${ColumnFamilies.Refs}:${ColumnNames.Parent}`,
