@@ -31,7 +31,7 @@ async function main() {
         throw new Error(`Default model doesn't exist`);
     }
     // STEP 4 - get tagged assets
-    const assets = await client.getTaggedAssets(defaultModel.modelId, [ ColumnFamilies.Standard, ColumnFamilies.Xrefs ]);
+    const assets = await client.getTaggedAssets(defaultModel.modelId);
     // STEP 5 - map to store offset for each model
     const modelOffsetMap = new Map();
 
