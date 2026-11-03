@@ -1026,7 +1026,7 @@ export class TandemClient {
      * @param {boolean} [includeHistory] - controls if history information is included in response
      * @returns {Promise<object[]>}
      */
-    async getTaggedAssets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs ], includeHistory = false) {
+    async getTaggedAssets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs, ColumnFamilies.Xrefs ], includeHistory = false) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
