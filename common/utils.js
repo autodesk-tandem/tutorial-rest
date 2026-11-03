@@ -11,6 +11,7 @@ import {
     ElementFlags,
     KeyFlags,
     QC,
+    SchemaVersion,
     SystemClassNames,
     TC
 } from './constants.js';
@@ -182,7 +183,10 @@ export class Encoding {
     }
 
     /**
+     * @deprecated This function is not needed in V3 schema.
+     * 
      * Converts full key to short key.
+     * 
      * @param {string} fullKey 
      * @returns {string}
      */
@@ -556,12 +560,11 @@ function streamFlag(schemaVersion) {
 /**
  * Check if the flag represents a family type.
  * 
- * @param {number} schemaVersion  The schema version of the model.
  * @param {number} flag  The flag to check.
  * @returns {boolean} True if the flag represents a family type, false otherwise.
  */
-export function isFamilyType(schemaVersion, flag) {
-    return flag === familyTypeFlag(schemaVersion);
+export function isFamilyType(flag) {
+    return flag === familyTypeFlag(SchemaVersion);
 }
 
 /**
@@ -571,6 +574,6 @@ export function isFamilyType(schemaVersion, flag) {
  * @param {number} flag  The flag to check.
  * @returns {boolean} True if the flag represents a stream, false otherwise.
  */
-export function isStream(schemaVersion, flag) {
-    return flag === streamFlag(schemaVersion);
+export function isStream(flag) {
+    return flag === streamFlag(SchemaVersion);
 }

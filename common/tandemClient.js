@@ -10,8 +10,7 @@ import {
     Environment,
     MutateActions,
     QC,
-    Region,
-    SchemaVersion
+    Region
 } from './constants.js';
 import { isLevel, isRoom, isStream } from './utils.js';
 
@@ -968,7 +967,7 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (isStream(SchemaVersion, item[QC.ElementFlags])) {
+            if (isStream(item[QC.ElementFlags])) {
                 results.push(item);
             }
         }
