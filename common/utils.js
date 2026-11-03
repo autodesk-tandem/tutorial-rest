@@ -570,7 +570,6 @@ export function isFamilyType(flag) {
 /**
  * Check if the flag represents a stream.
  * 
- * @param {number} schemaVersion  The schema version of the model.
  * @param {number} flag  The flag to check.
  * @returns {boolean} True if the flag represents a stream, false otherwise.
  */
