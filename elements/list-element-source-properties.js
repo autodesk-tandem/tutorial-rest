@@ -1,5 +1,6 @@
 /*
-    This example demonstrates how to get read source properties (i.e. from Revit). Those properties are available as Source family.
+    This example demonstrates how to get read source properties (i.e. from Revit) from BIM element reference
+    by assets.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
