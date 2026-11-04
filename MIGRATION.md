@@ -6,7 +6,7 @@ This document summarizes steps for migration of REST API examples to work with v
 V3 changes where logical elements are stored and how several element types are identified. Sections below contain addtional details.
 
 ## LBS
-v3 data model is using LBS (Location Breakdown Structure) to describe location structure (level - room).
+v3 data model is using LBS (Location Breakdown Structure) to describe location structure (level - room). Location information is stored using `QC.Location` resp. `QC.OLocation` column. The value is encoded array of xrefs - use `Encoding.fromXrefKeyArray` to get list of model IDs and element IDs.
 
 ## Key encoding
 For v3 of data model `POST scan` endpoint returns full 24-byte element keys. Consumers no longer need to convert return keys between short and full form.
