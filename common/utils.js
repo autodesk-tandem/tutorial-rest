@@ -137,6 +137,24 @@ export class Encoding {
     }
 
     /**
+     * Decodes element flags from the given key.
+     * 
+     * @param {string} key 
+     * @returns {ElementFlags}
+     */
+    static getElementFlags(key) {
+        if (!key) {
+            return ElementFlags.Unknown;
+        }
+        const binData = Buffer.from(key, 'base64');
+        
+        if (binData.length !== kElementIdWithFlagsSize) {
+            return ElementFlags.Unknown;
+        }
+        return binData.readUInt32BE(0);
+    }
+
+    /**
      * Converts Tandem element key to Revit GUID.
      * 
      * @param {string} key 
@@ -533,7 +551,9 @@ export function systemClassToList(flags) {
  * @returns {boolean}
  */
 export function isLevel(element) {
-    return element[QC.ElementFlags] === ElementFlags.Location && element[QC.TandemCategory] === TC.Levels;
+    const flags = Encoding.getElementFlags(element[QC.Key]);
+    
+    return flags === ElementFlags.Location && element[QC.TandemCategory] === TC.Levels;
 }
 
 /**
@@ -543,7 +563,9 @@ export function isLevel(element) {
  * @returns {boolean}
  */
 export function isRoom(element) {
-    return element[QC.ElementFlags] === ElementFlags.Location && element[QC.TandemCategory] === TC.Rooms;
+    const flags = Encoding.getElementFlags(element[QC.Key]);
+
+    return flags === ElementFlags.Location && element[QC.TandemCategory] === TC.Rooms;
 }
 
 // helper functions

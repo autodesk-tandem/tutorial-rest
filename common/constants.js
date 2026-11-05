@@ -46,7 +46,8 @@ export const ElementFlags = {
     Collection:     0x01000006,
     Ticket:         0x01000007,
     AllLogicalMask: 0xff000000,
-    Deleted:        0xfffffffe
+    Deleted:        0xfffffffe,
+    Unknown:        0xffffffff
 };
 
 export const KeyFlags = {
