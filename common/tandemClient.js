@@ -12,7 +12,7 @@ import {
     QC,
     Region
 } from './constants.js';
-import { isLevel, isRoom, isStream } from './utils.js';
+import { Encoding, isLevel, isRoom, isStream } from './utils.js';
 
 const paths = {
     'prod': {
@@ -967,7 +967,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (isStream(item[QC.ElementFlags])) {
+            const flags = Encoding.getElementFlags(item[QC.Key]);
+
+            if (isStream(flags)) {
                 results.push(item);
             }
         }
@@ -1011,7 +1013,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.System) {
+            const flags = Encoding.getElementFlags(item[QC.Key]);
+
+            if (flags === ElementFlags.System) {
                 results.push(item);
             }
         }
@@ -1038,7 +1042,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.GenericAsset) {
+            const flags = Encoding.getElementFlags(item[QC.Key]);
+
+            if (flags === ElementFlags.GenericAsset) {
                 results.push(item);
             }
         }
@@ -1088,7 +1094,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Ticket) {
+            const flags = Encoding.getElementFlags(item[QC.Key]);
+
+            if (flags === ElementFlags.Ticket) {
                 results.push(item);
             }
         }
@@ -1413,7 +1421,9 @@ class ElementFilter extends Transform {
             if (this._elementFlags === undefined) {
                 this.push(chunk.value);
             }
-            if ((this._elementFlags !== undefined) && (chunk.value[QC.ElementFlags] === this._elementFlags)) {
+            const flags = Encoding.getElementFlags(chunk.value?.[QC.Key]);
+
+            if ((this._elementFlags !== undefined) && (flags === this._elementFlags)) {
                 this.push(chunk.value);
             }
         }
