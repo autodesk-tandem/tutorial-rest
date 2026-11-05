@@ -18,22 +18,34 @@ All logical elements (i.e. assets, levels, rooms, streams, tickets) are stored i
 
 When logical elements references an element from other model, decode it's key using `Encoding.fromXrefKey` function and query corresponding model for additional details.
 
+## Element Flags
+Element flags are encoded in the first four bytes of the 24-byte element key. Call `Encoding.getElementFlags(key)` to get element flags and compare the result with appropriate `ElementFlags` constant. Missing or invalid keys return `ElementFlags.Unknown`.
+
 ## Assets
-In v3 assets are stored separately from source BIM elements. The value of `QC.ElementFlags` column is `ElementFlags.GenericAsset`.
+In v3 assets are stored separately from source BIM elements. Call `Encoding.getElementFlags(key)` to get flags of the element and compare result to `ElementFlags.GenericAsset`.
 - Use `QC.BimElmOfAsset` column to find link between asset and its BIM element. The value is xref key (can be decoded using `Encoding.fromXrefKey` function).
 - Use `QC.HostOfAsset` column to find link between BIM element and its related asset. The value is xref key.
 
 ## Family Types
-The value of element flag for the family type is changed in v3 schema. Call utility function `isFamilyType(element[QC.ElementFlags])` to check if element represents family type for current schema.
+The value of element flag for the family type is changed in v3 schema. Call utility function `isFamilyType` to check if element represents family type, for example:
+```javascript
+const flags = Encoding.getElementFlags(element[QC.Key]);
+const familyType = isFamilyType(flags);
+```
 
 ## Levels
 Levels are handled differently in v3 - level is part of LBS. The element flag of the level element is `ElementFlags.Location` and Tandem category of the element is `TC.Levels` (`L.Lv`).
-Use `isLevel` function to check if element is level.
+Call utility function `isLevel(element)` to check if element is level.
 
 ## Rooms
 Rooms are handled differently in v3 - room is part of LBS. The element flag of the room element is `ElementFlags.Location` and Tandem category of the element is `TC.Rooms` (`L.Rm`).
-Use `isRoom` function to check if element is room.
+Call utility function `isRoom(element)` to check if element is room.
 Parent (`QC.Parent`) of the room is level.
 
 ## Streams
-The value of element flag for the stream is changed in v3 schema. Call utility function `isStream(element[QC.ElementFlags])` to check if element represents stream for current schema.
+The value of element flag for the stream is changed in v3 schema. Call utility function `isStream` to check if element represents stream, for example:
+```javascript
+const flags = Encoding.getElementFlags(element[QC.Key]);
+const stream = isStream(flags);
+```
+
