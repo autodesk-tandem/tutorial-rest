@@ -6,7 +6,7 @@
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies, QC } from './../common/constants.js';
-import { Encoding, getDefaultModel, isLogicalElement } from './../common/utils.js';
+import { Encoding, getDefaultModel } from './../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -34,40 +34,25 @@ async function main() {
     if (!defaultModel) {
         throw new Error('Unable to find default model');
     }
-    // STEP 3 - find room by name. We assume there is only one room with given name.
     const roomName = ROOM_NAME;
     const uniformatClassId = 'D7070'; // this refers to Electronic Monitoring and Control
     const categoryId = 5031; // this refers to IoT Connections category
     const classification = CLASSIFICATION_ID;
-    let targetRoomModelId = null;
-    let targetRoom = null;
+    // STEP 3 - find room by name. We assume there is only one room with given name.
+    const rooms = await client.getRooms(defaultModel.modelId, [ ColumnFamilies.Standard, ColumnFamilies.Refs ]);
+    const targetRoom = rooms.find(r => r[QC.OName] ?? r[QC.Name] === roomName);
 
-    // iterate through rooms
-    for (const link of facility.links) {
-        // we need to query for refs because we want to know related level
-        const rooms = await client.getRooms(link.modelId, [ ColumnFamilies.Standard, ColumnFamilies.Refs ]);
-        const room = rooms.find(r => r[QC.Name] === roomName);
-
-        if (room) {
-            targetRoom = room;
-            targetRoomModelId = link.modelId.replace('urn:adsk.dtm:', '');
-            break;
-        }
-    }
     if (!targetRoom) {
         throw new Error(`Room ${roomName} doesn't exist`);
     }
-    // STEP 4 - find level. Level with same name should exist in default model.
-    const levelDetails = await client.getElement(targetRoomModelId, targetRoom[QC.Level]);
-    const levels = await client.getLevels(defaultModel.modelId);
-    const targetLevel = levels.find(l => l[QC.Name] === levelDetails[QC.Name]);
+    // STEP 4 - find level from the room
+    const targetLevel = await client.getElement(defaultModel.modelId, targetRoom[QC.Parent]);
 
     if (!targetLevel) {
-        console.warn(`Level ${levelDetails[QC.Name]} doesn't exist`);
+        console.warn(`Level ${targetRoom[QC.Parent]} doesn't exist`);
     }
     // STEP 5 - create new stream. First step is to encode keys for references. In our case host element and room are same.
-    const targetRoomKey = Encoding.toFullKey(targetRoom[QC.Key], isLogicalElement(targetRoom[QC.ElementFlags]));
-    const parentXref = Encoding.toXrefKey(targetRoomModelId, targetRoomKey);
+    const parentXref = Encoding.toXrefKey(defaultModel.modelId, targetRoom[QC.Key]);
     // create new stream
     const streamId = await client.createStream(defaultModel.modelId,
         roomName,
