@@ -1,5 +1,5 @@
 /*
-    This example demonstrates how to get assets from facility and print their bounding box.
+    This example demonstrates how to get assets from facility and print bounding box of associated BIM element.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
