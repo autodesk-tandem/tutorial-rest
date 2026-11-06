@@ -279,7 +279,7 @@ export class TandemClient {
         const inputs = {
             muts: [
                 [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.Name, name ],
-                [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.ElementFlags, ElementFlags.Stream ], // this flag identifies stream
+                [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.ElementFlags, ElementFlags.StreamV3 ], // this flag identifies stream
                 [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.UniformatClass, uniformatClass ],
                 [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.CategoryId, categoryId ],
 
