@@ -55,12 +55,14 @@ async function main() {
         // STEP 5 - decode location IDs and update location-assets map
         const [ _, elementIds ] = Encoding.fromXrefKeyArray(locationId);
 
-        locationIds.add(...elementIds);
+        for (const elementId of elementIds) {
+            locationIds.add(elementId);
+        }
         for (const elementId of elementIds) {
             if (!data.locationAssetsMap.has(elementId)) {
-                data.locationAssetsMap.set(elementId, new Set());
+                data.locationAssetsMap.set(elementId, []);
             }
-            data.locationAssetsMap.get(elementId).add(assetKey);
+            data.locationAssetsMap.get(elementId).push(assetKey);
         }
     }
     // STEP 6 - fetch locations

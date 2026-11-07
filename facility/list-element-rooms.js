@@ -46,12 +46,16 @@ async function main() {
         // but location are stored in default model so no need to store modelIds
         const [ _, elementIds ] = Encoding.fromXrefKeyArray(locationId);
 
-        locationIds.add(...elementIds);
+        for (const elementId of elementIds) {
+            locationIds.add(elementId);
+        }
         // STEP 6 - remember locations for asset
         if (!assetLocations.has(asset[QC.Key])) {
             assetLocations.set(asset[QC.Key], new Set());
         }
-        assetLocations.get(asset[QC.Key]).add(...elementIds);
+        for (const elementId of elementIds) {
+            assetLocations.get(asset[QC.Key]).add(elementId);
+        }
     }
     // STEP 7 - query locations
     const elements = await client.getElements(defaultModel.modelId, Array.from(locationIds));
