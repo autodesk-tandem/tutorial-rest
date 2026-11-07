@@ -12,6 +12,7 @@ import {
     QC,
     Region
 } from './constants.js';
+import { Encoding, isLevel, isRoom, isStream } from './utils.js';
 
 const paths = {
     'prod': {
@@ -278,7 +279,7 @@ export class TandemClient {
         const inputs = {
             muts: [
                 [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.Name, name ],
-                [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.ElementFlags, ElementFlags.Stream ], // this flag identifies stream
+                [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.ElementFlags, ElementFlags.StreamV3 ], // this flag identifies stream
                 [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.UniformatClass, uniformatClass ],
                 [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.CategoryId, categoryId ],
 
@@ -616,7 +617,7 @@ export class TandemClient {
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<any[]>}
      */
-    async getLevels(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+    async getLevels(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs ]) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
@@ -628,7 +629,7 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Level) {
+            if (isLevel(item)) {
                 results.push(item);
             }
         }
@@ -837,7 +838,7 @@ export class TandemClient {
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<object[]>}
      */
-    async getRooms(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+    async getRooms(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs ]) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
@@ -849,7 +850,7 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Room) {
+            if (isRoom(item)) {
                 results.push(item);
             }
         }
@@ -966,7 +967,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Stream) {
+            const flags = Encoding.getElementFlags(item[QC.Key]);
+
+            if (isStream(flags)) {
                 results.push(item);
             }
         }
@@ -1010,7 +1013,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.System) {
+            const flags = Encoding.getElementFlags(item[QC.Key]);
+
+            if (flags === ElementFlags.System) {
                 results.push(item);
             }
         }
@@ -1025,7 +1030,7 @@ export class TandemClient {
      * @param {boolean} [includeHistory] - controls if history information is included in response
      * @returns {Promise<object[]>}
      */
-    async getTaggedAssets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs ], includeHistory = false) {
+    async getTaggedAssets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs, ColumnFamilies.Xrefs ], includeHistory = false) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
@@ -1037,9 +1042,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            const isAsset = item[QC.IsAsset];
+            const flags = Encoding.getElementFlags(item[QC.Key]);
 
-            if (isAsset) {
+            if (flags === ElementFlags.GenericAsset) {
                 results.push(item);
             }
         }
@@ -1089,7 +1094,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Ticket) {
+            const flags = Encoding.getElementFlags(item[QC.Key]);
+
+            if (flags === ElementFlags.Ticket) {
                 results.push(item);
             }
         }
@@ -1414,7 +1421,9 @@ class ElementFilter extends Transform {
             if (this._elementFlags === undefined) {
                 this.push(chunk.value);
             }
-            if ((this._elementFlags !== undefined) && (chunk.value[QC.ElementFlags] === this._elementFlags)) {
+            const flags = Encoding.getElementFlags(chunk.value?.[QC.Key]);
+
+            if ((this._elementFlags !== undefined) && (flags === this._elementFlags)) {
                 this.push(chunk.value);
             }
         }

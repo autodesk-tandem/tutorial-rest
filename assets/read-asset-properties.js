@@ -4,8 +4,9 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { QC } from '../common/constants.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -23,28 +24,31 @@ async function main() {
     // STEP 2 - get facility
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
-    let count = 0;
 
-    // STEP 3 - iterate through facility models and collect tagged assets
-    for (const link of facility.links) {
-        const schema = await client.getModelSchema(link.modelId);
-        const assets = await client.getTaggedAssets(link.modelId);
+    // STEP 3 - get default model and its schema
+    const defaultModel = getDefaultModel(facilityId, facility);
 
-        count += assets.length;
-        for (const asset of assets) {
-            // STEP 4 - map properties to schema and print out property name & value
-            // first check for name override, if empty then use default name
-            const name = asset[QC.OName] ?? asset[QC.Name];
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
+    const schema = await client.getModelSchema(defaultModel.modelId);
+    // STEP 4 - get tagget assets
+    const assets = await client.getTaggedAssets(defaultModel.modelId);
+    const count = assets.length;
 
-            console.log(`${name}: ${asset[QC.Key]}`);
-            for (const propId in asset) {
-                const prop = schema.attributes.find(p => p.id === propId);
+    for (const asset of assets) {
+        // STEP 5 - map properties to schema and print out property name & value
+        // first check for name override, if empty then use default name
+        const name = asset[QC.OName] ?? asset[QC.Name];
 
-                if (!prop) {
-                    continue;
-                }
-                console.log(`  ${prop.category}.${prop.name}: ${asset[propId]}`);
+        console.log(`${name}: ${asset[QC.Key]}`);
+        for (const propId in asset) {
+            const prop = schema.attributes.find(p => p.id === propId);
+
+            if (!prop) {
+                continue;
             }
+            console.log(`  ${prop.category}.${prop.name}: ${asset[propId]}`);
         }
     }
     console.log(`Total assets: ${count}`);

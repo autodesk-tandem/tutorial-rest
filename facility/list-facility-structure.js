@@ -5,9 +5,9 @@
 */
 import * as fs from 'fs';
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies, QC } from '../common/constants.js';
-import { Encoding } from '../common/utils.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { Encoding, getDefaultModel, isLevel, isRoom } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -23,165 +23,150 @@ async function main() {
     });
 
     // STEP 2 - get facility
-    const facility = await client.getFacility(FACILITY_URN);
+    const facilityId = FACILITY_URN;
+    const facility = await client.getFacility(facilityId);
+    const defaultModel = getDefaultModel(facilityId, facility);
+
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
     // this structure is used to keep structure data. it uses element keys as keys for maps.
     const data = {
-        levels: {}, // map between level key and level
-        rooms: {}, // map between room key and room
-        assets: {}, // map between asset key and asset
-        roomAssetsMap: {}, // map between room and assets (asset key - room key)
-        roomLevelMap: {} // map between room and level (room key - level key)
+        levels: new Map(), // map between level key and level
+        rooms: new Map(), // map between room key and room
+        assets: new Map(), // map between asset key and asset
+        locationAssetsMap: new Map(), // map between location and assets (location key - asset keys)
+        roomLevelMap: new Map() // map between room and level (room key - level key)
     };
-    const modelRooms = [];
+    // STEP 3 - collect assets and read related location references
+    const assets = await client.getTaggedAssets(defaultModel.modelId);
+    const locationIds = new Set();
 
-    // STEP 3 - collect assets and related room references
-    for (const link of facility.links) {
-        // skip default model
-        if (isDefaultModel(FACILITY_URN, link.modelId)) {
+    for (const asset of assets) {
+        const assetKey = asset[QC.Key];
+
+        data.assets.set(assetKey, asset);
+        // STEP 4 - find location references
+        const locationId = asset[QC.OLocation] ?? asset[QC.Location];
+
+        if (!locationId) {
             continue;
         }
-        const assets = await client.getTaggedAssets(link.modelId,
-            [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs, ColumnFamilies.Xrefs ]);
-        const modelId = link.modelId;
+        // STEP 5 - decode location IDs and update location-assets map
+        const [ _, elementIds ] = Encoding.fromXrefKeyArray(locationId);
 
-        for (const asset of assets) {
-            // unique asset key
-            const assetKey = asset[QC.Key];
-
-            data.assets[assetKey] = asset;
-            // STEP 4 - find room references. Note that reference can be within same model or across models
-            let roomRef = asset[QC.Rooms];
-            const assetRooms = [];
-
-            if (roomRef) {
-                const roomKeys = Encoding.fromShortKeyArray(roomRef);
-
-                for (const roomKey of roomKeys) {
-                    assetRooms.push({
-                        modelId: modelId,
-                        roomId: roomKey
-                    });
-                }
-            } else {
-                roomRef = asset[QC.XRooms];
-                const roomKeys = Encoding.fromXrefKeyArray(roomRef);
-                const modelIds = roomKeys[0];
-                const elementKeys = roomKeys[1];
-
-                for (let i = 0; i < modelIds.length; i++) {
-                    assetRooms.push({
-                        modelId: `urn:adsk.dtm:${modelIds[i]}`,
-                        // in case of xref key we need to decode from long key to short key
-                        roomId: Encoding.toShortKey(elementKeys[i])
-                    });
-                }
+        for (const elementId of elementIds) {
+            locationIds.add(elementId);
+        }
+        for (const elementId of elementIds) {
+            if (!data.locationAssetsMap.has(elementId)) {
+                data.locationAssetsMap.set(elementId, []);
             }
-            // STEP 5 - build map between asset and rooms - note that asset can be linked to more than one room
-            for (const { roomId } of assetRooms) {
-                const roomKey = roomId;
-                let assetIds = data.roomAssetsMap[roomKey];
-
-                if (!assetIds) {
-                    assetIds = [];
-                }
-                assetIds.push(assetKey);
-                data.roomAssetsMap[roomKey] = assetIds;
-            }
-            modelRooms.push(... assetRooms);
+            data.locationAssetsMap.get(elementId).push(assetKey);
         }
     }
-    // STEP 6 - process rooms and create map between room and level
-    const modelIds = new Set(modelRooms.map(i => i.modelId));
+    // STEP 6 - fetch locations
+    const locations = await client.getElements(defaultModel.modelId, Array.from(locationIds),
+        [ ColumnFamilies.Standard, ColumnFamilies.Refs ]);
+    const levelIds = new Set();
 
-    for (const modelId of modelIds) {
-        const roomIds = new Set(modelRooms.filter(i => i.modelId === modelId).map(i => i.roomId));
-        const rooms = await client.getElements(modelId, [... roomIds ],
-            [ ColumnFamilies.Standard, ColumnFamilies.Refs ]);
-        const levelIds = new Set();
+    for (const location of locations) {
+        const locationKey = location[QC.Key];
 
-        for (const room of rooms) {
-            const roomKey = room[QC.Key];
-
-            data.rooms[roomKey] = room;
-            const levelRef = room[QC.Level];
-
-            if (levelRef) {
-                levelIds.add(levelRef);
-                data.roomLevelMap[roomKey] = levelRef;
-            }
+        // STEP 7 - categorize locations into levels and rooms
+        if (isLevel(location)) {
+            data.levels.set(locationKey, location);
         }
-        // process levels
-        if (levelIds.size > 0) {
-            const levels = await client.getElements(modelId, [... levelIds ]);
+        if (isRoom(location)) {
+            data.rooms.set(locationKey, location);
+            // STEP 8 - collect parent level references for rooms
+            const parentLevelRef = location[QC.Parent];
 
-            for (const level of levels) {
-                const levelKey = level[QC.Key];
-
-                data.levels[levelKey] = level;
+            if (parentLevelRef) {
+                levelIds.add(parentLevelRef);
+                data.roomLevelMap.set(locationKey, parentLevelRef);
             }
         }
     }
-    // STEP 7 - iterate through structure
+    // STEP 9 - fetch levels
+    const levels = await client.getElements(defaultModel.modelId, Array.from(levelIds),
+        [ ColumnFamilies.Standard, ColumnFamilies.Refs ]);
+
+    for (const level of levels) {
+        const levelKey = level[QC.Key];
+
+        data.levels.set(levelKey, level);
+    }
+    // STEP 10 - iterate through structure
     console.debug(`facility data list`);
-    for (const { levelKey, level } of getLevels(data)) {
-        console.debug(`${level[QC.Name]}`);
-        for (const { roomKey, room } of getRoomsByLevel(data, levelKey)) {
-            console.debug(`  ${room[QC.Name]}`);
-            for (const { asset } of getAssetsByRoom(data, roomKey)) {
-                console.debug(`    ${asset[QC.Name]}`);
+    for (const level of getLevels(data)) {
+        const levelName = level[QC.OName] ?? level[QC.Name];
+
+        console.debug(`[L] ${levelName}`);
+        for (const room of getRoomsByLevel(data, level[QC.Key])) {
+            const roomName = room[QC.OName] ?? room[QC.Name];
+
+            console.debug(`  [R] ${roomName}`);
+            for (const asset of getAssetsByLocation(data, room[QC.Key])) {
+                const assetName = asset[QC.OName] ?? asset[QC.Name];
+
+                console.debug(`    [A] ${assetName}`);
             }
         }
+        for (const asset of getAssetsByLocation(data, level[QC.Key])) {
+            const assetName = asset[QC.OName] ?? asset[QC.Name];
+
+            console.debug(`    [A] ${assetName}`);
+        }
     }
-    // STEP 8 - save structure to file
+    // STEP 11 - save structure to file
     await saveToFile(data, 'facility-structure.json');
 }
 
 /**
- * Check if model is default model.
+ * Get all levels from the facility data.
  * 
- * @param {string} facilityId 
- * @param {string} modelId 
- * @returns {boolean}
+ * @param {any} data 
+ * @returns {Array<any>}
  */
-function isDefaultModel(facilityId, modelId) {
-    const defaultModelId = facilityId.replace('urn:adsk.dtt:', 'urn:adsk.dtm:');
-
-    return defaultModelId == modelId;
-}
-
 function getLevels(data) {
-    const result = [];
-
-    for (const levelKey in data.levels) {
-        const level = data.levels[levelKey];
-
-        result.push({ levelKey, level });
-    }
-    return result;
+    return data.levels.entries().map(l => l[1]);
 }
 
+/**
+ * Get all rooms for a specific level from the facility data.
+ * 
+ * @param {any} data 
+ * @param {string} levelKey 
+ * @returns {Array<any>}
+ */
 function getRoomsByLevel(data, levelKey) {
     const result = [];
 
-    for (const roomKey in data.rooms) {
-        if (data.roomLevelMap[roomKey] !== levelKey) {
+    for (const [ key, room ] of data.rooms.entries()) {
+        if (data.roomLevelMap.get(key) !== levelKey) {
             continue;
         }
-        const room = data.rooms[roomKey];
-
-        result.push({ roomKey, room });
+        result.push(room);
     }
     return result;
 }
 
-function getAssetsByRoom(data, roomKey) {
-    const assetKeys = data.roomAssetsMap[roomKey];
+/**
+ * Get all assets for a specific location from the facility data.
+ * 
+ * @param {any} data 
+ * @param {string} locationKey 
+ * @returns {Array<any>}
+ */
+function getAssetsByLocation(data, locationKey) {
+    const assetKeys = data.locationAssetsMap.get(locationKey);
     const result = [];
 
     for (const assetKey of assetKeys) {
-        const asset = data.assets[assetKey];
+        const asset = data.assets.get(assetKey);
 
-        result.push({ assetKey, asset });
+        result.push(asset);
     }
     return result;
 }
@@ -195,7 +180,15 @@ function getAssetsByRoom(data, roomKey) {
  */
 function saveToFile(data, fileName) {
     return new Promise((resolve, reject) => {
-        fs.writeFile(fileName, JSON.stringify(data), err => {
+        fs.writeFile(fileName, JSON.stringify(data, (key, value) => {
+            if (value instanceof Map) {
+                return Array.from(value.entries());
+            }
+            if (value instanceof Set) {
+                return Array.from(value);
+            }
+            return value;
+        }), err => {
             if (err) {
                 reject(err);
             } else {
