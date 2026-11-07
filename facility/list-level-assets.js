@@ -43,13 +43,16 @@ async function main() {
         }
         const [_, elementIds] = Encoding.fromXrefKeyArray(location);
 
-        locationIds.add(...elementIds);
+        for (const elementId of elementIds) {
+            locationIds.add(elementId);
+        }
         // STEP 5 - store mapping from location element to assets
         for (const elementId of elementIds) {
+            locationIds.add(elementId);
             if (!locationAssetMap.has(elementId)) {
-                locationAssetMap.set(elementId, new Set());
+                locationAssetMap.set(elementId, []);
             }
-            locationAssetMap.get(elementId).add(asset);
+            locationAssetMap.get(elementId).push(asset);
         }
     }
     // STEP 6 - fetch locations and iterate through them
