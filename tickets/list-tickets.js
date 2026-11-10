@@ -4,8 +4,8 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { QC } from './../common/constants.js';
+import { TandemClient } from '../common/tandemClient.js';
 import { Encoding, getDefaultModel } from './../common/utils.js';
 
 // update values below according to your environment
@@ -49,27 +49,27 @@ async function main() {
         const xref = ticket[QC.XParent];
 
         if (xref) {
-            const [ modelIds, elementIds ] = Encoding.fromXrefKeyArray(xref);
-            const modelElementMap = new Map();
+            // technically all assets are stored in the default model,
+            // but we use the modelId from the xref to fetch them to make the logic generic
+            const [ modelIds, assetIds ] = Encoding.fromXrefKeyArray(xref);
+            const modelAssetMap = new Map();
 
             for (let i = 0; i < modelIds.length; i++) {
                 const modelId = modelIds[i];
-                const elementId = elementIds[i];
-                const modelElements = modelElementMap.get(modelId);
+                const assetId = assetIds[i];
 
-                if (modelElements) {
-                    modelElements.push(elementId);
-                } else {
-                    modelElementMap.set(modelId, [elementId]);
+                if (!modelAssetMap.has(modelId)) {
+                    modelAssetMap.set(modelId, []);
                 }
+                modelAssetMap.get(modelId).push(assetId);
             }
-            for (const [ modelId, elementIds ] of modelElementMap.entries()) {
-                const elements = await client.getElements(modelId, elementIds);
+            for (const [ modelId, assetIds ] of modelAssetMap.entries()) {
+                const elements = await client.getElements(modelId, assetIds);
 
                 for (const element of elements) {
                     const elementName = element[QC.OName] ?? element[QC.Name];
                     
-                    console.log(`  Element: ${elementName}`);
+                    console.log(`  Asset: ${elementName}`);
                 }
             }
         }
