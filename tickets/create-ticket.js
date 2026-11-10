@@ -4,7 +4,6 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies,
     ColumnNames,
     ElementFlags,
@@ -12,11 +11,8 @@ import { ColumnFamilies,
     QC,
     TC
 } from './../common/constants.js';
-import {
-    Encoding,
-    getDefaultModel,
-    isLogicalElement
-} from './../common/utils.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { Encoding, getDefaultModel } from './../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -44,51 +40,17 @@ async function main() {
         throw new Error('Unable to find default model');
     }
     // STEP 3 - find asset by name. In case when there is multiple assets with same name the first one is selected.
-    let xref;
-
-    for (const l of facility.links) {
-        const elements = await client.getElements(l.modelId);
-
-        for (const element of elements) {
-            const name = element[QC.OName] ?? element[QC.Name];
-
-            if (name === ASSET_NAME) {
-                // create xref key of an asset
-                xref = Encoding.toXrefKey(l.modelId, Encoding.toFullKey(element[QC.Key], isLogicalElement(element[QC.ElementFlags])));
-                break;
-            }
-        }
-        if (xref) {
-            break;
-        }
-    }
-    if (!xref) {
+    const assets = await client.getTaggedAssets(facilityId);
+    const asset = assets.find(a => a[QC.OName] === ASSET_NAME || a[QC.Name] === ASSET_NAME);
+    
+    if (!asset) {
         throw new Error(`Unable to locate asset: ${ASSET_NAME}`);
     }
+    const xref = Encoding.toXrefKey(defaultModel.modelId, asset[QC.Key]);
+
     // STEP 4 - get rooms and levels from parent asset
-    const [ modelId, elementKey ] = Encoding.fromXrefKey(xref);
-    let roomsIds;
-    let levelId;
-
-    if (modelId && elementKey) {
-        const parentElement = await client.getElement(modelId, elementKey, [ ColumnFamilies.Standard, ColumnFamilies.Refs, ColumnFamilies.Xrefs ]);
-
-        roomsIds = parentElement[QC.OXRooms] ?? parentElement[QC.XRooms];
-        // STEP 5 - find level by name in default model
-        const parentLevelId = parentElement[QC.OLevel] ?? parentElement[QC.Level];
-
-        if (parentLevelId) {
-            const parentLevel = await client.getElement(modelId, parentLevelId, [ ColumnFamilies.Standard ]);
-            const levelName = parentLevel[QC.OName] ?? parentLevel[QC.Name];
-            const levels = await client.getLevels(defaultModel.modelId);
-            const level = levels.find(l => l[QC.OName] === levelName || l[QC.Name] === levelName);
-
-            if (level) {
-                levelId = level[QC.Key];
-            }
-        }
-    }
-    // STEP 6 - payload for ticket connected to asset
+    const locationIds = asset[QC.OLocation] ?? asset[QC.Location];
+    // STEP 5 - create payload for ticket connected to asset
     const flags = ElementFlags.Ticket;
     const mutations = [
         [
@@ -129,21 +91,12 @@ async function main() {
         ]
     ];
 
-    if (roomsIds && roomsIds.length > 0) {
+    if (locationIds) {
         mutations.push([
             MutateActions.Insert,
             ColumnFamilies.Xrefs,
-            ColumnNames.Rooms,
-            roomsIds
-        ]);
-    }
-
-    if (levelId) {
-        mutations.push([
-            MutateActions.Insert,
-            ColumnFamilies.Refs,
-            ColumnNames.Level,
-            levelId
+            ColumnNames.Location,
+            locationIds
         ]);
     }
     const inputs = {
