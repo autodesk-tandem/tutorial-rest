@@ -68,7 +68,7 @@ async function main() {
 
                 for (const element of elements) {
                     const elementName = element[QC.OName] ?? element[QC.Name];
-                    
+
                     console.log(`  Asset: ${elementName}`);
                 }
             }
