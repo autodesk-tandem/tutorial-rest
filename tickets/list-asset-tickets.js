@@ -13,7 +13,6 @@ const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
 const APS_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
 const FACILITY_URN = 'YOUR_FACILITY_URN';
 
-
 async function main() {
     // STEP 1 - obtain token. The sample uses 2-legged token but it would also work with 3-legged token
     // assuming that user has access to the facility
