@@ -29,6 +29,8 @@ In v3 assets are stored separately from source BIM elements. Call `Encoding.getE
 ### Asset Creation
 In v3, asset must to be created explicitly for a BIM element using `POST v3/.../makeAssets` endpoint. An asset created for a BIM element has a 1:1 relationship with that element. Use `QC.HostOfAsset` column to check if BIM has asset.
 
+Use `POST create` to create asset without BIM element. This is useful for scenarios when BIM model is not available.
+
 ### Asset Mutation
 Use `POST v3/.../mutate` endpoint to apply asset changes. The endpoint can be also used to change selected standard properties of BIM elements.
 
