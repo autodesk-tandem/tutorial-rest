@@ -1160,6 +1160,30 @@ export class TandemClient {
     }
 
     /**
+     * Creates assets for given BIM elements.
+     * 
+     * @param {string} modelId 
+     * @param {string[]} keys 
+     * @param {string} description 
+     * @param {string} correlationId 
+     * @returns {Promise<any>}
+     */
+    async makeAssets(modelId, keys, description, correlationId) {
+        const token = this._authProvider();
+        const inputs = {
+            keys,
+            description
+        };
+        if (correlationId) {
+            inputs.correlationId = correlationId;
+        }
+        const url = useV3(`${this.basePath}/modeldata/${modelId}/makeAssets`);
+        const data = await this._post(token, url, JSON.stringify(inputs));
+
+        return data;
+    }
+
+    /**
      * Applies provided changes (mutations) to the elements.
      * 
      * @param {string} urn - URN of the model.
