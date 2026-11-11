@@ -26,6 +26,12 @@ In v3 assets are stored separately from source BIM elements. Call `Encoding.getE
 - Use `QC.BimElmOfAsset` column to find link between asset and its BIM element. The value is xref key (can be decoded using `Encoding.fromXrefKey` function). Note that this column is optional - Tandem supports scenarios when asset doesn't need to be connected to BIM element.
 - Use `QC.HostOfAsset` column to find link between BIM element and its related asset. The value is xref key. This column is also optional.
 
+### Asset Creation
+In v3, asset must to be created explicitly for a BIM element using `POST v3/.../makeAssets` endpoint. An asset created for a BIM element has a 1:1 relationship with that element. Use `QC.HostOfAsset` column to check if BIM has asset.
+
+### Asset Mutation
+Use `POST v3/.../mutate` endpoint to apply asset changes. The endpoint can be also used to change selected standard properties of BIM elements.
+
 ## Family Types
 The value of element flag for the family type is changed in v3 schema. Call utility function `isFamilyType` to check if element represents family type, for example:
 ```javascript
