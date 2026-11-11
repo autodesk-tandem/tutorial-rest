@@ -1182,7 +1182,7 @@ export class TandemClient {
         if (correlationId) {
             inputs.correlationId = correlationId;
         }
-        const url = `${this.basePath}/modeldata/${urn}/mutate`;
+        const url = useV3(`${this.basePath}/modeldata/${urn}/mutate`);
         const result = await this._post(token, url, JSON.stringify(inputs));
         
         return result;
@@ -1429,4 +1429,14 @@ class ElementFilter extends Transform {
         }
         callback();
     }
+}
+
+/**
+ * Helper function to redirect API calls from v1 to v3.
+ * 
+ * @param {string} url 
+ * @returns 
+ */
+function useV3(url) {
+    return url.replace('/v1/', '/v3/');
 }
