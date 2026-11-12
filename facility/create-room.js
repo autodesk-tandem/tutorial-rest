@@ -1,5 +1,5 @@
 /*
-    This example demonstrates how to create logical space.
+    This example demonstrates how to create room - this is useful for No BIM scenarios.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
@@ -38,15 +38,15 @@ async function main() {
     if (!defaultModel) {
         throw new Error(`Default model doesn't exist`);
     }
+    // STEP 4 - fetch levels from the model and find level by name - assumption is that
+    // level name is unique
     const levels = await client.getLevels(defaultModel.modelId);
-    const level = levels.find(l =>
-        l[QC.OName] === LEVEL_NAME ||
-        l[QC.Name] === LEVEL_NAME);
+    const level = levels.find(l => (l[QC.OName] ?? l[QC.Name]) === LEVEL_NAME);
 
     if (!level) {
         throw new Error(`Level "${LEVEL_NAME}" doesn't exist`);
     }
-    // STEP 4 - create room with minimal properties
+    // STEP 5 - create room with minimal properties
     const inputs = {
         muts: [
             [
@@ -71,7 +71,7 @@ async function main() {
                 MutateActions.Insert,
                 ColumnFamilies.Standard,
                 ColumnNames.CategoryId,
-                160
+                160 // Revit room category ID
             ],
             [
                 MutateActions.Insert,
@@ -83,7 +83,6 @@ async function main() {
         ],
         desc: 'Create room'
     };
-
     const result = await client.createElement(defaultModel.modelId, inputs);
 
     console.log(`New space created: ${result.key}`);
