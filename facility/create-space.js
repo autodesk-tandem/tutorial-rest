@@ -4,17 +4,22 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies,
     ColumnNames,
     ElementFlags,
-    MutateActions } from '../common/constants.js';
+    MutateActions,
+    QC,
+    TC } from '../common/constants.js';
+import { TandemClient } from '../common/tandemClient.js';
 import { getDefaultModel } from '../common/utils.js';;
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
 const APS_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
 const FACILITY_URN = 'YOUR_FACILITY_ID';
+
+const LEVEL_NAME = '00 FIRST - FINISH FLOOR';
+const ROOM_NAME = 'ELEC W-101';
 
 async function main() {
     // STEP 1 - obtain token to authenticate subsequent API calls
@@ -29,29 +34,54 @@ async function main() {
     const facility = await client.getFacility(facilityId);
     // STEP 3 - get default model
     const defaultModel = getDefaultModel(facilityId, facility);
-    // STEP 4 - create logical space with minimal properties
+
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
+    const levels = await client.getLevels(defaultModel.modelId);
+    const level = levels.find(l =>
+        l[QC.OName] === LEVEL_NAME ||
+        l[QC.Name] === LEVEL_NAME);
+
+    if (!level) {
+        throw new Error(`Level "${LEVEL_NAME}" doesn't exist`);
+    }
+    // STEP 4 - create room with minimal properties
     const inputs = {
         muts: [
             [
                 MutateActions.Insert,
                 ColumnFamilies.Standard,
                 ColumnNames.Name,
-                'My Space'
+                ROOM_NAME
             ],
             [
                 MutateActions.Insert,
                 ColumnFamilies.Standard,
                 ColumnNames.ElementFlags,
-                ElementFlags.Room
+                ElementFlags.Location
+            ],
+            [
+                MutateActions.Insert,
+                ColumnFamilies.Standard,
+                ColumnNames.TandemCategory,
+                TC.Rooms,
             ],
             [
                 MutateActions.Insert,
                 ColumnFamilies.Standard,
                 ColumnNames.CategoryId,
                 160
+            ],
+            [
+                MutateActions.Insert,
+                ColumnFamilies.Refs,
+                ColumnNames.Parent,
+                level[QC.Key]
             ]
+
         ],
-        desc: 'Create space'
+        desc: 'Create room'
     };
 
     const result = await client.createElement(defaultModel.modelId, inputs);
