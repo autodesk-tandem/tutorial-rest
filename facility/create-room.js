@@ -79,13 +79,12 @@ async function main() {
                 ColumnNames.Parent,
                 level[QC.Key]
             ]
-
         ],
         desc: 'Create room'
     };
     const result = await client.createElement(defaultModel.modelId, inputs);
 
-    console.log(`New space created: ${result.key}`);
+    console.log(`New room created: ${result.key}`);
 }
 
 main()
