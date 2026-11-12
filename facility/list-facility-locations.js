@@ -13,6 +13,12 @@ const APS_CLIENT_ID = 'YOUR_APS_CLIENT_ID';
 const APS_CLIENT_SECRET = 'YOUR_APS_CLIENT_SECRET';
 const FACILITY_URN = 'YOUR_FACILITY_URN';
 
+// label between Tandem category and human-readable label
+const labelMap = {
+    'L.Lv': 'LEVEL',
+    'L.Rm': 'ROOM'
+};
+
 async function main() {
     // STEP 1 - obtain token to authenticate subsequent API calls
     const token = await createToken(APS_CLIENT_ID,
@@ -72,8 +78,9 @@ async function main() {
 function printTree(key, locationById, parentChildMap, depth = 0) {
     const location = locationById.get(key);
     const name = location[QC.OName] ?? location[QC.Name];
+    const label = labelMap[location[QC.TandemCategory]] ?? 'Unknown';
 
-    console.log(`${'  '.repeat(depth)}${name} (${key})`);
+    console.log(`${'  '.repeat(depth)}[${label}] ${name} (${key})`);
     const children = parentChildMap.get(key) ?? [];
 
     for (const child of children) {
