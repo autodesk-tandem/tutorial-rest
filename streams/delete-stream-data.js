@@ -4,8 +4,8 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { QC } from '../common/constants.js';
+import { TandemClient } from '../common/tandemClient.js';
 import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
@@ -27,6 +27,9 @@ async function main() {
     const facility = await client.getFacility(facilityId);
     const defaultModel = getDefaultModel(facilityId, facility);
 
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
     // STEP 3 - get streams
     const streams = await client.getStreams(defaultModel.modelId);
     // STEP 4 - get stream keys
