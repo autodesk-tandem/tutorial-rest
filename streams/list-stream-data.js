@@ -4,8 +4,8 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { AttributeType, ColumnFamilies, QC } from '../common/constants.js';
+import { TandemClient } from '../common/tandemClient.js';
 import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
@@ -28,45 +28,53 @@ async function main() {
     const facility = await client.getFacility(facilityId);
     const defaultModel = getDefaultModel(facilityId, facility);
 
-    // STEP 3 - get schema
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
+    // STEP 3 - get schema and map to look for property by its id
     const schema = await client.getModelSchema(defaultModel.modelId);
-    // STEP 4 - calculate dates (from, to)
+    const propDefsById = new Map(
+        schema.attributes.filter(attr => attr.fam === ColumnFamilies.DtProperties)
+        .map(attr => [attr.id, attr]));
+    // STEP 4 - prepare property value maps for string attributes
+    const propValueMap = new Map();
+
+    for (const [propId, propDef] of propDefsById.entries()) {
+        if (propDef.dataType === AttributeType.String) {
+            propValueMap.set(propId, new Map(
+                Object.entries(propDef.allowedValues?.map || {})
+                    .map(([name, value]) => [value, name])
+            ));
+        }
+    }
+    // STEP 5 - calculate dates (from, to)
     const now = new Date();
     const to = now.getTime();
     const from = new Date(now.getTime() - OFFSET_DAYS * 24 * 60 * 60 * 1000).getTime();
-    // STEP 5 - get streams
+    // STEP 6 - get stream connections
     const streams = await client.getStreams(defaultModel.modelId);
 
     for (const stream of streams) {
-        // STEP 4 - get stream data for last NN days and print their values
+        // STEP 7 - get stream data for last NN days and print their values
         const streamKey = stream[QC.Key];
         const name = stream[QC.OName] ?? stream[QC.Name];
 
         console.log(`${name}`);
         const data = await client.getStreamData(defaultModel.modelId, streamKey, from, to);
 
-        for (const item in data) {
-            const propDef = schema.attributes.find(p => p.fam === ColumnFamilies.DtProperties && p.id === item);
+        for (const [propId, values] of Object.entries(data)) {
+            const propDef = propDefsById.get(propId);
 
             if (!propDef) {
-                console.warn(`Unable to find property definition: ${item}`);
+                console.warn(`Unable to find property definition: ${propId}`);
+                continue;
             }
-            const valueMap = new Map();
-
-            if (propDef && propDef.dataType === AttributeType.String) {
-                for (const [name, value] of Object.entries(propDef.allowedValues.map)) {
-                    valueMap.set(value, name);
-                }
-            }
-            console.log(`  ${propDef?.name} (${item})`);
-            const values = data[item];
-
-            for (const ts in values) {
+            console.log(`  ${propDef.name} (${propId})`);
+            for (const [ts, value] of Object.entries(values)) {
                 const date = new Date(parseInt(ts));
-                const value = values[ts];
                 
-                if (propDef?.dataType === AttributeType.String) {
-                    const name = valueMap.get(value);
+                if (propDef.dataType === AttributeType.String) {
+                    const name = propValueMap.get(propId)?.get(value) ?? value;
 
                     console.log(`    [${date.toLocaleString()}]: ${name}`);
                 } else {
