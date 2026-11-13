@@ -185,6 +185,8 @@ export class Encoding {
     }
 
     /**
+     * @deprecated This function is unnecessary when using the V3 schema.
+     * 
      * Converts element short key to full key.
      * 
      * @param {string} shortKey 
@@ -201,7 +203,7 @@ export class Encoding {
     }
 
     /**
-     * @deprecated This function is not needed in V3 schema.
+     * @deprecated This function is unnecessary when using the V3 schema.
      * 
      * Converts full key to short key.
      * 
@@ -238,7 +240,10 @@ export class Encoding {
     }
 
     /**
+     * @deprecated This function is unnecessary when using the V3 schema.
+     * 
      * Decodes array of keys from provided text.
+     * 
      * @param {string} text 
      * @param {boolean} [useFullKeys] - if specified returns full keys, otherwise returns short keys. 
      * @param {boolean} [isLogical]  - when useFullKeys is true it specifies if key is logical or physical.
