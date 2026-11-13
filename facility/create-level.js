@@ -8,7 +8,6 @@ import { ColumnFamilies,
     ColumnNames,
     ElementFlags,
     MutateActions,
-    QC,
     TC } from '../common/constants.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { getDefaultModel } from '../common/utils.js';;
