@@ -1,12 +1,12 @@
 /*
-    This example demonstrates how to get streams from given facility and their secrets.
+    This example demonstrates how to list streams from given facility along with their secrets.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { QC } from '../common/constants.js';
-import { Encoding, getDefaultModel } from '../common/utils.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -27,22 +27,20 @@ async function main() {
     const facility = await client.getFacility(facilityId);
     const defaultModel = getDefaultModel(facilityId, facility);
 
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
     // STEP 3 - get streams
     const streams = await client.getStreams(defaultModel.modelId);
-    // we need to convert stream keys to fully qualified key
-    const keys = streams.map(s => s[QC.Key]);
+    const nameById = new Map(streams.map(s => [s[QC.Key], s[QC.OName] ?? s[QC.Name]]));
     // STEP 4 - get streams secrets
-    const data = await client.getStreamsSecrets(defaultModel.modelId, keys);
+    const data = await client.getStreamsSecrets(defaultModel.modelId, Array.from(nameById.keys()));
 
     // STEP 5 - print out stream name + secret
-    for (const key in data) {
-        // stream data are stored using short key
-        const streamKey = Encoding.toShortKey(key);
-        const streamSecret = data[key];
-        const streamData = streams.find(s => s[QC.Key] === streamKey);
-        const name = streamData[QC.OName] ?? streamData[QC.Name];
+    for (const [key, secret] of Object.entries(data)) {
+        const name = nameById.get(key);
 
-        console.log(`${name}: ${streamSecret}`);
+        console.log(`${name}: ${secret}`);
     }
 }
 
