@@ -235,3 +235,9 @@ export const HC = {
 export const RC = {
   Levels: 240
 };
+
+export const StreamAlertState = {
+    0: 'Normal',
+    1: 'Warning',
+    2: 'Alert'
+};
