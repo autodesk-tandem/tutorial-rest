@@ -89,10 +89,8 @@ async function main() {
 }
 
 function printThreshold(threshold, spaces) {
-    const keys = Object.keys(threshold);
-
-    for (const key of keys) {
-        console.log(`${Array(spaces + 1).join(' ')}${key}: ${threshold[key]}`);
+    for (const [key, value] of Object.entries(threshold)) {
+        console.log(`${' '.repeat(spaces + 1)}${key}: ${value}`);
     }
 }
 
