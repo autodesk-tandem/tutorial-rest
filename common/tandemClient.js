@@ -858,6 +858,20 @@ export class TandemClient {
     }
 
     /**
+     * Returns latest stream alerts.
+     * 
+     * @param {string} urn - URN of the model.
+     * @returns {Promise<object>}
+     */
+    async getStreamAlerts(urn) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/models/${urn}/stream-alerts`;
+        const data = await this._get(token, url);
+        
+        return data;
+    }
+
+    /**
      * Returns stream configuration for given stream.
      * 
      * @param {string} urn - URN of the model.
