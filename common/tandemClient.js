@@ -767,16 +767,15 @@ export class TandemClient {
      * @param {number} from - timestamp of start date.
      * @param {number} to - timestamp of end date.
      * @param {boolean} [includeChanges] - include change details.
-     * @param {boolean} [useFullKeys] - include full keys. Used only if includeChanges = true.
      * @returns {Promise<object[]>}
      */
-    async getModelHistoryBetweenDates(modelId, from, to, includeChanges = true, useFullKeys = true) {
+    async getModelHistoryBetweenDates(modelId, from, to, includeChanges = true) {
         const token = this._authProvider();
         const inputs = {
             min: from,
             max: to,
             includeChanges: includeChanges,
-            useFullKeys: useFullKeys
+            useFullKeys: true
         };
         const url = `${this.basePath}/modeldata/${modelId}/history`;
         const data = await this._post(token, url, JSON.stringify(inputs));
