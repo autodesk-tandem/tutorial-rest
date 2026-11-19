@@ -743,15 +743,14 @@ export class TandemClient {
      * @param {string} modelId - URN of the model.
      * @param {number[]} timestamps - array of timestamps.
      * @param {boolean} [includeChanges] - include change details.
-     * @param {boolean} [useFullKeys] - include full keys. Used only if includeChanges = true.
      * @returns {Promise<object[]>}
      */
-    async getModelHistory(modelId, timestamps, includeChanges = false, useFullKeys = false) {
+    async getModelHistory(modelId, timestamps, includeChanges = false) {
         const token = this._authProvider();
         const inputs = {
             timestamps: timestamps,
             includeChanges: includeChanges,
-            useFullKeys: useFullKeys
+            useFullKeys: true
         };
 
         const url = `${this.basePath}/modeldata/${modelId}/history`;
