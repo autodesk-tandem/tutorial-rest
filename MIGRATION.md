@@ -46,6 +46,9 @@ Family types apply only to BIM data and are not carride over to assets.
 Levels are handled differently in v3 - level is part of LBS. The element flag of the level element is `ElementFlags.Location` and Tandem category of the element is `TC.Levels` (`L.Lv`).
 Call utility function `isLevel(element)` to check if element is level.
 
+## Model History
+When reading model history using `POST /modeldata/{modelId}/history` make sure to set `useFullKeys` field to `true`.
+
 ## Rooms
 Rooms are handled differently in v3 - room is part of LBS. The element flag of the room element is `ElementFlags.Location` and Tandem category of the element is `TC.Rooms` (`L.Rm`).
 Call utility function `isRoom(element)` to check if element is room.
