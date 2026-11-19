@@ -5,7 +5,7 @@
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { ColumnFamilies, QC } from '../common/constants.js';
+import { QC } from '../common/constants.js';
 import { Encoding, getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
@@ -27,19 +27,21 @@ async function main() {
     const facility = await client.getFacility(facilityId);
     const defaultModel = getDefaultModel(facilityId, facility);
 
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
     // STEP 3 - get streams and their parents
     const streams = await client.getStreams(defaultModel.modelId);
     const modelStreamMap = new Map();
 
     for (let i = 0; i < streams.length; i++) {
         const stream = streams[i];
-        // host is stored as parent
+        // STEP 4 - host is stored as parent xref, need to decode it to get modelId and key
         const parentXref = stream[QC.XParent];
 
         if (!parentXref) {
             continue;
         }
-        // decode xref key of the host
         const [ modelId, key ] = Encoding.fromXrefKey(parentXref);
         let items = modelStreamMap.get(modelId)
 
@@ -48,7 +50,7 @@ async function main() {
             modelStreamMap.set(modelId, items);
         }
         items.push({
-            key: Encoding.toShortKey(key),
+            key,
             streamIndex: i
         });
     }

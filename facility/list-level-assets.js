@@ -1,11 +1,12 @@
 /*
-    This example demonstrates how to list all levels from facility and find assets for each level.
+    This example demonstrates how to list levels from facility and find assets for each level.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { QC } from '../common/constants.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { Encoding, getDefaultModel, isLevel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -23,31 +24,56 @@ async function main() {
     // STEP 2 - get facility
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
+    // STEP 3 - get default model
+    const defaultModel = getDefaultModel(facilityId, facility);
 
-    // STEP 3 - iterate through facility models
-    for (const link of facility.links) {
-        const levels = await client.getLevels(link.modelId);
-        const assets = await client.getTaggedAssets(link.modelId);
+    if (!defaultModel) {
+        throw new Error('Default model not found.');
+    }
+    // STEP 4 - fetch assets and map them to their locations
+    const assets = await client.getTaggedAssets(defaultModel.modelId);
+    const locationIds = new Set();
+    const locationAssetMap = new Map();
+    
+    for (const asset of assets) {
+        const location = asset[QC.OLocation] ?? asset[QC.Location];
 
-        // STEP 4 - iterate through levels
-        for (const level of levels) {
-            console.log(`${level[QC.Name]}`);
-            // STEP 5 - iterate through assets
-            for (const asset of assets) {
-                const assetLevel = asset[QC.Level];
-
-                if (!assetLevel) {
-                    continue;
-                }
-                // STEP 6 - compare key with level key of an asset
-                // if level key is matching to current level then we print out
-                // asset name.
-                if (level.k === assetLevel) {
-                    console.log(`  ${asset[QC.Name]}`);
-                }
-            }
+        if (!location) {
+            continue;
         }
-    }   
+        const [_, elementIds] = Encoding.fromXrefKeyArray(location);
+
+        for (const elementId of elementIds) {
+            locationIds.add(elementId);
+        }
+        // STEP 5 - store mapping from location element to assets
+        for (const elementId of elementIds) {
+            locationIds.add(elementId);
+            if (!locationAssetMap.has(elementId)) {
+                locationAssetMap.set(elementId, []);
+            }
+            locationAssetMap.get(elementId).push(asset);
+        }
+    }
+    // STEP 6 - fetch locations and iterate through them
+    const locations = await client.getElements(defaultModel.modelId, Array.from(locationIds));
+
+    for (const location of locations) {
+        if (!isLevel(location)) {
+            continue;
+        }
+        const levelName = location[QC.OName] ?? location[QC.Name];
+        
+        console.log(`${levelName}`);
+        // STEP 7 - find assets for given location and print their names
+        const assets = locationAssetMap.get(location[QC.Key]) ?? [];
+
+        for (const asset of assets) {
+            const assetName = asset[QC.OName] ?? asset[QC.Name];
+
+            console.log(`  ${assetName}`);
+        }
+    }
 }
 
 main()

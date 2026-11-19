@@ -4,17 +4,9 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
+import { ColumnFamilies, ElementFlags, QC } from '../common/constants.js';
 import { TandemClient } from '../common/tandemClient.js';
-import {
-    ColumnFamilies,
-    ElementFlags,
-    QC } from '../common/constants.js';
-import {
-    Encoding,
-    getDefaultModel,
-    isLogicalElement,
-    systemClassToList
-} from '../common/utils.js';
+import { Encoding, getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -33,13 +25,17 @@ async function main() {
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
 
-    // STEP 3 - iterate through systems and collect their data (id => { name, key })
+    // STEP 3 - iterate through systems and collect their data (id => { name, key, filter })
     const defaultModel = getDefaultModel(facilityId, facility);
+
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
     const systems = await client.getSystems(defaultModel.modelId);
     const systemMap = new Map();
 
     for (const system of systems) {
-        const key = Encoding.toFullKey(system[QC.Key], isLogicalElement(system[QC.ElementFlags]));
+        const key = system[QC.Key];
         const name = system[QC.OName] ?? system[QC.Name];
         const parent = system[QC.Parent];
 
@@ -59,58 +55,34 @@ async function main() {
     }
     // STEP 4 - iterate through model elements and store their relationship to system
     const systemElementsMap = new Map();
-    const systemClassMap = new Map();
 
     for (const link of facility.links) {
         const elements = await client.getElements(link.modelId, undefined, [ ColumnFamilies.Standard, ColumnFamilies.Systems ]);
-    
+
         for (const element of elements) {
-            const elementFlags = element[QC.ElementFlags];
+            const elementFlags = Encoding.getElementFlags(element[QC.Key]);
 
              // skip deleted elements and systems
             if (elementFlags === ElementFlags.Deleted || elementFlags === ElementFlags.System) {
                 continue;
             }
-            const key = element[QC.Key];
-            // check if element has system class assigned
-            const elementClass = element[QC.OSystemClass] ?? element[QC.SystemClass];
+            const xrefKey = Encoding.toXrefKey(link.modelId, element[QC.Key]);
+            // get system related properties
+            const systemPropKeys = Object.keys(element).filter(k => k.startsWith(`${ColumnFamilies.Systems}:`));
 
-            if (!elementClass) {
-                continue;
-            }
-            const elementClassNames = systemClassToList(elementClass);
-
-            for (const item in element) {
+            for (const item of systemPropKeys) {
                 // need to handle both fam:col and fam:!col formats
                 const [, family, systemId] = item.match(/^([^:]+):!?(.+)$/) ?? [];
+                const system = systemMap.get(systemId);
 
-                if (family === ColumnFamilies.Systems) {
-                    const system = systemMap.get(systemId);
-
-                    if (!system) {
-                        continue;
-                    }
-                    const filter = system.filter;
-                    let classNames = systemClassMap.get(filter);
-
-                    if (!classNames) {
-                        classNames = systemClassToList(filter);
-                        systemClassMap.set(filter, classNames);
-                    }
-                    // if system has filter, then check that element matches it
-                    const matches = elementClassNames.some(name => classNames.includes(name));
-
-                    if (matches) {
-                        // use set to handle possible duplicates
-                        let elementList = systemElementsMap.get(systemId);
-
-                        if (!elementList) {
-                            elementList = new Set();
-                            systemElementsMap.set(systemId, elementList);
-                        }
-                        elementList.add(key);
-                    }
+                if (!system) {
+                    continue;
                 }
+                // use set to handle possible duplicates
+                if (!systemElementsMap.has(systemId)) {
+                    systemElementsMap.set(systemId, new Set());
+                }
+                systemElementsMap.get(systemId).add(xrefKey);
             }
         }
     }

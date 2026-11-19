@@ -10,7 +10,10 @@ import {
     kSystemIdSize,
     ElementFlags,
     KeyFlags,
-    SystemClassNames
+    QC,
+    SchemaVersion,
+    SystemClassNames,
+    TC
 } from './constants.js';
 
 export class Encoding {
@@ -134,6 +137,24 @@ export class Encoding {
     }
 
     /**
+     * Decodes element flags from the given key.
+     * 
+     * @param {string} key 
+     * @returns {ElementFlags}
+     */
+    static getElementFlags(key) {
+        if (!key) {
+            return ElementFlags.Unknown;
+        }
+        const binData = Buffer.from(key, 'base64');
+        
+        if (binData.length !== kElementIdWithFlagsSize) {
+            return ElementFlags.Unknown;
+        }
+        return binData.readUInt32BE(0);
+    }
+
+    /**
      * Converts Tandem element key to Revit GUID.
      * 
      * @param {string} key 
@@ -164,6 +185,8 @@ export class Encoding {
     }
 
     /**
+     * @deprecated This function is unnecessary when using the V3 schema.
+     * 
      * Converts element short key to full key.
      * 
      * @param {string} shortKey 
@@ -180,7 +203,10 @@ export class Encoding {
     }
 
     /**
+     * @deprecated This function is unnecessary when using the V3 schema.
+     * 
      * Converts full key to short key.
+     * 
      * @param {string} fullKey 
      * @returns {string}
      */
@@ -214,7 +240,10 @@ export class Encoding {
     }
 
     /**
+     * @deprecated This function is unnecessary when using the V3 schema.
+     * 
      * Decodes array of keys from provided text.
+     * 
      * @param {string} text 
      * @param {boolean} [useFullKeys] - if specified returns full keys, otherwise returns short keys. 
      * @param {boolean} [isLogical]  - when useFullKeys is true it specifies if key is logical or physical.
@@ -518,4 +547,59 @@ export function systemClassToList(flags) {
 		}
 	}
 	return result;
+}
+
+/**
+ * Checks if element is of type level.
+ * 
+ * @param {object} element 
+ * @returns {boolean}
+ */
+export function isLevel(element) {
+    const flags = Encoding.getElementFlags(element[QC.Key]);
+    
+    return flags === ElementFlags.Location && element[QC.TandemCategory] === TC.Levels;
+}
+
+/**
+ * Checks if element is of type room.
+ * 
+ * @param {object} element 
+ * @returns {boolean}
+ */
+export function isRoom(element) {
+    const flags = Encoding.getElementFlags(element[QC.Key]);
+
+    return flags === ElementFlags.Location && element[QC.TandemCategory] === TC.Rooms;
+}
+
+// helper functions
+const ModelSchemaVersionV3 = 3;
+
+function familyTypeFlag(schemaVersion) {
+    return schemaVersion >= ModelSchemaVersionV3 ? ElementFlags.FamilyTypeV3 : ElementFlags.FamilyTypeV2;
+}
+
+function streamFlag(schemaVersion) {
+    return schemaVersion >= ModelSchemaVersionV3 ? ElementFlags.StreamV3 : ElementFlags.StreamV2;
+}
+
+/**
+ * Check if the flag represents a family type.
+ * 
+ * @param {number} flag  The flag to check.
+ * @returns {boolean} True if the flag represents a family type, false otherwise.
+ */
+export function isFamilyType(flag) {
+    return flag === familyTypeFlag(SchemaVersion);
+}
+
+/**
+ * Check if the flag represents a stream.
+ * 
+ * @param {number} flag  The flag to check.
+ * @returns {boolean} True if the flag represents a stream, false otherwise.
+ */
+export function isStream(flag) {
+    return flag === streamFlag(SchemaVersion);
 }

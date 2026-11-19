@@ -4,9 +4,9 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies, QC } from '../common/constants.js';
-import { Encoding, getDefaultModel, isLogicalElement } from '../common/utils.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -28,18 +28,21 @@ async function main() {
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
     const defaultModel = getDefaultModel(facilityId, facility);
+
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
     // STEP 3 - get model schema. It is needed to find parameter id.
     const schema = await client.getModelSchema(defaultModel.modelId);
     // STEP 4 - get streams and find stream by name
     const streams = await client.getStreams(defaultModel.modelId);
-    const stream = streams.find(s => s[QC.Name] === STREAM_NAME);
+    const stream = streams.find(s => (s[QC.OName] ?? s[QC.Name]) === STREAM_NAME);
 
     if (!stream) {
         throw new Error(`Stream ${STREAM_NAME} not found`);
     }
-    // STEP 5 - get stream data - we use full key because getStreamData expects full key
-    const streamKey = Encoding.toFullKey(stream[QC.Key], isLogicalElement(stream[QC.ElementFlags]));
-    const streamData = await client.getStreamData(defaultModel.modelId, streamKey);
+    // STEP 5 - get stream data
+    const streamData = await client.getStreamData(defaultModel.modelId, stream[QC.Key]);
     // STEP 6 - find substream by parameter name
     let propDef;
 
@@ -56,7 +59,7 @@ async function main() {
     }
     // STEP 7 - delete stream data. Note that we delete all data. If needed it's possible to
     // use from,to parameters to delete data for specific time range only.
-    await client.deleteStreamsData(defaultModel.modelId, [ streamKey ], [ propDef.id ]);
+    await client.deleteStreamsData(defaultModel.modelId, [ stream[QC.Key] ], [ propDef.id ]);
 }
 
 main()

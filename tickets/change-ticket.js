@@ -4,8 +4,8 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies, ColumnNames, MutateActions, QC } from '../common/constants.js';
+import { TandemClient } from '../common/tandemClient.js';
 import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment

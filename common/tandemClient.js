@@ -12,6 +12,7 @@ import {
     QC,
     Region
 } from './constants.js';
+import { Encoding, isLevel, isRoom, isStream } from './utils.js';
 
 const paths = {
     'prod': {
@@ -278,7 +279,7 @@ export class TandemClient {
         const inputs = {
             muts: [
                 [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.Name, name ],
-                [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.ElementFlags, ElementFlags.Stream ], // this flag identifies stream
+                [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.ElementFlags, ElementFlags.StreamV3 ], // this flag identifies stream
                 [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.UniformatClass, uniformatClass ],
                 [ MutateActions.Insert, ColumnFamilies.Standard, ColumnNames.CategoryId, categoryId ],
 
@@ -616,7 +617,7 @@ export class TandemClient {
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<any[]>}
      */
-    async getLevels(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+    async getLevels(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs ]) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
@@ -628,7 +629,7 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Level) {
+            if (isLevel(item)) {
                 results.push(item);
             }
         }
@@ -742,15 +743,14 @@ export class TandemClient {
      * @param {string} modelId - URN of the model.
      * @param {number[]} timestamps - array of timestamps.
      * @param {boolean} [includeChanges] - include change details.
-     * @param {boolean} [useFullKeys] - include full keys. Used only if includeChanges = true.
      * @returns {Promise<object[]>}
      */
-    async getModelHistory(modelId, timestamps, includeChanges = false, useFullKeys = false) {
+    async getModelHistory(modelId, timestamps, includeChanges = false) {
         const token = this._authProvider();
         const inputs = {
             timestamps: timestamps,
             includeChanges: includeChanges,
-            useFullKeys: useFullKeys
+            useFullKeys: true
         };
 
         const url = `${this.basePath}/modeldata/${modelId}/history`;
@@ -766,16 +766,15 @@ export class TandemClient {
      * @param {number} from - timestamp of start date.
      * @param {number} to - timestamp of end date.
      * @param {boolean} [includeChanges] - include change details.
-     * @param {boolean} [useFullKeys] - include full keys. Used only if includeChanges = true.
      * @returns {Promise<object[]>}
      */
-    async getModelHistoryBetweenDates(modelId, from, to, includeChanges = true, useFullKeys = true) {
+    async getModelHistoryBetweenDates(modelId, from, to, includeChanges = true) {
         const token = this._authProvider();
         const inputs = {
             min: from,
             max: to,
             includeChanges: includeChanges,
-            useFullKeys: useFullKeys
+            useFullKeys: true
         };
         const url = `${this.basePath}/modeldata/${modelId}/history`;
         const data = await this._post(token, url, JSON.stringify(inputs));
@@ -837,7 +836,7 @@ export class TandemClient {
      * @param {string[]} [columnFamilies] - optional list of columns
      * @returns {Promise<object[]>}
      */
-    async getRooms(urn, columnFamilies = [ ColumnFamilies.Standard ]) {
+    async getRooms(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.Refs ]) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
@@ -849,11 +848,25 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Room) {
+            if (isRoom(item)) {
                 results.push(item);
             }
         }
         return results;
+    }
+
+    /**
+     * Returns latest stream alerts.
+     * 
+     * @param {string} urn - URN of the model.
+     * @returns {Promise<object>}
+     */
+    async getStreamAlerts(urn) {
+        const token = this._authProvider();
+        const url = `${this.basePath}/models/${urn}/stream-alerts`;
+        const data = await this._get(token, url);
+        
+        return data;
     }
 
     /**
@@ -966,7 +979,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Stream) {
+            const flags = Encoding.getElementFlags(item[QC.Key]);
+
+            if (isStream(flags)) {
                 results.push(item);
             }
         }
@@ -1010,7 +1025,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.System) {
+            const flags = Encoding.getElementFlags(item[QC.Key]);
+
+            if (flags === ElementFlags.System) {
                 results.push(item);
             }
         }
@@ -1025,7 +1042,7 @@ export class TandemClient {
      * @param {boolean} [includeHistory] - controls if history information is included in response
      * @returns {Promise<object[]>}
      */
-    async getTaggedAssets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs ], includeHistory = false) {
+    async getTaggedAssets(urn, columnFamilies = [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.Refs, ColumnFamilies.Xrefs ], includeHistory = false) {
         const token = this._authProvider();
         const inputs = {
             families: columnFamilies,
@@ -1037,9 +1054,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            const isAsset = item[QC.IsAsset];
+            const flags = Encoding.getElementFlags(item[QC.Key]);
 
-            if (isAsset) {
+            if (flags === ElementFlags.GenericAsset) {
                 results.push(item);
             }
         }
@@ -1089,7 +1106,9 @@ export class TandemClient {
         const results = [];
 
         for (const item of data) {
-            if (item[QC.ElementFlags] === ElementFlags.Ticket) {
+            const flags = Encoding.getElementFlags(item[QC.Key]);
+
+            if (flags === ElementFlags.Ticket) {
                 results.push(item);
             }
         }
@@ -1153,6 +1172,30 @@ export class TandemClient {
     }
 
     /**
+     * Creates assets for given BIM elements.
+     * 
+     * @param {string} modelId 
+     * @param {string[]} keys 
+     * @param {string} description 
+     * @param {string} correlationId 
+     * @returns {Promise<any>}
+     */
+    async makeAssets(modelId, keys, description, correlationId) {
+        const token = this._authProvider();
+        const inputs = {
+            keys,
+            description
+        };
+        if (correlationId) {
+            inputs.correlationId = correlationId;
+        }
+        const url = useV3(`${this.basePath}/modeldata/${modelId}/makeAssets`);
+        const data = await this._post(token, url, JSON.stringify(inputs));
+
+        return data;
+    }
+
+    /**
      * Applies provided changes (mutations) to the elements.
      * 
      * @param {string} urn - URN of the model.
@@ -1175,7 +1218,7 @@ export class TandemClient {
         if (correlationId) {
             inputs.correlationId = correlationId;
         }
-        const url = `${this.basePath}/modeldata/${urn}/mutate`;
+        const url = useV3(`${this.basePath}/modeldata/${urn}/mutate`);
         const result = await this._post(token, url, JSON.stringify(inputs));
         
         return result;
@@ -1414,10 +1457,22 @@ class ElementFilter extends Transform {
             if (this._elementFlags === undefined) {
                 this.push(chunk.value);
             }
-            if ((this._elementFlags !== undefined) && (chunk.value[QC.ElementFlags] === this._elementFlags)) {
+            const flags = Encoding.getElementFlags(chunk.value?.[QC.Key]);
+
+            if ((this._elementFlags !== undefined) && (flags === this._elementFlags)) {
                 this.push(chunk.value);
             }
         }
         callback();
     }
+}
+
+/**
+ * Helper function to redirect API calls from v1 to v3.
+ * 
+ * @param {string} url 
+ * @returns 
+ */
+function useV3(url) {
+    return url.replace('/v1/', '/v3/');
 }

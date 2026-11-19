@@ -5,8 +5,9 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { AttributeType, QC } from '../common/constants.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -24,44 +25,47 @@ async function main() {
     // STEP 2 - get facility
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
+    // STEP 3 - get default model and its schema
+    const defaultModel = getDefaultModel(facilityId, facility);
 
-    // STEP 3 - iterate through facility models and collect tagged assets
-    for (const link of facility.links) {
-        const schema = await client.getModelSchema(link.modelId);
-        // STEP 4 - read property definitions for tag properties - they are of type StringList
-        const propDefs = schema.attributes.filter(a => a.dataType === AttributeType.StringList);
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
+    const schema = await client.getModelSchema(defaultModel.modelId);
 
-        if (propDefs.length === 0) {
+    // STEP 4 - read property definitions for tag properties - they are of type StringList
+    const propDefs = schema.attributes.filter(a => a.dataType === AttributeType.StringList);
+
+    if (propDefs.length === 0) {
+        return;
+    }
+    const propIds = propDefs.map(p => p.id);
+    const assets = await client.getTaggedAssets(defaultModel.modelId);
+
+    for (const asset of assets) {
+        // STEP 5 - get tag properties for each asset
+        const props = propIds
+            .filter(propId => asset[propId] !== undefined); // remove properties without values
+
+        if (props.length === 0) {
             continue;
         }
-        const propIds = propDefs.map(p => p.id);
-        const assets = await client.getTaggedAssets(link.modelId);
+        // first check for name override, if empty then use default name
+        const name = asset[QC.OName] ?? asset[QC.Name];
 
-        for (const asset of assets) {
-            // STEP 5 - get tag properties for each asset
-            const props = propIds
-                .filter(propId => asset[propId] !== undefined); // remove properties without values
+        console.log(`${name}: ${asset[QC.Key]}`);
+        // STEP 5 - iterate through tag properties and print out property name & value
+        for (const propId of props) {
+            const propDef = schema.attributes.find(p => p.id === propId);
 
-            if (props.length === 0) {
+            if (!propDef) {
                 continue;
             }
-            // first check for name override, if empty then use default name
-            const name = asset[QC.OName] ?? asset[QC.Name];
+            const values = asset[propId];
 
-            console.log(`${name}: ${asset[QC.Key]}`);
-            // STEP 5 - iterate through tag properties and print out property name & value
-            for (const propId of props) {
-                const propDef = schema.attributes.find(p => p.id === propId);
-
-                if (!propDef) {
-                    continue;
-                }
-                const values = asset[propId];
-                
-                console.log(`  ${propDef.category}.${propDef.name}: ${values.join(',')}`);
-            }
+            console.log(`  ${propDef.category}.${propDef.name}: ${values.join(',')}`);
         }
-    }   
+    }
 }
 
 main()

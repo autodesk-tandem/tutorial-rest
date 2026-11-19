@@ -4,9 +4,9 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
+import { ColumnFamilies, QC } from '../common/constants.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { QC } from '../common/constants.js';
-import { Encoding, getDefaultModel, isLogicalElement } from '../common/utils.js';
+import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -27,7 +27,7 @@ async function main() {
     const defaultModel = getDefaultModel(facilityId, facility);
 
     if (!defaultModel) {
-        throw new Error('Default model not found');
+        throw new Error(`Default model doesn't exist`);
     }
     // STEP 3 - get streams
     const streams = await client.getStreams(defaultModel.modelId);
@@ -35,10 +35,13 @@ async function main() {
     const streamConfigs = await client.getStreamConfigs(defaultModel.modelId);
     // STEP 5 - get model schema
     const schema = await client.getModelSchema(defaultModel.modelId);
+    const propDefsById = new Map(
+        schema.attributes.filter(attr => attr.fam === ColumnFamilies.DtProperties)
+        .map(attr => [attr.id, attr]));
     
     for (const stream of streams) {
         // STEP 6 - find settings for stream by its key. Note that configuration uses full key
-        const key = Encoding.toFullKey(stream[QC.Key], isLogicalElement(stream[QC.ElementFlags]));
+        const key = stream[QC.Key];
         const config = streamConfigs.find(s => s.elementId === key);
         const settings = config ? config.streamSettings : null;
         
@@ -52,7 +55,7 @@ async function main() {
         const thresholds = settings.thresholds;
 
         for (const [propId, mapping] of Object.entries(settings.sourceMapping)) {
-            const propDef = schema.attributes.find(a => a.id === propId);
+            const propDef = propDefsById.get(propId);
 
             if (!propDef) {
                 console.log(`  Property: ${propId} (definition not found)`);
@@ -86,10 +89,8 @@ async function main() {
 }
 
 function printThreshold(threshold, spaces) {
-    const keys = Object.keys(threshold);
-
-    for (const key of keys) {
-        console.log(`${Array(spaces + 1).join(' ')}${key}: ${threshold[key]}`);
+    for (const [key, value] of Object.entries(threshold)) {
+        console.log(`${' '.repeat(spaces + 1)}${key}: ${value}`);
     }
 }
 

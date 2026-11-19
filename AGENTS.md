@@ -69,6 +69,8 @@ This document explains how to work with AI agents (like GitHub Copilot Chat in V
 - Use `client.mutateElements(modelUrn, keys, mutations, desc?, correlationId?)`.
 - Construct `mutations` with `MutateActions` and the family/column constants.
 - Provide a short `desc` (helps with history/audit).
+- `correlationId` can be used to group multiple mutations as one action - this is useful for multi-model changes.
+- it's efficient to execute changes in batches instead of one by one (i.e. one change per element).
 
 ### Stream Operations
 - Creating streams: `client.createStream(...)`.
@@ -78,7 +80,7 @@ This document explains how to work with AI agents (like GitHub Copilot Chat in V
 ## Prompting Tips for Agents
 - Be explicit: mention the exact file path to create or modify, and the intended minimal change.
 - Ask the agent to mirror the style of existing examples (top constants block, `main()`, clean console output).
-- When dealing with keys/encoding, reference `common/utils.js` helpers (e.g., `Encoding.toFullKey`, `Encoding.fromXrefKey`).
+- When dealing with keys/encoding, reference `common/utils.js` helpers (e.g., `Encoding.fromXrefKey`).
 - If adding a new example, specify the target folder and name (e.g., `streams/list-stream-metrics.js`).
 
 ## Project Conventions

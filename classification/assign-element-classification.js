@@ -1,12 +1,13 @@
 /*
-    This example demonstrates how assign classification to the element. The scenario is quite simple - there is hardcoded mapping between element name
-    and classification. I can be used as reference sample in case that more advanced logic is needed.
+    This example demonstrates how create assets for BIM elements and classify them. This is using hardcoded mapping between element name
+    and classification. The example can be used as reference sample in case that more advanced logic is needed.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies, ColumnNames, MutateActions, QC } from '../common/constants.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -41,49 +42,78 @@ async function main() {
             return r[1] === className;
         });
 
-        if (classData) {
-            classMap.set(name, classData[0]);
+        if (!classData) {
+            console.log(`Classification not found for: ${className}`);
+            continue;
         }
+        classMap.set(name, classData[0]);
     }
     // STEP 4 - iterate through facility models and apply classification based on mapping
+    const defaultModel = getDefaultModel(facilityId, facility);
+
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
+    const assetClassMap = new Map();
+
     for (const link of facility.links) {
-        const elements = await client.getElements(link.modelId);
-        const keys = [];
-        const mutations = [];
+        // STEP 5 - skip default model - this is where assets are stored
+        if (link.modelId === defaultModel.modelId) {
+            continue;
+        }
+        // STEP 6 - iterate through elements in the model and prepare classification list
+        console.log(`Processing model: ${link.label}`);
+        const elements = await client.getElements(link.modelId, undefined, [ ColumnFamilies.Standard, ColumnFamilies.Xrefs ]);
+        const elementClassList = []; // list of element id and classification id pairs
 
         for (const element of elements) {
-            const elementName = element[QC.Name];
+            // STEP 7 - check if there is associated asset and skip if present
+            const assetId = element[QC.HostOfAsset];
 
-            if (!elementName) {
+            if (assetId) {
                 continue;
             }
+            const elementName = element[QC.OName] ?? element[QC.Name];
+
             if (!classMap.has(elementName)) {
                 continue;
             }
             const classId = classMap.get(elementName);
+            const elementId = element[QC.Key];
 
-            // we don't want to apply same classification again
-            if ((element[QC.Classification] === classId) || (element[QC.OClassification] === classId)) {
-                continue;
-            }
-            console.log(`${elementName}:${element[QC.Key]}`);
-            // store keys and mutations
-            keys.push(element[QC.Key]);
-            mutations.push([
-                MutateActions.Insert,
-                ColumnFamilies.Standard,
-                ColumnNames.OClassification,
-                classId
-            ]);
+            elementClassList.push({ elementId, classId });
+            console.log(`  ${elementName}:${elementId}`);
         }
-        if (keys.length === 0) {
+        if (elementClassList.length === 0) {
             continue;
         }
-        // STEP 5 - apply changes
-        await client.mutateElements(link.modelId, keys, mutations, 'Update classification');
+        // STEP 8 - create assets for collected BIM elements
+        const result = await client.makeAssets(link.modelId,
+            elementClassList.map(e => e.elementId), 'Create assets');
 
-        console.log(`Updated elements: ${keys.length}`);
+        result.keys.forEach((assetId, i) => {
+            assetClassMap.set(assetId, elementClassList[i].classId);
+        });
+        console.log(`  Created assets: ${result.keys.length}`);
     }
+    // STEP 9 - apply classification to created assets
+    const assetIds = [];
+    const mutations = [];
+
+    for (const [assetId, classId] of assetClassMap.entries()) {
+        assetIds.push(assetId);
+        mutations.push([
+            MutateActions.Insert,
+            ColumnFamilies.Standard,
+            ColumnNames.OClassification,
+            classId
+        ]);
+    }
+    if (assetIds.length === 0) {
+        return;
+    }
+    await client.mutateElements(defaultModel.modelId, assetIds, mutations, 'Apply classification');
+    console.log(`Applied classification: ${assetIds.length}`);
 }
 
 main()

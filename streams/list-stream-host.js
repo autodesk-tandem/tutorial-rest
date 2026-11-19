@@ -4,9 +4,9 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { QC } from '../common/constants.js';
-import { Encoding, getDefaultModel, isLogicalElement } from '../common/utils.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { Encoding, getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -27,6 +27,9 @@ async function main() {
     const facility = await client.getFacility(facilityId);
     const defaultModel = getDefaultModel(facilityId, facility);
 
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
     // STEP 3 - get streams
     const streams = await client.getStreams(defaultModel.modelId);
     const streamData = [];
@@ -37,45 +40,32 @@ async function main() {
             console.log(`Stream ${stream[QC.Name]} has no parent`);
             continue;
         }
-        // STEP 5 - decode and store model id and key of parent element
-        const [ parentModelId, parentKey ] = Encoding.fromXrefKey(stream[QC.XParent]);
+        // STEP 5 - decode and key of parent element. We don't need to store
+        // model id - streams can be only linked to elements within the default model
+        const [ _, parentKey ] = Encoding.fromXrefKey(stream[QC.XParent]);
         
         streamData.push({
             id: stream[QC.Key],
             name: stream[QC.OName] ?? stream[QC.Name],
             parent: {
-                modelId: parentModelId,
                 key: parentKey
             }
         });
     }
-    // STEP 6 - build map of model to element key
-    const modelKeys = new Map();
+    // STEP 6 - build list of parent keys
+    const parentKeys = [...new Set(streamData.map(item => item.parent.key))];
 
-    for (const item of streamData) {
-        const modelId = item.parent.modelId;
-
-        if (!modelKeys.has(modelId)) {
-            modelKeys.set(modelId, []);
-        }
-        modelKeys.get(modelId).push(item.parent.key);
+    // STEP 7 - get parent names
+    if (parentKeys.length === 0) {
+        console.log('No parent keys found');
+        return;
     }
-    // STEP 6 - get element details
-    for (const [ modelId, elementKeys] of modelKeys) {
-        const elements = await client.getElements(modelId, elementKeys);
+    const elements = await client.getElements(defaultModel.modelId, parentKeys);
+    const parentNameById = new Map(elements.map(e => [e[QC.Key], e[QC.OName] ?? e[QC.Name]]));
 
-        for (const element of elements) {
-            const fullKey = Encoding.toFullKey(element[QC.Key], isLogicalElement(element[QC.ElementFlags]));
-            const item = streamData.find(i => i.parent.modelId === modelId && i.parent.key === fullKey);
-
-            if (item) {
-                item.parent.name = element[QC.OName] ?? element[QC.Name];
-            }
-        }
-    }
-    // STEP 7 - print results (stream name - parent name)
+    // STEP 8 - print results (stream name - parent name)
     for (const item of streamData) {
-        console.log(`${item.name}: (${item.parent.name})`);
+        console.log(`${item.name} (${item.id}) -> ${parentNameById.get(item.parent.key)} (${item.parent.key})`);
     }
 }
 

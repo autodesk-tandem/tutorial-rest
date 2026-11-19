@@ -1,12 +1,12 @@
 /*
-    This example demonstrates how to get assets from facility and print their bounding box.
+    This example demonstrates how to get assets from facility and print bounding box of associated BIM element.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
 import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies, QC } from '../common/constants.js';
-import { Encoding } from '../common/utils.js';
+import { getDefaultModel, Encoding } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -24,28 +24,59 @@ async function main() {
     // STEP 2 - get facility
     const facilityId = FACILITY_URN;
     const facility = await client.getFacility(facilityId);
+    // STEP 3 - get default model
+    const defaultModel = getDefaultModel(facilityId, facility);
 
-    // STEP 3 - iterate through facility models and collect tagged assets
-    for (const link of facility.links) {
-        const modelMetadata = await client.getModel(link.modelId);
-        const assets = await client.getTaggedAssets(link.modelId, [ ColumnFamilies.Standard, ColumnFamilies.DtProperties, ColumnFamilies.LMV ]);
-        const offset = modelMetadata.fragmentTransformsOffset;
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
+    // STEP 4 - get tagged assets
+    const assets = await client.getTaggedAssets(defaultModel.modelId);
+    // STEP 5 - map to store offset for each model
+    const modelOffsetMap = new Map();
 
-        // STEP 4 - iterate through assets and print their bounding boxes
-        for (const asset of assets) {
-            console.log(`${asset[QC.Name]}`);
-            const bboxData = asset[QC.BoundingBox];
+    // STEP 6 - iterate through assets and print their bounding boxes
+    for (const asset of assets) {
+        const name = asset[QC.OName] ?? asset[QC.Name];
 
-            if (!bboxData) {
-                continue;
-            }
-            // bounding box is encoded into binary string
-            const box = Encoding.decodeBBox(asset[QC.BoundingBox], offset);
+        console.log(`${asset[QC.Name]}`);
+        // STEP 7 -find BIM element of an asset
+        const modelElementXref = asset[QC.BimElmOfAsset];
 
-            console.log(`  min: ${box.minx}, ${box.miny}, ${box.minz}`);
-            console.log(`  max: ${box.maxx}, ${box.maxy}, ${box.maxz}`);
+        if (!modelElementXref) {
+            console.log(` ERROR: Asset does not have a BIM element reference`);
+            continue;
         }
-    }   
+        // STEP 8 - decode xref key to get model ID and element ID.
+        // Use modelId to get the offset of the model
+        const [ modelId, elementId ] = Encoding.fromXrefKey(modelElementXref);
+
+        if (!modelOffsetMap.has(modelId)) {
+            const modelMetadata = await client.getModel(modelId);
+
+            modelOffsetMap.set(modelId, modelMetadata.fragmentTransformsOffset);
+        }
+        const offset = modelOffsetMap.get(modelId);
+        // STEP 9 - get element details using model ID and element ID
+        const element = await client.getElement(modelId, elementId, [ ColumnFamilies.Standard, ColumnFamilies.LMV ]);
+
+        if (!element) {
+            console.log(` ERROR: Unable to read BIM element reference`);
+            continue;
+        }
+        // STEP 10 - extract bounding box data from element
+        const bboxData = element[QC.BoundingBox];
+
+        if (!bboxData) {
+            console.log(` ERROR: BIM element does not have a bounding box`);
+            continue;
+        }
+        // STEP 11 - bounding box is encoded into binary string
+        const box = Encoding.decodeBBox(bboxData, offset);
+
+        console.log(`  min: ${box.minx}, ${box.miny}, ${box.minz}`);
+        console.log(`  max: ${box.maxx}, ${box.maxy}, ${box.maxz}`);
+    }
 }
 
 main()

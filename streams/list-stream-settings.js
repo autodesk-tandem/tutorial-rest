@@ -4,8 +4,8 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { QC } from '../common/constants.js';
+import { TandemClient } from '../common/tandemClient.js';
 import { Encoding, getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
@@ -28,12 +28,15 @@ async function main() {
     const defaultModel = getDefaultModel(facilityId, facility);
 
     if (!defaultModel) {
-        throw new Error('Default model not found');
+        throw new Error(`Default model doesn't exist`);
     }
     // STEP 3 - get streams
     const streams = await client.getStreams(defaultModel.modelId);
 
     for (const stream of streams) {
+        const name = stream[QC.OName] ?? stream[QC.Name];
+
+        console.log(`Stream: ${name}`);
         // STEP 4 - get stream settings
         const streamSettings = stream[QC.Settings];
 
@@ -43,32 +46,23 @@ async function main() {
         // STEP 5 - decode settings and print thresholds
         const settings = Encoding.decodeStreamSettings(streamSettings);
 
-        if (!settings) {
-            continue;
-        }
-        console.log(`Stream: ${stream[QC.Name]}`);
         console.log(`  Thresholds:`);
-        const keys = Object.keys(settings.thresholds);
-
-        for (const key of keys) {
-            console.log(`    ${settings.thresholds[key].name}`);
-            if (settings.thresholds[key].lower) {
-                console.log(`      lower:`);
-                printThreshold(settings.thresholds[key].lower, 8);
+        for (const [key, threshold] of Object.entries(settings.thresholds)) {
+            console.log(`    ${threshold.name}`);
+            if (threshold.lower) {
+                printThreshold('lower', threshold.lower, 6);
             }
-            if (settings.thresholds[key].upper) {
-                console.log(`      upper:`);
-                printThreshold(settings.thresholds[key].upper, 8);
+            if (threshold.upper) {
+                printThreshold('upper', threshold.upper, 6);
             }
         }
     }
 }
 
-function printThreshold(threshold, spaces) {
-    const keys = Object.keys(threshold);
-
-    for (const key of keys) {
-        console.log(`${Array(spaces + 1).join(' ')}${key}: ${threshold[key]}`);
+function printThreshold(label, threshold, spaces) {
+    console.log(`${' '.repeat(spaces)}${label}:`);
+    for (const [key, value] of Object.entries(threshold)) {
+        console.log(`${' '.repeat(spaces + 2)}${key}: ${value}`);
     }
 }
 

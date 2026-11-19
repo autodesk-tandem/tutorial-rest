@@ -1,15 +1,15 @@
 /*
     This example demonstrates how to create generic asset (w/o geometry).
-    The facility is using REC Sample template and new asset is Lighting Equipment.
+    The facility is using template based on Tandem categories and new asset is Mechanical Equipment.
     
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies,
     ColumnNames,
     ElementFlags,
     MutateActions } from '../common/constants.js';
+import { TandemClient } from '../common/tandemClient.js';
 import { getDefaultModel, matchClassification } from '../common/utils.js';
     
 
@@ -17,9 +17,8 @@ import { getDefaultModel, matchClassification } from '../common/utils.js';
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
 const APS_CLIENT_SECRET = 'YOUR_CLINET_SECRET';
 const FACILITY_URN = 'YOUR_FACILITY_URN';
-const CLASSIFICATION = 'Lighting Equipment';
-const ASSEMBLY_CODE = 'D5040.50'; // Lighting Fixtures
-const CATEGORY = 1120; // Lighting Fixtures
+const TANDEM_CATEGORY = 'M.Eq'; // Mechanical Equipment
+const CATEGORY = 1140; // Mechanical Equipment
 
 async function main() {
     // STEP 1 - obtain token to authenticate subsequent API calls
@@ -35,21 +34,21 @@ async function main() {
     const defaultModel = getDefaultModel(facilityId, facility);
 
     if (!defaultModel) {
-        throw new Error('Facility does not have default model');
+        throw new Error(`Default model doesn't exist`);
     }
     // STEP 3 - get facility template
     const template = await client.getFacilityTemplate(facilityId);
-    const classification = template.classification.rows.find(c => c[1] === CLASSIFICATION);
+    const classification = template.classification.rows.find(c => c[0] === TANDEM_CATEGORY);
 
     if (!classification) {
-        throw new Error(`Classification ${CLASSIFICATION} not found`);
+        throw new Error(`Classification ${TANDEM_CATEGORY} not found`);
     }
     const pset = template.psets.find(p => p.name === template.name);
     // STEP 4 - get suitable parameters for classification
-    const classParameters = pset?.parameters.filter(p => p.applicationFilters.userClass.some(c => matchClassification(classification[0], c)));
+    const classParameters = pset?.parameters.filter(p => p.applicationFilters?.tandemCategory?.some(c => matchClassification(classification[0], c)));
 
-    if (!classParameters) {
-        throw new Error(`No suitable parameters for provided classification: ${CLASSIFICATION}`);
+    if (!classParameters || classParameters.length === 0) {
+        throw new Error(`No suitable parameters for provided classification: ${TANDEM_CATEGORY}`);
     }
     const schema = await client.getModelSchema(defaultModel.modelId);
 
@@ -71,7 +70,7 @@ async function main() {
             [
                 MutateActions.Insert,
                 ColumnFamilies.Standard,
-                ColumnNames.Classification,
+                ColumnNames.TandemCategory,
                 classification[0]
             ],
             [
@@ -79,30 +78,31 @@ async function main() {
                 ColumnFamilies.Standard,
                 ColumnNames.CategoryId,
                 CATEGORY
-            ],
-            [
-                MutateActions.Insert,
-                ColumnFamilies.Standard,
-                ColumnNames.UniformatClass,
-                ASSEMBLY_CODE
             ]
         ],
         desc: 'Create asset'
     };
-    // STEP 6 - add asset properties based on ma below (property name -> value)
+    // STEP 6 - add asset properties based on mapping below (property name -> value)
     const assetProperties = {
-        'Asset Tag': '12345',
-        'Model Number': 'ABC',
-        'IP Address': '10.0.0.0',
-        'Serial Number': '12345'
+        'Flow Rate': 2500,
+        'Function': ['Ventilation'], // tags
+        'Pressure': 140
     };
 
-    for (const item in assetProperties) {
-        const value = assetProperties[item];
+    for (const [item, value] of Object.entries(assetProperties)) {
         const classParameter = classParameters.find(p => p.name === item);
-        const param = schema.attributes.find(a => a.name === classParameter.name && a.category == classParameter.category);
+
+        if (!classParameter) {
+            console.warn(`Parameter ${item} not found in template`);
+            continue;
+        }
+        const param = schema.attributes.find(a => 
+            a.fam === ColumnFamilies.DtProperties &&
+            a.name === classParameter.name &&
+            a.category == classParameter.category);
 
         if (!param) {
+            console.warn(`Parameter ${item} not found in schema`);
             continue;
         }
         inputs.muts.push([

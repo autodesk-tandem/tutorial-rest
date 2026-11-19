@@ -4,15 +4,14 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { ColumnFamilies, QC } from './../common/constants.js';
-import { Encoding, getDefaultModel, isLogicalElement } from './../common/utils.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { Encoding, getDefaultModel } from './../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
 const APS_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
 const FACILITY_URN = 'YOUR_FACILITY_URN';
-
 
 async function main() {
     // STEP 1 - obtain token. The sample uses 2-legged token but it would also work with 3-legged token
@@ -45,18 +44,14 @@ async function main() {
             const modelId = modelIds[i];
             const elementKey = elementKeys[i];
 
-            const modelAssets = modelAssetMap.get(modelId) || new Set();
-
-            if (modelAssets.size === 0) {
-                modelAssetMap.set(modelId, modelAssets);
+            if (!modelAssetMap.has(modelId)) {
+                modelAssetMap.set(modelId, new Set());
             }
-            modelAssets.add(elementKey);
-            const assetTickets = assetTicketsMap.get(elementKey) || [];
-
-            if (assetTickets.length === 0) {
-                assetTicketsMap.set(elementKey, assetTickets);
+            modelAssetMap.get(modelId).add(elementKey);
+            if (!assetTicketsMap.has(elementKey)) {
+                assetTicketsMap.set(elementKey, new Set());
             }
-            assetTickets.push(ticket);
+            assetTicketsMap.get(elementKey).add(ticket);
         }
     }
     // STEP 5 - retrieve asset details and print tickets per asset
@@ -64,11 +59,10 @@ async function main() {
         const assets = await client.getElements(modelId, [...elementKeys], [ColumnFamilies.Standard]);
 
         for (const asset of assets) {
-            const elementKey = Encoding.toFullKey(asset[QC.Key], isLogicalElement(asset[QC.ElementFlags]));
             const assetName = asset[QC.OName] ?? asset[QC.Name];
-            const tickets = assetTicketsMap.get(elementKey) || [];
+            const tickets = assetTicketsMap.get(asset[QC.Key]) || new Set();
 
-            console.log(`Asset: ${assetName} (${elementKey}) Tickets: ${tickets.length}`);
+            console.log(`Asset: ${assetName} (${asset[QC.Key]}) Tickets: ${tickets.size}`);
             for (const ticket of tickets) {
                 const ticketName = ticket[QC.OName] ?? ticket[QC.Name];
                 const ticketPriority = ticket[QC.Priority];

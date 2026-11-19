@@ -4,9 +4,9 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { QC } from '../common/constants.js';
-import { Encoding, getDefaultModel, isLogicalElement } from '../common/utils.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { Encoding, getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -37,7 +37,7 @@ async function main() {
     const subsystems = [];
 
     for (const item of items) {
-        const key = Encoding.toFullKey(item[QC.Key], isLogicalElement(item[QC.ElementFlags]));
+        const key = item[QC.Key];
         const name = item[QC.OName] ?? item[QC.Name];
         const parent = item[QC.Parent];
 
@@ -48,14 +48,14 @@ async function main() {
 
             subsystems.push({
                 name: name,
-                key: item[QC.Key],
+                key,
                 parent: parent,
                 parameters
             });
         } else {
             systems.push({
                 name,
-                key: item[QC.Key],
+                key,
                 systemId: Encoding.toSystemId(key),
             });
         }
@@ -90,21 +90,28 @@ function getSubsystemParameters(encodedSettings, facilityTemplate) {
         const configObj = JSON.parse(config);
 
         for (const [key, value] of Object.entries(configObj)) {
-            const match = key.match(/^\[(.+?)\]\[(.+?)\]$/);
+            const match = key.match(/^\[([^\[\]]*)\](?:\[([^\[\]]*)\])?(?:\[([^\[\]]*)\])?(?:\[([^\[\]]*)\])?$/);
 
             if (!match) {
                 continue;
             }
             const [, uuid] = match;
             const params = facilityTemplate.psets.flatMap(pset =>
-                pset.parameters.find(p => p.uuid === uuid));
+                pset.parameters.find(p => p.uuid === uuid)).filter(Boolean);
                     
             if (params.length > 0) {
                 parameters.push({
-                    name: params[0].name,
+                    name: params[0]?.name,
                     uuid,
                     value
                 });
+            } else {
+                if (match.length > 2) {
+                    parameters.push({
+                        name: match[2],
+                        value
+                    });
+                }
             }
         }
     } catch (err) {

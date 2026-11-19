@@ -5,9 +5,9 @@
     It uses 2-legged authentication - this requires that application is added to facility as service.
 */
 import { createToken } from '../common/auth.js';
-import { TandemClient } from '../common/tandemClient.js';
 import { AttributeType, ColumnFamilies, QC } from '../common/constants.js';
-import { Encoding, getDefaultModel, isLogicalElement } from '../common/utils.js';
+import { TandemClient } from '../common/tandemClient.js';
+import { getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -28,53 +28,65 @@ async function main() {
     const facility = await client.getFacility(facilityId);
     const defaultModel = getDefaultModel(facilityId, facility);
 
+    if (!defaultModel) {
+        throw new Error(`Default model doesn't exist`);
+    }
     // STEP 3 - get schema
     const schema = await client.getModelSchema(defaultModel.modelId);
-    // STEP 4 - get streams
+    const propDefsById = new Map(
+        schema.attributes.filter(attr => attr.fam === ColumnFamilies.DtProperties)
+        .map(attr => [attr.id, attr]));
+    // STEP 4 - prepare property value maps for string attributes
+    const propValueMap = new Map();
+
+    for (const [propId, propDef] of propDefsById.entries()) {
+        if (propDef.dataType === AttributeType.String) {
+            propValueMap.set(propId, new Map(
+                Object.entries(propDef.allowedValues?.map || {})
+                    .map(([name, value]) => [value, name])
+            ));
+        }
+    }
+    // STEP 5 - get streams
     const streams = await client.getStreams(defaultModel.modelId);
-    // STEP 5 - get last readings for each stream
-    const keys = streams.map(stream => stream[QC.Key]);
+    // STEP 6 - get last readings for each stream
+    const streamById = new Map(streams.map(stream => [stream[QC.Key], stream]));
+    const keys = Array.from(streamById.keys());
     const data = await client.getStreamLastReading(defaultModel.modelId, keys);
 
-    for (const key in data) {
-        // STEP 6 - read stream name
-        const stream = streams.find(s => Encoding.toFullKey(s[QC.Key], isLogicalElement(s[QC.ElementFlags])) === key);
+    for (const [key, readings] of Object.entries(data)) {
+        // STEP 7 - read stream name
+        const stream = streamById.get(key);
+
+        if (!stream) {
+            console.warn(`Unable to find stream for key: ${key}`);
+            continue;
+        }
         const name = stream[QC.OName] ?? stream[QC.Name];
 
         console.log(`${name}`);
-        // STEP 7 - print stream values
-        const item = data[key];
+        // STEP 8 - print stream values
+        for (const [propId, values] of Object.entries(readings)) {
+            const propDef = propDefsById.get(propId);
 
-        for (const propId in item) {
-            const propDef = schema.attributes.find(p => p.fam === ColumnFamilies.DtProperties && p.id === propId);
-
-            console.log(`  ${propDef?.name} (${propId})`);
-            // STEP 8 - create map in case of discrete values. In this case the map of allowed strings
-            // is stored in the property definition. The map is string to number. The stream data contains integer
-            // values which needs to be mapped to strings. We create map for this purpose.
-            const valueMap = new Map();
-
-            if (propDef?.dataType === AttributeType.String) {
-                for (const [ name, value ] of Object.entries(propDef.allowedValues.map)) {
-                    valueMap.set(value, name);
-                }
+            if (!propDef) {
+                console.warn(`Unable to find property definition: ${propId}`);
+                continue;
             }
-            const values = item[propId];
-            
-            for (const ts in values) {
+            console.log(`  ${propDef.name} (${propId})`);
+            // STEP 9 - print values
+            for (const [ts, value] of Object.entries(values)) {
                 const date = new Date(parseInt(ts));
-                const value = values[ts];
                 
-                if (propDef?.dataType === AttributeType.String) {
-                    // check string value from map created above.
-                    const name = valueMap.get(value);
+                if (propDef.dataType === AttributeType.String) {
+                    // STEP 10 - check string value from map created above.
+                    const name = propValueMap.get(propId)?.get(value) ?? value;
 
                     console.log(`    [${date.toLocaleString()}]: ${name}`);
                 } else {
                     console.log(`    [${date.toLocaleString()}]: ${value}`);
                 }
             }
-
         }
     }
 }

@@ -6,7 +6,7 @@
 import { createToken } from '../common/auth.js';
 import { ColumnFamilies, ElementFlags, QC } from '../common/constants.js';
 import { TandemClient } from '../common/tandemClient.js';
-import { getDefaultModel } from '../common/utils.js';
+import { Encoding, getDefaultModel } from '../common/utils.js';
 
 // update values below according to your environment
 const APS_CLIENT_ID = 'YOUR_CLIENT_ID';
@@ -32,7 +32,7 @@ async function main() {
     // STEP 4 - get elements from the model, find root element
     const elements = await client.getElements(defaultModel.modelId, undefined,
         [ ColumnFamilies.Standard, ColumnFamilies.DtProperties]);
-    const rootElement = elements.find(e => e[QC.ElementFlags] === ElementFlags.DocumentRoot);
+    const rootElement = elements.find(e => Encoding.getElementFlags(e[QC.Key]) === ElementFlags.DocumentRoot);
 
     if (!rootElement) {
         throw new Error('Root element not found');
